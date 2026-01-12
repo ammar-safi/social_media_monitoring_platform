@@ -5,25 +5,25 @@ models:
     #     last_name: string
     #     user_name: string
     #     password: string
-    #     email: string unique
-    #     phone_number: string unique
-    #     type: enum:"admin","gov_off","policy_maker" default:"gov_off"
+    #     email: string
+    #     phone_number: string
+    #     type: enum:"admin","user","policy_maker" default:"gov_off"
     #     active: boolean default:"0"
     ApprovesUser:
         id: id
-        admin_id: bigInteger foreign:users.id
+        admin_id: bigInteger nullable foreign:users.id
         user_id: bigInteger foreign:users.id
+        expired_at: timestamp
+        expired: boolean default:"0"
+        status: enum:"pending","approved","rejected" default:"pending"
     Invite:
         id: id
-        cov_off_id: bigInteger foreign:users.id
-        policy_maker_id: bigInteger foreign:users.id
+        token: string
+        user_id: bigInteger foreign:users.id
         email: string
-        new_column: bigInteger
-    ApprovesPolicyMaker:
-        id: id
-        admin_id: bigInteger foreign:users.id
-        policy_maker_id: bigInteger foreign:users.id
-        expired_at: timestamp
+        status: enum:"pending","approved","rejected" default:"pending"
+        expired_at: timestamp nullable
+        expired: boolean default:"0"
     Post:
         id: id
         content: text
@@ -34,7 +34,7 @@ models:
         id: id
         name: string
         email: string nullable
-    Analyst:
+    Analysi:
         id: id
         post_id: bigInteger foreign:posts.id
         sentiment: enum:"positive","negative","normal" nullable
@@ -46,3 +46,8 @@ models:
         id: id
         hashtag_id: bigInteger foreign:hashtags.id
         post_id: bigInteger foreign:posts.id
+    Rating:
+        id: id
+        user_id: bigInteger foreign:users.id
+        rating: bigInteger
+        comment: text nullable
