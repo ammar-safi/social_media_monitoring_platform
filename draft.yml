@@ -16,6 +16,7 @@ models:
         expired_at: timestamp
         expired: boolean default:"0"
         status: enum:"pending","approved","rejected" default:"pending"
+        softDeletes
     Invite:
         id: id
         token: string
@@ -24,30 +25,37 @@ models:
         status: enum:"pending","approved","rejected" default:"pending"
         expired_at: timestamp nullable
         expired: boolean default:"0"
+        softDeletes
     Post:
         id: id
         content: text
         platform: string nullable
         account: string nullable
         gov_org_id: bigInteger foreign:gov_org.id
+        softDeletes
     GovOrg:
         id: id
         name: string
         email: string nullable
+        softDeletes
     Analysi:
         id: id
         post_id: bigInteger foreign:posts.id
         sentiment: enum:"positive","negative","normal" nullable
         stance: enum:"supportive","against" nullable
+        softDeletes
     Hashtag:
         id: id
         name: string
+        softDeletes
     HashtagPost:
         id: id
         hashtag_id: bigInteger foreign:hashtags.id
         post_id: bigInteger foreign:posts.id
+        softDeletes
     Rating:
         id: id
         user_id: bigInteger foreign:users.id
         rating: bigInteger
         comment: text nullable
+        softDeletes
