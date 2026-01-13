@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum InvitesStatusEnum :string 
+enum ApproveUserStatusEnum :string 
 {
     case PENDING = 'pending';
     case APPROVED = 'approved';
