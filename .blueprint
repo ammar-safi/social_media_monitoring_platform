@@ -1,2 +1,35 @@
+created:
+    - database/factories/ApproveUserFactory.php
+    - database/factories/InviteFactory.php
+    - database/factories/PostFactory.php
+    - database/factories/GovOrgFactory.php
+    - database/factories/AnalystFactory.php
+    - database/factories/HashtagFactory.php
+    - database/factories/HashtagPostFactory.php
+    - database/factories/RatingFactory.php
+    - database/migrations/2026_01_13_153707_create_approve_users_table.php
+    - database/migrations/2026_01_13_153708_create_invites_table.php
+    - database/migrations/2026_01_13_153709_create_posts_table.php
+    - database/migrations/2026_01_13_153710_create_gov_orgs_table.php
+    - database/migrations/2026_01_13_153711_create_analysis_table.php
+    - database/migrations/2026_01_13_153712_create_hashtags_table.php
+    - database/migrations/2026_01_13_153713_create_hashtag_posts_table.php
+    - database/migrations/2026_01_13_153714_create_ratings_table.php
+    - app/Models/ApproveUser.php
+    - app/Models/Invite.php
+    - app/Models/Post.php
+    - app/Models/GovOrg.php
+    - app/Models/Analyst.php
+    - app/Models/Hashtag.php
+    - app/Models/HashtagPost.php
+    - app/Models/Rating.php
 models:
     User: { name: string, email: string, email_verified_at: 'timestamp nullable', password: string, remember_token: 'string:100 nullable' }
+    ApproveUser: { id: id, admin_id: 'unsignedBigInteger nullable foreign:users.id', user_id: 'unsignedBigInteger foreign:users.id', expired_at: timestamp, expired: 'boolean default:"0"', status: 'enum:"pending","approved","rejected" default:"pending"', softdeletes: softDeletes }
+    Invite: { id: id, token: string, user_id: 'unsignedBigInteger foreign:users.id', email: string, status: 'enum:"pending","approved","rejected" default:"pending"', expired_at: 'timestamp nullable', expired: 'boolean default:"0"', softdeletes: softDeletes }
+    Post: { id: id, content: text, platform: 'string nullable', account: 'string nullable', gov_org_id: 'unsignedBigInteger foreign:gov_org.id', softdeletes: softDeletes }
+    GovOrg: { id: id, name: string, email: 'string nullable', softdeletes: softDeletes }
+    Analyst: { id: id, post_id: 'unsignedBigInteger foreign:posts.id', sentiment: 'enum:"positive","negative","normal" nullable', stance: 'enum:"supportive","against" nullable', softdeletes: softDeletes }
+    Hashtag: { id: id, name: string, softdeletes: softDeletes }
+    HashtagPost: { id: id, hashtag_id: 'unsignedBigInteger foreign:hashtags.id', post_id: 'unsignedBigInteger foreign:posts.id', softdeletes: softDeletes }
+    Rating: { id: id, user_id: 'unsignedBigInteger foreign:users.id', rating: unsignedBigInteger, comment: 'text nullable', softdeletes: softDeletes }

@@ -1,0 +1,33 @@
+<?php
+
+namespace Database\Factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
+use App\Models\Invite;
+use App\Models\User;
+
+class InviteFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Invite::class;
+
+    /**
+     * Define the model's default state.
+     */
+    public function definition(): array
+    {
+        return [
+            'token' => fake()->word(),
+            'user_id' => User::factory(),
+            'email' => fake()->safeEmail(),
+            'status' => fake()->randomElement(["pending","approved","rejected"]),
+            'expired_at' => fake()->dateTime(),
+            'expired' => fake()->boolean(),
+        ];
+    }
+}

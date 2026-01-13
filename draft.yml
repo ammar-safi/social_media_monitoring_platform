@@ -7,12 +7,12 @@ models:
     #     password: string
     #     email: string
     #     phone_number: string
-    #     type: enum:"admin","user","policy_maker" default:"gov_off"
+    #     type: enum:"admin","user","policy_maker" default:"user"
     #     active: boolean default:"0"
-    ApprovesUser:
+    ApproveUser:
         id: id
-        admin_id: bigInteger nullable foreign:users.id
-        user_id: bigInteger foreign:users.id
+        admin_id: unsignedBigInteger nullable foreign:users.id
+        user_id: unsignedBigInteger foreign:users.id
         expired_at: timestamp
         expired: boolean default:"0"
         status: enum:"pending","approved","rejected" default:"pending"
@@ -20,7 +20,7 @@ models:
     Invite:
         id: id
         token: string
-        user_id: bigInteger foreign:users.id
+        user_id: unsignedBigInteger foreign:users.id
         email: string
         status: enum:"pending","approved","rejected" default:"pending"
         expired_at: timestamp nullable
@@ -31,7 +31,7 @@ models:
         content: text
         platform: string nullable
         account: string nullable
-        gov_org_id: bigInteger foreign:gov_org.id
+        gov_org_id: unsignedBigInteger foreign:gov_org.id
         softDeletes
     GovOrg:
         id: id
@@ -40,7 +40,7 @@ models:
         softDeletes
     Analysi:
         id: id
-        post_id: bigInteger foreign:posts.id
+        post_id: unsignedBigInteger foreign:posts.id
         sentiment: enum:"positive","negative","normal" nullable
         stance: enum:"supportive","against" nullable
         softDeletes
@@ -50,12 +50,12 @@ models:
         softDeletes
     HashtagPost:
         id: id
-        hashtag_id: bigInteger foreign:hashtags.id
-        post_id: bigInteger foreign:posts.id
+        hashtag_id: unsignedBigInteger foreign:hashtags.id
+        post_id: unsignedBigInteger foreign:posts.id
         softDeletes
     Rating:
         id: id
-        user_id: bigInteger foreign:users.id
-        rating: bigInteger
+        user_id: unsignedBigInteger foreign:users.id
+        rating: unsignedBigInteger
         comment: text nullable
         softDeletes
