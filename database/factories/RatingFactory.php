@@ -23,7 +23,7 @@ class RatingFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'rating' => fake()->randomNumber(),
+            'rating' => fake()->randomElement([rand(0,5)]),
             'comment' => fake()->text(),
         ];
     }
