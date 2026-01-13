@@ -2,18 +2,16 @@
 
 namespace App\Enums;
 
-enum InvitesStatusEnum :string 
+enum AnalystSentimentEnum :string 
 {
-    case PENDING = 'pending';
-    case APPROVED = 'approved';
-    case REJECTED = 'rejected';
+    case POSITIVE = 'positive';
+    case NEGATIVE = 'negative';
 
     public function label(): string
     {
         return match ($this) {
-            self::PENDING => 'pending',
-            self::APPROVED => 'approved',
-            self::REJECTED => 'rejected',
+            self::POSITIVE => 'positive',
+            self::NEGATIVE => 'negative',
         };
     }
     public static function asSelectArray(): array
@@ -29,18 +27,16 @@ enum InvitesStatusEnum :string
     public function badgeColor(): string
     {
         return match ($this) {
-            self::PENDING => 'gray',
-            self::APPROVED => 'success',
-            self::REJECTED => 'warning',
+            self::POSITIVE => 'success',
+            self::NEGATIVE => 'rejected',
         };
     }
     
     public function icon(): string
     {
         return match ($this) {
-            self::PENDING => 'heroicon-o-clock',
-            self::APPROVED => 'heroicon-o-check-circle',
-            self::REJECTED => 'heroicon-o-x-circle',
+            self::POSITIVE => 'heroicon-o-clock',
+            self::NEGATIVE => 'heroicon-o-check-circle',
         };
     }
 }
