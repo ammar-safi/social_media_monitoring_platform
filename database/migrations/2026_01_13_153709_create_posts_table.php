@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('platform')->nullable();
             $table->string('account')->nullable();
             $table->unsignedBigInteger('gov_org_id');
-            $table->foreign('gov_org_id')->references('id')->on('gov_org');
+            $table->foreign('gov_org_id')->references('id')->on('gov_orgs');
             $table->timestamps();
             $table->softDeletes();
         });

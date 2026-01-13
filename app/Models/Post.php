@@ -21,6 +21,6 @@ class Post extends Model
 
     public function govOrg(): BelongsTo
     {
-        return $this->belongsTo(GovOrg::class);
+        return $this->belongsTo(GovOrg::class , 'gov_org_id');
     }
 }

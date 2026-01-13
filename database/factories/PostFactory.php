@@ -22,7 +22,8 @@ class PostFactory extends Factory
     public function definition(): array
     {
         return [
-            'content' => fake()->paragraphs(3, true),
+            // 'content' => fake()->paragraphs(3, true),
+            'content' => "fake()->paragraphs(3, true)",
             'platform' => fake()->word(),
             'account' => fake()->word(),
             'gov_org_id' => GovOrg::factory(),
