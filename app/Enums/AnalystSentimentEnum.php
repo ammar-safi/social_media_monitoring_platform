@@ -28,15 +28,15 @@ enum AnalystSentimentEnum :string
     {
         return match ($this) {
             self::POSITIVE => 'success',
-            self::NEGATIVE => 'rejected',
+            self::NEGATIVE => 'danger',
         };
     }
     
     public function icon(): string
     {
         return match ($this) {
-            self::POSITIVE => 'heroicon-o-clock',
-            self::NEGATIVE => 'heroicon-o-check-circle',
+            self::POSITIVE => 'heroicon-o-arrow-trending-up',
+            self::NEGATIVE => 'heroicon-o-arrow-trending-down',
         };
     }
 }
