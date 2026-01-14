@@ -11,6 +11,8 @@ class HashtagPost extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = "hashtag_post";
+
     protected function casts(): array
     {
         return [

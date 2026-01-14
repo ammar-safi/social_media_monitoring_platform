@@ -22,13 +22,13 @@ class ApproveUser extends Model
         ];
     }
 
-    public function admin(): BelongsTo
+    public function Admin(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, "admin_id");
     }
 
-    public function user(): BelongsTo
+    public function User(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class , "user_id");
     }
 }

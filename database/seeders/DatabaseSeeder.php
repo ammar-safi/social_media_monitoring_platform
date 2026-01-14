@@ -40,7 +40,7 @@ class DatabaseSeeder extends Seeder
         ApproveUser::factory(10)->create();
         GovOrg::factory(10)->create();
         // Hashtag::factory(10)->create();
-        Post::factory(10)->create();
+        // Post::factory(10)->create();
         HashtagPost::factory(10)->create();
         Invite::factory(10)->create();
         Rating::factory(10)->create();

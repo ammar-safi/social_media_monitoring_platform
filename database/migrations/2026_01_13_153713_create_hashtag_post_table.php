@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('hashtag_posts', function (Blueprint $table) {
+        Schema::create('hashtag_post', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('hashtag_id');
             $table->foreign('hashtag_id')->references('id')->on('hashtags');
@@ -25,7 +25,7 @@ return new class extends Migration
 
         Schema::enableForeignKeyConstraints();
     }
-
+    
     /**
      * Reverse the migrations.
      */

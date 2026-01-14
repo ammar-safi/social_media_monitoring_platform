@@ -6,6 +6,8 @@ namespace App\Models;
 
 use Filament\Models\Contracts\HasName;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -49,4 +51,21 @@ class User extends Authenticatable implements HasName
     public function getFilamentName() :string {
         return $this->first_name;
     }
+
+    public function UsersApprovedByTheAdmin() : HasMany {
+        return $this->hasMany(ApproveUser::class , "admin_id");
+    }
+    //TODO : has many or has one ?
+    public function GetTheAdminWhoApproveMyAccount() : HasOne {
+        return $this->hasOne(ApproveUser::class);
+    }
+    public function PolicyMakersThatUserInvites() : HasMany {
+        return $this->hasMany(Invite::class);
+    }
+    public function Ratings() : HasMany {
+        return $this->hasMany(Rating::class);
+    }
+
+    
+    
 }
