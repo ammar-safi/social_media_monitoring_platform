@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         //TODO : use enum in type : admin
-        if (User::where("type", "admin")->exists()) {
+        if (!User::where("type", "admin")->exists()) {
             User::factory()->create([
                 'first_name' => 'admin',
                 'email' => 'ammar.ahmed.safi@gmail.com',
