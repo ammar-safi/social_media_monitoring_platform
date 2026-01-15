@@ -23,18 +23,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        //TODO : use enum in type : admin
-        if (!User::where("type", "admin")->exists()) {
-            User::factory()->create([
-                'first_name' => 'admin',
-                'email' => 'ammar.ahmed.safi@gmail.com',
-                "password" => Hash::make("123456"),
-                "phone_number" => "0988845619",
-                // TODO use enum
-                'type' => "admin",
-                "active" => 1,
-            ]);
-        }
+        $this->call([
+            PermissionSeeder::class,
+        ]);
         User::factory(10)->create();
         Analyst::factory(10)->create();
         ApproveUser::factory(10)->create();
@@ -44,8 +35,5 @@ class DatabaseSeeder extends Seeder
         HashtagPost::factory(10)->create();
         Invite::factory(10)->create();
         Rating::factory(10)->create();
-
-
-
     }
 }

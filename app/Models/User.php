@@ -13,10 +13,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
+use App\Enums\UserTypeEnum;
 
 class User extends Authenticatable implements HasName
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes ,HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes ,HasRoles, HasSuperAdmin;
 
 
     /**
@@ -43,7 +45,7 @@ class User extends Authenticatable implements HasName
     protected static function booted(): void
     {
         static::deleting(function ($user) {
-            if ($user->id === 1) {
+            if ($user->type === UserTypeEnum::ADMIN) {
                 throw new \Exception('you cannot delete this admin');
             }
         });
