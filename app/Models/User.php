@@ -21,7 +21,7 @@ class User extends Authenticatable implements HasName
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes ,HasRoles, HasSuperAdmin;
 
-
+    protected $guarded = [];
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -70,7 +70,7 @@ class User extends Authenticatable implements HasName
         return $this->hasMany(Rating::class);
     }
 
-    public function getForm () {
+    public static function getForm () {
         return [
                 Forms\Components\TextInput::make('first_name')
                     ->required()
@@ -93,7 +93,6 @@ class User extends Authenticatable implements HasName
                     ->required(),
                 Forms\Components\Toggle::make('active')
                     ->required(),
-                Forms\Components\DateTimePicker::make('email_verified_at'),
         ];
     }
     

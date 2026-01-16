@@ -16,69 +16,36 @@ class PermissionSeeder extends Seeder
 {
     // Define the actions you want to create permissions for
     protected $actions = ['create', 'update', 'show', 'delete'];
+    protected $permissions = ['user', "organization", "analyst", "rating", "comment"];
 
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        // Get all model classes from the app/Models directory (including subfolders)
-        $models = $this->getModels();
-
-        // Create permissions for each model and action
-        foreach ($models as $model) {
-            $this->createPermissionsForModel($model);
+        // Create permissions for each role and action
+        foreach ($this->permissions as $permission) {
+            $this->createPermissionsForRole($permission);
         }
 
         $this->command->info('Permissions seeded successfully!');
 
         $this->SuperAdminRole();
+        
     }
 
     /**
-     * Get all models from the app/Models directory (including subfolders).
+     * Create permissions for a specific $role.
      *
-     * @return array
-     */
-    protected function getModels()
-    {
-        $models = [];
-        $modelFiles = File::allFiles(app_path('Models'));
-
-        foreach ($modelFiles as $file) {
-            // Get the relative path of the model file (including subfolders)
-            $relativePath = $file->getRelativePathName();
-            // Remove the file extension and replace slashes with namespace separators
-            $modelClass = app()->getNamespace() . 'Models\\' . str_replace(
-                ['/', '.php'],
-                ['\\', ''],
-                $relativePath
-            );
-
-            // Check if the class exists
-            if (class_exists($modelClass)) {
-                $models[] = $modelClass;
-            }
-        }
-
-        return $models;
-    }
-
-    /**
-     * Create permissions for a specific model.
-     *
-     * @param string $model
+     * @param string $role
      * @return void
      */
-    protected function createPermissionsForModel($model)
+    protected function createPermissionsForRole($role)
     {
-
-        $modelName = class_basename($model);
-
         foreach ($this->actions as $action) {
-            $permissionName = strtolower("{$modelName}.{$action}");
+            $permissionName = strtolower("{$action} {$role}");
             $permission = Permission::where('name', $permissionName)
-                ->where('guard_name', 'sanctum')
+                ->where('guard_name', 'web')
                 ->first();
 
             if (!$permission) {
@@ -125,4 +92,5 @@ class PermissionSeeder extends Seeder
             echo "Error: " . $e->getMessage() . "\n";
         }
     }
+   
 }
