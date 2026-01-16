@@ -13,7 +13,7 @@ class PostPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->checkPermissionTo('view-any Post');
+        return $user->checkPermissionTo('show post');
     }
 
     /**
@@ -21,7 +21,7 @@ class PostPolicy
      */
     public function view(User $user, Post $post): bool
     {
-        return $user->checkPermissionTo('view Post');
+        return $user->checkPermissionTo('show post');
     }
 
     /**
@@ -29,7 +29,7 @@ class PostPolicy
      */
     public function create(User $user): bool
     {
-        return $user->checkPermissionTo('create Post');
+        return false;
     }
 
     /**
@@ -37,7 +37,7 @@ class PostPolicy
      */
     public function update(User $user, Post $post): bool
     {
-        return $user->checkPermissionTo('update Post');
+        return false;
     }
 
     /**
@@ -45,7 +45,7 @@ class PostPolicy
      */
     public function delete(User $user, Post $post): bool
     {
-        return $user->checkPermissionTo('delete Post');
+        return false;
     }
 
     /**
@@ -53,7 +53,7 @@ class PostPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->checkPermissionTo('delete-any Post');
+        return false;
     }
 
     /**
@@ -61,7 +61,7 @@ class PostPolicy
      */
     public function restore(User $user, Post $post): bool
     {
-        return $user->checkPermissionTo('restore Post');
+        return false;
     }
 
     /**
@@ -69,7 +69,7 @@ class PostPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->checkPermissionTo('restore-any Post');
+        return false;
     }
 
     /**
@@ -77,7 +77,7 @@ class PostPolicy
      */
     public function replicate(User $user, Post $post): bool
     {
-        return $user->checkPermissionTo('replicate Post');
+        return false;
     }
 
     /**
@@ -85,7 +85,7 @@ class PostPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->checkPermissionTo('reorder Post');
+        return true;
     }
 
     /**
@@ -93,7 +93,7 @@ class PostPolicy
      */
     public function forceDelete(User $user, Post $post): bool
     {
-        return $user->checkPermissionTo('force-delete Post');
+        return false;
     }
 
     /**
@@ -101,6 +101,6 @@ class PostPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->checkPermissionTo('force-delete-any Post');
+        return false;
     }
 }

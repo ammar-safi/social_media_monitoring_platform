@@ -13,7 +13,7 @@ class RatingPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->checkPermissionTo('view-any Rating');
+        return $user->checkPermissionTo('show rating');
     }
 
     /**
@@ -21,7 +21,7 @@ class RatingPolicy
      */
     public function view(User $user, Rating $rating): bool
     {
-        return $user->checkPermissionTo('view Rating');
+        return $user->checkPermissionTo('show rating');
     }
 
     /**
@@ -29,7 +29,7 @@ class RatingPolicy
      */
     public function create(User $user): bool
     {
-        return $user->checkPermissionTo('create Rating');
+        return $user->checkPermissionTo('create rating');
     }
 
     /**
@@ -37,7 +37,13 @@ class RatingPolicy
      */
     public function update(User $user, Rating $rating): bool
     {
-        return $user->checkPermissionTo('update Rating');
+        if (!$user->checkPermissionTo('update rating')) {
+            return false;
+        }
+        if ($rating->user_id == auth()->user()?->id) {
+            return true;
+        }
+        return $user->hasRole("Super Admin");
     }
 
     /**
@@ -45,7 +51,13 @@ class RatingPolicy
      */
     public function delete(User $user, Rating $rating): bool
     {
-        return $user->checkPermissionTo('delete Rating');
+        if (!$user->checkPermissionTo('delete rating')) {
+            return false;
+        }
+        if ($rating->user_id == auth()->user()?->id) {
+            return true;
+        }
+        return $user->hasRole("Super Admin");
     }
 
     /**
@@ -53,7 +65,7 @@ class RatingPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->checkPermissionTo('delete-any Rating');
+        return false;
     }
 
     /**
@@ -61,7 +73,7 @@ class RatingPolicy
      */
     public function restore(User $user, Rating $rating): bool
     {
-        return $user->checkPermissionTo('restore Rating');
+        return false;
     }
 
     /**
@@ -69,7 +81,7 @@ class RatingPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->checkPermissionTo('restore-any Rating');
+        return false;
     }
 
     /**
@@ -77,7 +89,7 @@ class RatingPolicy
      */
     public function replicate(User $user, Rating $rating): bool
     {
-        return $user->checkPermissionTo('replicate Rating');
+        return false;
     }
 
     /**
@@ -85,7 +97,7 @@ class RatingPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->checkPermissionTo('reorder Rating');
+        return true;
     }
 
     /**
@@ -93,7 +105,7 @@ class RatingPolicy
      */
     public function forceDelete(User $user, Rating $rating): bool
     {
-        return $user->checkPermissionTo('force-delete Rating');
+        return false;
     }
 
     /**
@@ -101,6 +113,6 @@ class RatingPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->checkPermissionTo('force-delete-any Rating');
+        return false;
     }
 }

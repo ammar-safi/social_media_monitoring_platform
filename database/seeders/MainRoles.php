@@ -30,9 +30,22 @@ class MainRoles extends Seeder
         "create comment",
         "update comment",
         "delete comment",
+
+        "show hashtag",
+        "create hashtag",
+        "update hashtag",
+        "delete hashtag",
+
+        "show invite",
+        "create invite",
+        "update invite",
+        "delete invite",
+
+        "show post",
     ];
     protected $policy_mk_permissions = [
         "show analyst",
+
         "show rating",
         "create rating",
         "update rating",
@@ -42,6 +55,8 @@ class MainRoles extends Seeder
         "create comment",
         "update comment",
         "delete comment",
+
+        "show post",
     ];
     /**
      * Run the database seeds.

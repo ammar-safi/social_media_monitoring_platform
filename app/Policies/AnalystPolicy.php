@@ -9,19 +9,11 @@ use App\Models\User;
 class AnalystPolicy
 {
     /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
-    {
-        return $user->checkPermissionTo('view-any Analyst');
-    }
-
-    /**
      * Determine whether the user can view the model.
      */
     public function view(User $user, Analyst $analyst): bool
     {
-        return $user->checkPermissionTo('view Analyst');
+        return $user->checkPermissionTo('show analyst');
     }
 
     /**
@@ -29,7 +21,7 @@ class AnalystPolicy
      */
     public function create(User $user): bool
     {
-        return $user->checkPermissionTo('create Analyst');
+        return false;
     }
 
     /**
@@ -37,7 +29,7 @@ class AnalystPolicy
      */
     public function update(User $user, Analyst $analyst): bool
     {
-        return $user->checkPermissionTo('update Analyst');
+        return false;
     }
 
     /**
@@ -45,7 +37,7 @@ class AnalystPolicy
      */
     public function delete(User $user, Analyst $analyst): bool
     {
-        return $user->checkPermissionTo('delete Analyst');
+        return false;
     }
 
     /**
@@ -53,7 +45,7 @@ class AnalystPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->checkPermissionTo('delete-any Analyst');
+        return false;
     }
 
     /**
@@ -61,7 +53,7 @@ class AnalystPolicy
      */
     public function restore(User $user, Analyst $analyst): bool
     {
-        return $user->checkPermissionTo('restore Analyst');
+        return false;
     }
 
     /**
@@ -69,7 +61,7 @@ class AnalystPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->checkPermissionTo('restore-any Analyst');
+        return false;
     }
 
     /**
@@ -77,7 +69,7 @@ class AnalystPolicy
      */
     public function replicate(User $user, Analyst $analyst): bool
     {
-        return $user->checkPermissionTo('replicate Analyst');
+        return false;
     }
 
     /**
@@ -85,7 +77,7 @@ class AnalystPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->checkPermissionTo('reorder Analyst');
+        return true;
     }
 
     /**
@@ -93,7 +85,7 @@ class AnalystPolicy
      */
     public function forceDelete(User $user, Analyst $analyst): bool
     {
-        return $user->checkPermissionTo('force-delete Analyst');
+        return false;
     }
 
     /**
@@ -101,6 +93,6 @@ class AnalystPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->checkPermissionTo('force-delete-any Analyst');
+        return false;
     }
 }

@@ -13,7 +13,7 @@ class GovOrgPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->checkPermissionTo('view-any GovOrg');
+        return $user->checkPermissionTo('show organization');
     }
 
     /**
@@ -21,7 +21,7 @@ class GovOrgPolicy
      */
     public function view(User $user, GovOrg $govorg): bool
     {
-        return $user->checkPermissionTo('view GovOrg');
+        return $user->checkPermissionTo('show organization');
     }
 
     /**
@@ -29,7 +29,7 @@ class GovOrgPolicy
      */
     public function create(User $user): bool
     {
-        return $user->checkPermissionTo('create GovOrg');
+        return false;
     }
 
     /**
@@ -37,7 +37,7 @@ class GovOrgPolicy
      */
     public function update(User $user, GovOrg $govorg): bool
     {
-        return $user->checkPermissionTo('update GovOrg');
+        return false;
     }
 
     /**
@@ -45,7 +45,7 @@ class GovOrgPolicy
      */
     public function delete(User $user, GovOrg $govorg): bool
     {
-        return $user->checkPermissionTo('delete GovOrg');
+        return false;
     }
 
     /**
@@ -53,7 +53,7 @@ class GovOrgPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->checkPermissionTo('delete-any GovOrg');
+        return false;
     }
 
     /**
@@ -61,7 +61,7 @@ class GovOrgPolicy
      */
     public function restore(User $user, GovOrg $govorg): bool
     {
-        return $user->checkPermissionTo('restore GovOrg');
+        return false;
     }
 
     /**
@@ -69,7 +69,7 @@ class GovOrgPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->checkPermissionTo('restore-any GovOrg');
+        return false;
     }
 
     /**
@@ -77,7 +77,7 @@ class GovOrgPolicy
      */
     public function replicate(User $user, GovOrg $govorg): bool
     {
-        return $user->checkPermissionTo('replicate GovOrg');
+        return false;
     }
 
     /**
@@ -85,7 +85,7 @@ class GovOrgPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->checkPermissionTo('reorder GovOrg');
+        return false;
     }
 
     /**
@@ -93,7 +93,7 @@ class GovOrgPolicy
      */
     public function forceDelete(User $user, GovOrg $govorg): bool
     {
-        return $user->checkPermissionTo('force-delete GovOrg');
+        return false;
     }
 
     /**
@@ -101,6 +101,6 @@ class GovOrgPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->checkPermissionTo('force-delete-any GovOrg');
+        return false;
     }
 }

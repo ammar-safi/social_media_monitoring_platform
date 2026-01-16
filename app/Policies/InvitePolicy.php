@@ -13,7 +13,7 @@ class InvitePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->checkPermissionTo('view-any Invite');
+        return false;
     }
 
     /**
@@ -21,7 +21,13 @@ class InvitePolicy
      */
     public function view(User $user, Invite $invite): bool
     {
-        return $user->checkPermissionTo('view Invite');
+        if (!$user->checkPermissionTo('show invite')) {
+            return false;
+        }
+        if ($invite->user_id == auth()->user()?->id) {
+            return true;
+        }
+        return $user->hasRole("Super Admin");
     }
 
     /**
@@ -29,7 +35,7 @@ class InvitePolicy
      */
     public function create(User $user): bool
     {
-        return $user->checkPermissionTo('create Invite');
+        return $user->checkPermissionTo('create invite');
     }
 
     /**
@@ -37,7 +43,13 @@ class InvitePolicy
      */
     public function update(User $user, Invite $invite): bool
     {
-        return $user->checkPermissionTo('update Invite');
+        if (!$user->checkPermissionTo('update invite')) {
+            return false;
+        }
+        if ($invite->user_id == auth()->user()?->id) {
+            return true;
+        }
+        return $user->hasRole("Super Admin");
     }
 
     /**
@@ -45,7 +57,13 @@ class InvitePolicy
      */
     public function delete(User $user, Invite $invite): bool
     {
-        return $user->checkPermissionTo('delete Invite');
+        if (!$user->checkPermissionTo('delete invite')) {
+            return false;
+        }
+        if ($invite->user_id == auth()->user()?->id) {
+            return true;
+        }
+        return $user->hasRole("Super Admin");
     }
 
     /**
@@ -53,7 +71,7 @@ class InvitePolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->checkPermissionTo('delete-any Invite');
+        return false;
     }
 
     /**
@@ -61,7 +79,7 @@ class InvitePolicy
      */
     public function restore(User $user, Invite $invite): bool
     {
-        return $user->checkPermissionTo('restore Invite');
+        return false;
     }
 
     /**
@@ -69,7 +87,7 @@ class InvitePolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->checkPermissionTo('restore-any Invite');
+        return false;
     }
 
     /**
@@ -77,7 +95,7 @@ class InvitePolicy
      */
     public function replicate(User $user, Invite $invite): bool
     {
-        return $user->checkPermissionTo('replicate Invite');
+        return false;
     }
 
     /**
@@ -85,7 +103,7 @@ class InvitePolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->checkPermissionTo('reorder Invite');
+        return true;
     }
 
     /**
@@ -93,7 +111,7 @@ class InvitePolicy
      */
     public function forceDelete(User $user, Invite $invite): bool
     {
-        return $user->checkPermissionTo('force-delete Invite');
+        return false;
     }
 
     /**
@@ -101,6 +119,6 @@ class InvitePolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->checkPermissionTo('force-delete-any Invite');
+        return false;
     }
 }

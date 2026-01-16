@@ -69,6 +69,9 @@ class User extends Authenticatable implements HasName
     public function Ratings() : HasMany {
         return $this->hasMany(Rating::class);
     }
+    public function Hashtags() : HasMany {
+        return $this->hasMany(Hashtag::class);
+    }
 
     public static function getForm () {
         return [

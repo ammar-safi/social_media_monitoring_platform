@@ -13,7 +13,7 @@ class HashtagPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->checkPermissionTo('view-any Hashtag');
+        return $user->checkPermissionTo('show hashtag');
     }
 
     /**
@@ -21,7 +21,7 @@ class HashtagPolicy
      */
     public function view(User $user, Hashtag $hashtag): bool
     {
-        return $user->checkPermissionTo('view Hashtag');
+        return $user->checkPermissionTo('show hashtag');
     }
 
     /**
@@ -29,7 +29,7 @@ class HashtagPolicy
      */
     public function create(User $user): bool
     {
-        return $user->checkPermissionTo('create Hashtag');
+        return $user->checkPermissionTo('create hashtag');
     }
 
     /**
@@ -37,7 +37,13 @@ class HashtagPolicy
      */
     public function update(User $user, Hashtag $hashtag): bool
     {
-        return $user->checkPermissionTo('update Hashtag');
+        if (!$user->checkPermissionTo('update Hashtag')) {
+            return false;
+        }
+        if ($hashtag->user_id == auth()->user()?->id) {
+            return true;
+        }
+        return $user->hasRole("Super Admin");
     }
 
     /**
@@ -45,7 +51,13 @@ class HashtagPolicy
      */
     public function delete(User $user, Hashtag $hashtag): bool
     {
-        return $user->checkPermissionTo('delete Hashtag');
+        if (!$user->checkPermissionTo('delete Hashtag')) {
+            return false;
+        }
+        if ($hashtag->user_id == auth()->user()?->id) {
+            return true;
+        }
+        return $user->hasRole("Super Admin");
     }
 
     /**
@@ -53,7 +65,7 @@ class HashtagPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->checkPermissionTo('delete-any Hashtag');
+        return false;
     }
 
     /**
@@ -61,7 +73,7 @@ class HashtagPolicy
      */
     public function restore(User $user, Hashtag $hashtag): bool
     {
-        return $user->checkPermissionTo('restore Hashtag');
+        return false;
     }
 
     /**
@@ -69,7 +81,7 @@ class HashtagPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->checkPermissionTo('restore-any Hashtag');
+        return false;
     }
 
     /**
@@ -77,7 +89,7 @@ class HashtagPolicy
      */
     public function replicate(User $user, Hashtag $hashtag): bool
     {
-        return $user->checkPermissionTo('replicate Hashtag');
+        return false;
     }
 
     /**
@@ -85,7 +97,7 @@ class HashtagPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->checkPermissionTo('reorder Hashtag');
+        return true;
     }
 
     /**
@@ -93,7 +105,7 @@ class HashtagPolicy
      */
     public function forceDelete(User $user, Hashtag $hashtag): bool
     {
-        return $user->checkPermissionTo('force-delete Hashtag');
+        return false;
     }
 
     /**
@@ -101,6 +113,6 @@ class HashtagPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->checkPermissionTo('force-delete-any Hashtag');
+        return false;
     }
 }

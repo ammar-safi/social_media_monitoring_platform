@@ -13,7 +13,7 @@ class ApproveUserPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->checkPermissionTo('view-any ApproveUser');
+        return false;
     }
 
     /**
@@ -21,7 +21,7 @@ class ApproveUserPolicy
      */
     public function view(User $user, ApproveUser $approveuser): bool
     {
-        return $user->checkPermissionTo('view ApproveUser');
+        return false;
     }
 
     /**
@@ -29,7 +29,7 @@ class ApproveUserPolicy
      */
     public function create(User $user): bool
     {
-        return $user->checkPermissionTo('create ApproveUser');
+        return false;
     }
 
     /**
@@ -37,7 +37,7 @@ class ApproveUserPolicy
      */
     public function update(User $user, ApproveUser $approveuser): bool
     {
-        return $user->checkPermissionTo('update ApproveUser');
+        return false;
     }
 
     /**
@@ -45,7 +45,7 @@ class ApproveUserPolicy
      */
     public function delete(User $user, ApproveUser $approveuser): bool
     {
-        return $user->checkPermissionTo('delete ApproveUser');
+        return false;
     }
 
     /**
@@ -53,7 +53,7 @@ class ApproveUserPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->checkPermissionTo('delete-any ApproveUser');
+        return false;
     }
 
     /**
@@ -61,7 +61,7 @@ class ApproveUserPolicy
      */
     public function restore(User $user, ApproveUser $approveuser): bool
     {
-        return $user->checkPermissionTo('restore ApproveUser');
+        return false;
     }
 
     /**
@@ -69,7 +69,7 @@ class ApproveUserPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->checkPermissionTo('restore-any ApproveUser');
+        return false;
     }
 
     /**
@@ -77,7 +77,7 @@ class ApproveUserPolicy
      */
     public function replicate(User $user, ApproveUser $approveuser): bool
     {
-        return $user->checkPermissionTo('replicate ApproveUser');
+        return false;
     }
 
     /**
@@ -85,7 +85,7 @@ class ApproveUserPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->checkPermissionTo('reorder ApproveUser');
+        return true;
     }
 
     /**
@@ -93,7 +93,7 @@ class ApproveUserPolicy
      */
     public function forceDelete(User $user, ApproveUser $approveuser): bool
     {
-        return $user->checkPermissionTo('force-delete ApproveUser');
+        return false;
     }
 
     /**
@@ -101,6 +101,6 @@ class ApproveUserPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->checkPermissionTo('force-delete-any ApproveUser');
+        return false;
     }
 }

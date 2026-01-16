@@ -16,7 +16,7 @@ class PermissionSeeder extends Seeder
 {
     // Define the actions you want to create permissions for
     protected $actions = ['create', 'update', 'show', 'delete'];
-    protected $permissions = ['user', "organization", "analyst", "rating", "comment"];
+    protected $permissions = ['user', "organization", "analyst", "rating", "comment" , "hashtag" , "invite"];
 
     /**
      * Run the database seeds.
