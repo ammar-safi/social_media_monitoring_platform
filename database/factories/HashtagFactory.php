@@ -5,6 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use App\Models\Hashtag;
+use App\Models\User;
 
 class HashtagFactory extends Factory
 {
@@ -22,6 +23,7 @@ class HashtagFactory extends Factory
     {
         return [
             'name' => fake()->word(),
+            "user_id" => User::factory()
         ];
     }
 }

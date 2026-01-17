@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies\Role;
+namespace App\Policies;
 
 use App\Models\Role\Permission;
 use App\Models\User;

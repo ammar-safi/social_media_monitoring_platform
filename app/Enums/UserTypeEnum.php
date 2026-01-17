@@ -11,7 +11,7 @@ enum UserTypeEnum :string
     public function label(): string
     {
         return match ($this) {
-            self::ADMIN => 'pending',
+            self::ADMIN => 'admin',
             self::USER => 'user',
             self::POLICY_MAKER => 'policy_maker',
         };
