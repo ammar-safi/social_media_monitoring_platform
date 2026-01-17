@@ -20,9 +20,15 @@ class UserPolicy
      */
     public function view(User $user, user $model)
     {
-        return false ;
+        if (!$user->checkPermissionTo('show user')) {
+            return false;
+        }
+        if ($model->id == auth()->user()?->id) {
+            return true;
+        }
+        return $user->hasRole("Super Admin");
     }
-
+    
     /**
      * Determine whether the user can create models.
      */
@@ -36,7 +42,13 @@ class UserPolicy
      */
     public function update(User $user, user $model)
     {
-        return false ;
+        if (!$user->checkPermissionTo('update user')) {
+            return false;
+        }
+        if ($model->id == auth()->user()?->id) {
+            return true;
+        }
+        return $user->hasRole("Super Admin");
     }
 
     /**

@@ -11,6 +11,9 @@ class GovOrg extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $guarded = [];
+
+
     protected function casts(): array
     {
         return [

@@ -11,9 +11,8 @@ class Analyst extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $guarded = [];
     protected $table = "analysis";
-    
-
 
     protected function casts(): array
     {

@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class HashtagPost extends Model
 {
     use HasFactory, SoftDeletes;
+    protected $guarded = [];
+
 
     protected $table = "hashtag_post";
 
