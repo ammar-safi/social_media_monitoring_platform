@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserTypeEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,7 +19,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('password');
             $table->string('phone_number');
-            $table->enum("type" , ["admin","user","policy_maker"])->default("user");
+            $table->enum("type" , [UserTypeEnum::USER->value , UserTypeEnum::ADMIN->value , UserTypeEnum::POLICY_MAKER->value])->default(UserTypeEnum::USER->value);
             $table->boolean("active");
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();

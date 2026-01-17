@@ -76,7 +76,7 @@ class PermissionSeeder extends Seeder
                         'email' => 'ammar.ahmed.safi@gmail.com',
                         "password" => Hash::make("123456"),
                         "phone_number" => "0988845619",
-                        'type' => UserTypeEnum::ADMIN,
+                        'type' => UserTypeEnum::ADMIN->value,
                         "active" => 1,
                     ]
                 );
