@@ -50,7 +50,32 @@ class User extends Authenticatable implements HasName
                 throw new \Exception('you cannot delete this admin');
             }
         });
+
+
+        static::created(function ($user) {
+            $user->assignRoleBasedOnType();
+        });
+        
+        static::updated(function ($user) {
+            if ($user->wasChanged('type')) {
+                $user->assignRoleBasedOnType();
+            }
+        });
     }
+
+    public function assignRoleBasedOnType(): void
+    {
+        // Remove existing roles first
+        $this->syncRoles([]);
+        
+        // Assign role based on type
+        match($this->type) {
+            UserTypeEnum::ADMIN => $this->assignRole('Super Admin'),
+            UserTypeEnum::USER => $this->assignRole('Governmental Official'),
+            UserTypeEnum::POLICY_MAKER => $this->assignRole('Policy Maker'),
+        };
+    }
+
 
     public function getFilamentName() :string {
         return $this->first_name;
