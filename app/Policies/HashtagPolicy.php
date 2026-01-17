@@ -37,7 +37,7 @@ class HashtagPolicy
      */
     public function update(User $user, Hashtag $hashtag): bool
     {
-        if (!$user->checkPermissionTo('update Hashtag')) {
+        if (!$user->checkPermissionTo('update hashtag')) {
             return false;
         }
         if ($hashtag->user_id == auth()->user()?->id) {
@@ -51,7 +51,7 @@ class HashtagPolicy
      */
     public function delete(User $user, Hashtag $hashtag): bool
     {
-        if (!$user->checkPermissionTo('delete Hashtag')) {
+        if (!$user->checkPermissionTo('delete hashtag')) {
             return false;
         }
         if ($hashtag->user_id == auth()->user()?->id) {

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\UserTypeEnum;
+use App\Enums\UserRoleEnum;
 use App\Models\Role\Permission;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -16,7 +17,7 @@ class PermissionSeeder extends Seeder
 {
     // Define the actions you want to create permissions for
     protected $actions = ['create', 'update', 'show', 'delete'];
-    protected $permissions = ['user', "organization", "analyst", "rating", "comment" , "hashtag" , "invite"];
+    protected $permissions = ['user', "organization", "analyst", "rating", "comment" , "hashtag" , "invite" , "post"];
 
     /**
      * Run the database seeds.
@@ -28,7 +29,7 @@ class PermissionSeeder extends Seeder
             $this->createPermissionsForRole($permission);
         }
 
-        $this->command->info('Permissions seeded successfully!');
+        // $this->command->info('Permissions seeded successfully!');
 
         $this->SuperAdminRole();
         
@@ -61,7 +62,7 @@ class PermissionSeeder extends Seeder
         DB::beginTransaction();
         try {
             // Create Super Admin Role
-            $superAdminRole = Role::where('name', 'Super Admin')->where('guard_name', 'web')->first();
+            $superAdminRole = Role::where('name', UserRoleEnum::ADMIN)->where('guard_name', 'web')->first();
             if (!$superAdminRole) {
                 $superAdminRole = Role::Create(['name' => 'Super Admin']);
             }
@@ -75,7 +76,7 @@ class PermissionSeeder extends Seeder
                         'email' => 'ammar.ahmed.safi@gmail.com',
                         "password" => Hash::make("123456"),
                         "phone_number" => "0988845619",
-                        'type' => UserTypeEnum::ADMIN,
+                        'type' => UserTypeEnum::ADMIN->value,
                         "active" => 1,
                     ]
                 );
@@ -86,7 +87,6 @@ class PermissionSeeder extends Seeder
 
             DB::commit();
 
-            echo "Master role, account, and permissions created successfully.\n";
         } catch (\Exception $e) {
             DB::rollBack();
             echo "Error: " . $e->getMessage() . "\n";

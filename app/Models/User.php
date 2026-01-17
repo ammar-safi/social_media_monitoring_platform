@@ -14,12 +14,13 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
+use App\Enums\UserRoleEnum;
 use App\Enums\UserTypeEnum;
 use Filament\Forms;
 
 class User extends Authenticatable implements HasName
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes ,HasRoles, HasSuperAdmin;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasRoles, HasSuperAdmin;
 
     protected $guarded = [];
     /**
@@ -40,6 +41,7 @@ class User extends Authenticatable implements HasName
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'type' => UserTypeEnum::class,
     ];
 
 
@@ -50,53 +52,89 @@ class User extends Authenticatable implements HasName
                 throw new \Exception('you cannot delete this admin');
             }
         });
+
+
+        static::created(function ($user) {
+            $user->assignRoleBasedOnType();
+        });
+
+        static::updated(function ($user) {
+            if ($user->wasChanged('type')) {
+                $user->assignRoleBasedOnType();
+            }
+        });
     }
 
-    public function getFilamentName() :string {
+    public function assignRoleBasedOnType(): void
+    {
+        // Remove existing roles first
+        $this->syncRoles([]);
+
+        if (!$this->type) {
+            return;
+        }
+
+        // Assign role based on type
+        match ($this->type->value) {
+            UserTypeEnum::ADMIN->value => $this->assignRole(UserRoleEnum::ADMIN->value),
+            UserTypeEnum::USER->value => $this->assignRole(UserRoleEnum::USER->value),
+            UserTypeEnum::POLICY_MAKER->value => $this->assignRole(UserRoleEnum::POLICY_MAKER->value),
+            default => throw new \InvalidArgumentException('Unknown user type: ' . $this->type),
+        };
+    }
+
+
+    public function getFilamentName(): string
+    {
         return $this->first_name;
     }
 
-    public function UsersApprovedByTheAdmin() : HasMany {
-        return $this->hasMany(ApproveUser::class , "admin_id");
+    public function UsersApprovedByTheAdmin(): HasMany
+    {
+        return $this->hasMany(ApproveUser::class, "admin_id");
     }
     //TODO : has many or has one ?
-    public function GetTheAdminWhoApproveMyAccount() : HasOne {
+    public function GetTheAdminWhoApproveMyAccount(): HasOne
+    {
         return $this->hasOne(ApproveUser::class);
     }
-    public function PolicyMakersThatUserInvites() : HasMany {
+    public function PolicyMakersThatUserInvites(): HasMany
+    {
         return $this->hasMany(Invite::class);
     }
-    public function Ratings() : HasMany {
+    public function Ratings(): HasMany
+    {
         return $this->hasMany(Rating::class);
     }
-    public function Hashtags() : HasMany {
+    public function Hashtags(): HasMany
+    {
         return $this->hasMany(Hashtag::class);
     }
 
-    public static function getForm () {
+    public static function getForm()
+    {
         return [
-                Forms\Components\TextInput::make('first_name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('last_name')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('password')
-                    ->password()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('phone_number')
-                    ->tel()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('type')
-                    ->required(),
-                Forms\Components\Toggle::make('active')
-                    ->required(),
+            Forms\Components\TextInput::make('first_name')
+                ->required()
+                ->maxLength(255),
+            Forms\Components\TextInput::make('last_name')
+                ->maxLength(255),
+            Forms\Components\TextInput::make('email')
+                ->email()
+                ->required()
+                ->maxLength(255),
+            Forms\Components\TextInput::make('password')
+                ->password()
+                ->required()
+                ->maxLength(255),
+            Forms\Components\TextInput::make('phone_number')
+                ->tel()
+                ->required()
+                ->maxLength(255),
+            Forms\Components\TextInput::make('type')
+                ->required(),
+            Forms\Components\Toggle::make('active')
+                ->required(),
         ];
     }
-    
 }

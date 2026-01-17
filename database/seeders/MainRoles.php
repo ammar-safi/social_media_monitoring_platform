@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRoleEnum;
 use App\Models\Role\Role;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -11,9 +12,9 @@ use Spatie\Permission\Models\Permission;
 class MainRoles extends Seeder
 {
 
-    protected $gov = "Governmental Official";
-    protected $policy_mk =  "Policy Maker";
-    protected $gov_permissions = [
+    protected $user = UserRoleEnum::USER;
+    protected $policy_mk =  UserRoleEnum::POLICY_MAKER;
+    protected $user_permissions = [
         "show user",
         "update user",
 
@@ -33,7 +34,6 @@ class MainRoles extends Seeder
 
         "show hashtag",
         "create hashtag",
-        "update hashtag",
         "delete hashtag",
 
         "show invite",
@@ -63,23 +63,23 @@ class MainRoles extends Seeder
      */
     public function run(): void
     {
-        $this->GovRoles();
+        $this->userRoles();
         $this->PolicyMkRoles();
     }
 
 
-    public function GovRoles(): void
+    public function userRoles(): void
     {
         DB::beginTransaction();
         try {
-            $gov_role = Role::where('name', $this->gov)->first();
-            if (!$gov_role) {
-                $gov_role = Role::create(['name' => $this->gov]);
+            $user_role = Role::where('name', $this->user)->first();
+            if (!$user_role) {
+                $user_role = Role::create(['name' => $this->user]);
             }
-            $permissions_id = Permission::whereIn('name', $this->gov_permissions)->pluck('id')->toArray();
-            $gov_role->syncPermissions($permissions_id);
+            $permissions_id = Permission::whereIn('name', $this->user_permissions)->pluck('id')->toArray();
+            $user_role->syncPermissions($permissions_id);
             DB::commit();
-            echo ".\n";
+
         } catch (\Exception $e) {
             DB::rollBack();
             echo "Error: " . $e->getMessage() . "\n";
@@ -97,7 +97,7 @@ class MainRoles extends Seeder
             $permissions_id = Permission::whereIn('name', $this->policy_mk_permissions)->pluck('id')->toArray();
             $policy_role->syncPermissions($permissions_id);
             DB::commit();
-            echo ".\n";
+            
         } catch (\Exception $e) {
             DB::rollBack();
             echo "Error: " . $e->getMessage() . "\n";
