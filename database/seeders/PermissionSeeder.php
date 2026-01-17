@@ -29,7 +29,7 @@ class PermissionSeeder extends Seeder
             $this->createPermissionsForRole($permission);
         }
 
-        $this->command->info('Permissions seeded successfully!');
+        // $this->command->info('Permissions seeded successfully!');
 
         $this->SuperAdminRole();
         
@@ -87,7 +87,6 @@ class PermissionSeeder extends Seeder
 
             DB::commit();
 
-            echo "Master role, account, and permissions created successfully.\n";
         } catch (\Exception $e) {
             DB::rollBack();
             echo "Error: " . $e->getMessage() . "\n";

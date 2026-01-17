@@ -79,7 +79,7 @@ class MainRoles extends Seeder
             $permissions_id = Permission::whereIn('name', $this->user_permissions)->pluck('id')->toArray();
             $user_role->syncPermissions($permissions_id);
             DB::commit();
-            echo ".\n";
+
         } catch (\Exception $e) {
             DB::rollBack();
             echo "Error: " . $e->getMessage() . "\n";
@@ -97,7 +97,7 @@ class MainRoles extends Seeder
             $permissions_id = Permission::whereIn('name', $this->policy_mk_permissions)->pluck('id')->toArray();
             $policy_role->syncPermissions($permissions_id);
             DB::commit();
-            echo ".\n";
+            
         } catch (\Exception $e) {
             DB::rollBack();
             echo "Error: " . $e->getMessage() . "\n";
