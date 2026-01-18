@@ -17,7 +17,7 @@ class PermissionSeeder extends Seeder
 {
     // Define the actions you want to create permissions for
     protected $actions = ['create', 'update', 'show', 'delete'];
-    protected $permissions = ['user', "organization", "analyst", "rating", "comment" , "hashtag" , "invite" , "post"];
+    protected $permissions = ['user', "organization", "analyst", "rating", "comment", "hashtag", "invite", "post"];
 
     /**
      * Run the database seeds.
@@ -32,7 +32,6 @@ class PermissionSeeder extends Seeder
         // $this->command->info('Permissions seeded successfully!');
 
         $this->SuperAdminRole();
-        
     }
 
     /**
@@ -68,6 +67,21 @@ class PermissionSeeder extends Seeder
             }
 
             $masterUser = User::where('email', 'ammar.ahmed.safi@gmail.com')->first();
+
+            // TODO Delete this 
+            User::create(
+                [
+                    'first_name' => 'ammar',
+                    'last_name' => 'safi',
+                    'email' => 'ammar@gmail.com',
+                    "password" => Hash::make("123456"),
+                    "phone_number" => "0988845619",
+                    'type' => UserTypeEnum::USER->value,
+                    "active" => 1,
+                ]
+
+            );
+
             if (!$masterUser) {
                 // Create Master User
                 $masterUser = User::Create(
@@ -86,11 +100,9 @@ class PermissionSeeder extends Seeder
             $masterUser->assignRole($superAdminRole);
 
             DB::commit();
-
         } catch (\Exception $e) {
             DB::rollBack();
             echo "Error: " . $e->getMessage() . "\n";
         }
     }
-   
 }
