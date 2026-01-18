@@ -111,30 +111,4 @@ class User extends Authenticatable implements HasName
         return $this->hasMany(Hashtag::class);
     }
 
-    public static function getForm()
-    {
-        return [
-            Forms\Components\TextInput::make('first_name')
-                ->required()
-                ->maxLength(255),
-            Forms\Components\TextInput::make('last_name')
-                ->maxLength(255),
-            Forms\Components\TextInput::make('email')
-                ->email()
-                ->required()
-                ->maxLength(255),
-            Forms\Components\TextInput::make('password')
-                ->password()
-                ->required()
-                ->maxLength(255),
-            Forms\Components\TextInput::make('phone_number')
-                ->tel()
-                ->required()
-                ->maxLength(255),
-            Forms\Components\TextInput::make('type')
-                ->required(),
-            Forms\Components\Toggle::make('active')
-                ->required(),
-        ];
-    }
 }

@@ -13,7 +13,7 @@ enum UserTypeEnum :string
         return match ($this) {
             self::ADMIN => 'admin',
             self::USER => 'user',
-            self::POLICY_MAKER => 'policy_maker',
+            self::POLICY_MAKER => 'policy maker',
         };
     }
     public static function asSelectArray(): array
@@ -24,5 +24,15 @@ enum UserTypeEnum :string
             []
         );
     }
+
+        public function badgeColor(): string
+    {
+        return match ($this) {
+            self::ADMIN => 'success',
+            self::USER => 'warning',
+            self::POLICY_MAKER => 'gray',
+        };
+    }
+
 
 }

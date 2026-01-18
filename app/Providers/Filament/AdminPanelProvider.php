@@ -21,6 +21,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
 use App\Http\Middleware\IsUserActive;
 use App\Filament\Pages\Auth\Login;
+use Filament\Navigation\NavigationGroup;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -31,6 +32,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('user')
             ->path('')
             ->login(Login::class)
+            // ->topNavigation()
             ->colors([
                 'primary' => Color::Indigo,
             ])
@@ -63,6 +65,12 @@ class AdminPanelProvider extends PanelProvider
             ->plugin(FilamentSpatieRolesPermissionsPlugin::make())
             ->authMiddleware([
                 IsUserActive::class
-            ], isPersistent: true);;
+            ], isPersistent: true)
+            ->navigationGroups([
+                NavigationGroup::make()
+                    ->label('management')
+                    ->collapsed(false),
+            ])
+        ;
     }
 }
