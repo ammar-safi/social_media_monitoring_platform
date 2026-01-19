@@ -45,7 +45,6 @@ class PermissionSeeder extends Seeder
         foreach ($this->actions as $action) {
             $permissionName = strtolower("{$action} {$role}");
             $permission = Permission::where('name', $permissionName)
-                ->where('guard_name', 'web')
                 ->first();
 
             if (!$permission) {
@@ -61,26 +60,26 @@ class PermissionSeeder extends Seeder
         DB::beginTransaction();
         try {
             // Create Super Admin Role
-            $superAdminRole = Role::where('name', UserRoleEnum::ADMIN)->where('guard_name', 'web')->first();
+            $superAdminRole = Role::where('name', UserRoleEnum::ADMIN)->first();
             if (!$superAdminRole) {
                 $superAdminRole = Role::Create(['name' => 'Super Admin']);
             }
 
             $masterUser = User::where('email', 'ammar.ahmed.safi@gmail.com')->first();
 
-            // TODO Delete this 
-            User::create(
-                [
-                    'first_name' => 'ammar',
-                    'last_name' => 'safi',
-                    'email' => 'ammar@gmail.com',
-                    "password" => Hash::make("123456"),
-                    "phone_number" => "0988845619",
-                    'type' => UserTypeEnum::USER->value,
-                    "active" => 1,
-                ]
+            // // TODO Delete this 
+            // User::create(
+            //     [
+            //         'first_name' => 'ammar',
+            //         'last_name' => 'safi',
+            //         'email' => 'ammar@gmail.com',
+            //         "password" => Hash::make("123456"),
+            //         "phone_number" => "0988845619",
+            //         'type' => UserTypeEnum::USER->value,
+            //         "active" => 1,
+            //     ]
 
-            );
+            // );
 
             if (!$masterUser) {
                 // Create Master User
