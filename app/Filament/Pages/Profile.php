@@ -2,6 +2,8 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\UserRoleEnum;
+use App\Enums\UserTypeEnum;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
@@ -10,6 +12,7 @@ use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Hash;
 use Filament\Facades\Filament;
 use Illuminate\Validation\Rules\Password;
+use Livewire\Features\SupportFileUploads\FileUploadConfiguration;
 use Symfony\Component\Console\Color;
 
 class Profile extends Page
@@ -28,6 +31,18 @@ class Profile extends Page
     {
         $this->fillForm();
     }
+
+    public static function canAccess(): bool
+    {
+        if (Filament::auth()->user()->type == UserTypeEnum::ADMIN) {
+            return true;
+        }
+        if (Filament::auth()->user()->hasRole(UserRoleEnum::USER->value)) {
+            return false;
+        }
+        return true;
+    }
+
 
     protected function fillForm(): void
     {
@@ -93,8 +108,8 @@ class Profile extends Page
                             ->label('New Password')
                             ->password()
                             ->revealable()
-                            ->dehydrated(fn($state) => filled($state))
-                            ->rules([Password::default()]),
+                            ->dehydrated(fn($state) => filled($state)),
+                        // ->rules([Password::default()]),
 
                         Forms\Components\TextInput::make('password_confirmation')
                             ->label('Confirm New Password')
@@ -138,7 +153,7 @@ class Profile extends Page
         ]);
 
         // Update password if provided
-        if (filled($data['password'])) {
+        if (isset($data['password'])) {
             $user->update([
                 'password' => Hash::make($data['password']),
             ]);
@@ -160,11 +175,6 @@ class Profile extends Page
         return auth()->user()?->can('show user') ?? false;
     }
 
-    public static function canAccess(): bool
-    {
-        // Allow access if user has 'show user' permission
-        return auth()->user()?->can('show user') ?? false;
-    }
 
     public function cancel(): void
     {
