@@ -34,13 +34,12 @@ class Profile extends Page
 
     public static function canAccess(): bool
     {
-        if (Filament::auth()->user()->type == UserTypeEnum::ADMIN) {
-            return true;
+        $user = Filament::auth()->user();
+
+        if ($user->hasRole(UserRoleEnum::USER->value)) {
+            return True;
         }
-        if (Filament::auth()->user()->hasRole(UserRoleEnum::USER->value)) {
-            return false;
-        }
-        return true;
+        return false;
     }
 
 
