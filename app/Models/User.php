@@ -44,6 +44,10 @@ class User extends Authenticatable implements HasName
         'type' => UserTypeEnum::class,
     ];
 
+    protected $attributes = [
+        'type' => UserTypeEnum::USER,
+    ];
+
 
     protected static function booted(): void
     {
@@ -54,12 +58,9 @@ class User extends Authenticatable implements HasName
         });
 
 
-        static::created(function ($user) {
-            $user->assignRoleBasedOnType();
-        });
-
-        static::updated(function ($user) {
-            if ($user->wasChanged('type')) {
+        static::saved(function ($user) {
+            if ($user->wasRecentlyCreated || $user->wasChanged('type')) {
+                // \Log::info("heelo froewfowpekfmlwekmf;we");
                 $user->assignRoleBasedOnType();
             }
         });
@@ -69,17 +70,19 @@ class User extends Authenticatable implements HasName
     {
         // Remove existing roles first
         $this->syncRoles([]);
+        // \Log::info($this->type->value);
 
         if (!$this->type) {
+            // \Log::info("there is no type");
             return;
         }
+        // \Log::info("there is type", $this->type);
 
         // Assign role based on type
-        match ($this->type->value) {
-            UserTypeEnum::ADMIN->value => $this->assignRole(UserRoleEnum::ADMIN->value),
-            UserTypeEnum::USER->value => $this->assignRole(UserRoleEnum::USER->value),
-            UserTypeEnum::POLICY_MAKER->value => $this->assignRole(UserRoleEnum::POLICY_MAKER->value),
-            default => throw new \InvalidArgumentException('Unknown user type: ' . $this->type),
+        match ($this->type) {
+            UserTypeEnum::ADMIN        => $this->assignRole(UserRoleEnum::ADMIN->value),
+            UserTypeEnum::USER         => $this->assignRole(UserRoleEnum::USER->value),
+            UserTypeEnum::POLICY_MAKER => $this->assignRole(UserRoleEnum::POLICY_MAKER->value),
         };
     }
 
@@ -110,5 +113,4 @@ class User extends Authenticatable implements HasName
     {
         return $this->hasMany(Hashtag::class);
     }
-
 }
