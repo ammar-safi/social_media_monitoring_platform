@@ -54,6 +54,11 @@ class UserResource extends Resource
                                 ->maxLength(255),
 
                         ]),
+                        
+                        Section::make("Password Section")
+                        ->columns(2)
+                        ->description("Leave blank to keep current password.")
+                        ->schema([
                     Forms\Components\TextInput::make('password')
                         ->password()
                         ->revealable()
@@ -68,9 +73,11 @@ class UserResource extends Resource
                         ->required(fn(string $context) => $context === 'create')
                         ->dehydrated(false)
                         ->maxLength(255),
+                    ]),
                     Forms\Components\Toggle::make('active')
                         ->required()
                         ->columnSpanFull(),
+
                 ]
             );
     }
