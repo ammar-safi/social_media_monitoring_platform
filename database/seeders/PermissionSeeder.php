@@ -67,20 +67,6 @@ class PermissionSeeder extends Seeder
 
             $masterUser = User::where('email', 'ammar.ahmed.safi@gmail.com')->first();
 
-            // // TODO Delete this 
-            // User::create(
-            //     [
-            //         'first_name' => 'ammar',
-            //         'last_name' => 'safi',
-            //         'email' => 'ammar@gmail.com',
-            //         "password" => Hash::make("123456"),
-            //         "phone_number" => "0988845619",
-            //         'type' => UserTypeEnum::USER->value,
-            //         "active" => 1,
-            //     ]
-
-            // );
-
             if (!$masterUser) {
                 // Create Master User
                 $masterUser = User::Create(
@@ -94,6 +80,21 @@ class PermissionSeeder extends Seeder
                     ]
                 );
             }
+
+            
+            // // TODO Delete this 
+            // User::create(
+            //     [
+            //         'first_name' => 'ammar',
+            //         'last_name' => 'safi',
+            //         'email' => 'ammar@gmail.com',
+            //         "password" => Hash::make("123456"),
+            //         "phone_number" => "0988845619",
+            //         'type' => UserTypeEnum::USER->value,
+            //         "active" => 1,
+            //     ]
+
+            // );
 
             // Assign Super Admin role to the Master user
             $masterUser->assignRole($superAdminRole);
