@@ -36,6 +36,9 @@ class Profile extends Page
     {
         $user = Filament::auth()->user();
 
+        if ($user->type == UserTypeEnum::ADMIN) {
+            return True;
+        }
         if ($user->hasRole(UserRoleEnum::USER->value)) {
             return True;
         }
