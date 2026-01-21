@@ -111,12 +111,23 @@ class GovOrgResource extends Resource
                     })
                     ->icon("heroicon-o-star")
                     ->columns(2)
+                    ->hidden(function ($record) {
+                        $myRating = Rating::query()
+                            ->where("user_id", Filament::auth()->user()?->id)
+                            ->where("gov_org_id", $record->id)
+                            ->first();
+
+                        if($myRating) {
+                            return false;
+                        }
+                        return true;
+                    })
                     ->schema([
                         // TODO
-                        // TextEntry::make("ratings.rating")
-                            // ->getEloquentQuery(function($q) {
-                            //     return null;
-                            // }),
+                        TextEntry::make("my_rating")
+                            ->label("rating"),
+                        TextEntry::make("my_comment")
+                            ->label("comment"),
                     ]),
 
 

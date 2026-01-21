@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +15,7 @@ class GovOrg extends Model
 
     protected $guarded = [];
 
-    protected $appends = ["rating"];
+    protected $appends = ["rating", "my_rating", "my_comment"];
 
 
     protected function casts(): array
@@ -62,5 +63,14 @@ class GovOrg extends Model
                 ->email()
                 ->maxLength(255),
         ];
+    }
+
+    public function getMyRatingAttribute()
+    {
+        return Rating::where("user_id", Filament::auth()->user()?->id)->where("gov_org_id", $this->id)->get("rating")->first()->rating;
+    }
+    public function getMyCommentAttribute()
+    {
+        return Rating::where("user_id", Filament::auth()->user()?->id)->where("gov_org_id", $this->id)->get("comment")->first()->comment;
     }
 }

@@ -34,13 +34,14 @@ class Rating extends Model
         return $this->belongsTo(GovOrg::class, "gov_org_id");
     }
 
-    public static function Color(string $rating) {
-        if($rating <= 1.5) {
-            return "danger" ;
+    public static function Color(string $rating)
+    {
+        if ($rating <= 1.5) {
+            return "danger";
         } elseif ($rating < 3) {
-            return "warning" ;
+            return "warning";
         } else {
-            return "success" ;
+            return "success";
         }
     }
 }
