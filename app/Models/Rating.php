@@ -19,6 +19,7 @@ class Rating extends Model
         return [
             'id' => 'integer',
             'user_id' => 'integer',
+            'gov_org_id' => 'integer',
             'rating' => 'integer',
         ];
     }
@@ -26,5 +27,9 @@ class Rating extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+    public function GovOrg(): BelongsTo
+    {
+        return $this->belongsTo(GovOrg::class , "gov_org_id");
     }
 }

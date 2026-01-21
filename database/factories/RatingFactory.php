@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\GovOrg;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use App\Models\Rating;
@@ -23,6 +24,7 @@ class RatingFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
+            'gov_org_id' => GovOrg::factory(),
             'rating' => fake()->randomElement([rand(0,5)]),
             'comment' => fake()->text(),
         ];

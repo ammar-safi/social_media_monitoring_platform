@@ -17,6 +17,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
+
+            $table->unsignedBigInteger('gov_org_id');
+            $table->foreign('gov_org_id')->references('id')->on('gov_orgs');
             $table->unsignedBigInteger('rating');
             $table->text('comment')->nullable();
             $table->timestamps();

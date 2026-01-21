@@ -13,6 +13,8 @@ class GovOrg extends Model
 
     protected $guarded = [];
 
+    protected $appends = ["rating"];
+
 
     protected function casts(): array
     {
@@ -23,5 +25,18 @@ class GovOrg extends Model
 
     public function Posts () : HasMany {
         return $this->HasMany(Post::class , "gov_org_id");
+    }
+    public function Ratings () : HasMany {
+        return $this->HasMany(Rating::class , "gov_org_id");
+    }
+
+    public function getRatingAttribute() {
+        $rating = $this->ratings()->get("rating");
+        if ($rating->count() == 0) {
+            return $this->rating = null;
+        }
+        $rating = $rating->sum("rating") / $rating->count();
+
+        return $this->rating = $rating;
     }
 }
