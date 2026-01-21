@@ -8,8 +8,15 @@ use App\Models\GovOrg;
 use App\Models\Rating;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -64,7 +71,11 @@ class GovOrgResource extends Resource
             ])
             ->filters([])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make()
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -72,6 +83,8 @@ class GovOrgResource extends Resource
                 ]),
             ]);
     }
+
+   
 
     public static function getRelations(): array
     {
@@ -84,8 +97,9 @@ class GovOrgResource extends Resource
     {
         return [
             'index' => Pages\ListGovOrgs::route('/'),
-            // 'create' => Pages\CreateGovOrg::route('/create'),
-            // 'edit' => Pages\EditGovOrg::route('/{record}/edit'),
+            'create' => Pages\CreateGovOrg::route('/create'),
+            'edit' => Pages\EditGovOrg::route('/{record}/edit'),
+            'view' => Pages\ViewGovOrg::route('/{record}/view'),
         ];
     }
 

@@ -6,9 +6,15 @@ use App\Enums\UserTypeEnum;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
+use Doctrine\DBAL\Schema\Column;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Group;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\Section as InfoListSection;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -34,54 +40,48 @@ class UserResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema(
-                [
+            ->schema([
+                Section::make("User info")
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\TextInput::make('first_name')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('last_name')
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('email')
+                            ->email()
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('phone_number')
+                            ->tel()
+                            ->required()
+                            ->maxLength(255),
+                    ]),
+                Section::make("Password Section")
+                    ->columns(2)
+                    ->description("Leave blank to keep current password.")
+                    ->schema([
+                        Forms\Components\TextInput::make('password')
+                            ->password()
+                            ->revealable()
+                            ->required(fn(string $context) => $context === 'create')
+                            ->confirmed()
+                            ->dehydrated(fn($state) => filled($state))
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('password_confirmation')
+                            ->label("password confirmation")
+                            ->password()
+                            ->revealable()
+                            ->required(fn(string $context) => $context === 'create')
+                            ->dehydrated(false)
+                            ->maxLength(255),
+                    ]),
+                Forms\Components\Toggle::make('active')
+                    ->required()
+                    ->columnSpanFull(),
 
-                    Section::make("User info")
-                        ->columns(2)
-                        ->schema([
-
-                            Forms\Components\TextInput::make('first_name')
-                                ->required()
-                                ->maxLength(255),
-                            Forms\Components\TextInput::make('last_name')
-                                ->maxLength(255),
-                            Forms\Components\TextInput::make('email')
-                                ->email()
-                                ->required()
-                                ->maxLength(255),
-                            Forms\Components\TextInput::make('phone_number')
-                                ->tel()
-                                ->required()
-                                ->maxLength(255),
-
-                        ]),
-
-                    Section::make("Password Section")
-                        ->columns(2)
-                        ->description("Leave blank to keep current password.")
-                        ->schema([
-                            Forms\Components\TextInput::make('password')
-                                ->password()
-                                ->revealable()
-                                ->required(fn(string $context) => $context === 'create')
-                                ->confirmed()
-                                ->dehydrated(fn($state) => filled($state))
-                                ->maxLength(255),
-                            Forms\Components\TextInput::make('password_confirmation')
-                                ->label("password confirmation")
-                                ->password()
-                                ->revealable()
-                                ->required(fn(string $context) => $context === 'create')
-                                ->dehydrated(false)
-                                ->maxLength(255),
-                        ]),
-                    Forms\Components\Toggle::make('active')
-                        ->required()
-                        ->columnSpanFull(),
-
-                ]
-            );
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -144,6 +144,39 @@ class UserResource extends Resource
             ]);
     }
 
+
+    public static function infolist(Infolist $infolist): infolist
+    {
+        return $infolist
+            ->schema([
+                InfoListSection::make("User information")
+                    ->columns(2)
+                    ->schema([
+                        Group::make()
+                            ->schema([
+                                TextEntry::make("first_name"),
+                                TextEntry::make("last_name"),
+                            ]),
+                        Group::make()
+                            ->schema([
+                                TextEntry::make("email"),
+                                TextEntry::make("phone_number"),
+                            ])
+                    ]),
+                InfoListSection::make("Other information")
+                    ->columns(3)
+                    ->schema([
+                        TextEntry::make("type"),
+                        IconEntry::make('active')
+                            ->label("Account active")
+                            ->boolean(),
+                        TextEntry::make("created_at"),
+
+                    ])
+
+            ]);
+    }
+
     public static function getRelations(): array
     {
         return [
@@ -156,7 +189,8 @@ class UserResource extends Resource
         return [
             'index' => Pages\ListUsers::route('/'),
             'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/it'),
+            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'view' => Pages\ViewUsers::route('/{record}/view'),
         ];
     }
 
