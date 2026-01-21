@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\GovOrgResource\Pages;
 use App\Filament\Resources\GovOrgResource\RelationManagers;
 use App\Models\GovOrg;
+use App\Models\Rating;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -45,8 +46,12 @@ class GovOrgResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('rating.rating')
-                    ->sortable()
+                Tables\Columns\TextColumn::make('rating')
+                    ->badge()
+                    ->icon('heroicon-o-star')
+                    ->color(function (string $state) {
+                        return Rating::color($state);
+                    })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

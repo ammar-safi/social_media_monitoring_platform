@@ -20,7 +20,7 @@ return new class extends Migration
 
             $table->unsignedBigInteger('gov_org_id');
             $table->foreign('gov_org_id')->references('id')->on('gov_orgs');
-            $table->unsignedBigInteger('rating');
+            $table->string('rating' , 10);
             $table->text('comment')->nullable();
             $table->timestamps();
             $table->softDeletes();

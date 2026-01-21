@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\DecimalCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,7 +21,7 @@ class Rating extends Model
             'id' => 'integer',
             'user_id' => 'integer',
             'gov_org_id' => 'integer',
-            'rating' => 'integer',
+            'rating' => DecimalCast::class,
         ];
     }
 
@@ -30,6 +31,16 @@ class Rating extends Model
     }
     public function GovOrg(): BelongsTo
     {
-        return $this->belongsTo(GovOrg::class , "gov_org_id");
+        return $this->belongsTo(GovOrg::class, "gov_org_id");
+    }
+
+    public static function Color(string $rating) {
+        if($rating <= 1.5) {
+            return "danger" ;
+        } elseif ($rating < 3) {
+            return "warning" ;
+        } else {
+            return "success" ;
+        }
     }
 }
