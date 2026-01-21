@@ -101,9 +101,6 @@ class UserResource extends Resource
                         return UserTypeEnum::from($state->value)->label();
                     })
                     ->badge()
-                    ->formatStateUsing(function ($state): string {
-                        return UserTypeEnum::from($state->value)->label();
-                    })
                     ->color(function ($state): string {
                         return UserTypeEnum::from($state->value)->badgeColor();
                     }),
@@ -150,6 +147,7 @@ class UserResource extends Resource
         return $infolist
             ->schema([
                 InfoListSection::make("User information")
+                    ->icon("heroicon-o-user")
                     ->columns(2)
                     ->schema([
                         Group::make()
@@ -159,14 +157,20 @@ class UserResource extends Resource
                             ]),
                         Group::make()
                             ->schema([
-                                TextEntry::make("email"),
-                                TextEntry::make("phone_number"),
+                                TextEntry::make("email")
+                                    ->icon("heroicon-o-envelope"),
+                                TextEntry::make("phone_number")
+                                    ->icon("heroicon-o-phone"),
                             ])
                     ]),
                 InfoListSection::make("Other information")
                     ->columns(3)
                     ->schema([
-                        TextEntry::make("type"),
+                        TextEntry::make("type")
+                            ->badge()
+                            ->color(function ($state): string {
+                                return UserTypeEnum::from($state->value)->badgeColor();
+                            }),
                         IconEntry::make('active')
                             ->label("Account active")
                             ->boolean(),

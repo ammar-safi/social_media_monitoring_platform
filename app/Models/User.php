@@ -23,31 +23,19 @@ class User extends Authenticatable implements HasName
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasRoles, HasSuperAdmin;
 
     protected $guarded = [];
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'type' => UserTypeEnum::class,
     ];
-
     protected $attributes = [
         'type' => UserTypeEnum::USER,
     ];
-
+    protected $appends = ["name"];
 
     protected static function booted(): void
     {
@@ -60,7 +48,6 @@ class User extends Authenticatable implements HasName
 
         static::saved(function ($user) {
             if ($user->wasRecentlyCreated || $user->wasChanged('type')) {
-                // \Log::info("heelo froewfowpekfmlwekmf;we");
                 $user->assignRoleBasedOnType();
             }
         });
@@ -70,13 +57,10 @@ class User extends Authenticatable implements HasName
     {
         // Remove existing roles first
         $this->syncRoles([]);
-        // \Log::info($this->type->value);
 
         if (!$this->type) {
-            // \Log::info("there is no type");
             return;
         }
-        // \Log::info("there is type", $this->type);
 
         // Assign role based on type
         match ($this->type) {
@@ -96,7 +80,6 @@ class User extends Authenticatable implements HasName
     {
         return $this->hasMany(ApproveUser::class, "admin_id");
     }
-    //TODO : has many or has one ?
     public function GetTheAdminWhoApproveMyAccount(): HasOne
     {
         return $this->hasOne(ApproveUser::class);
@@ -112,5 +95,8 @@ class User extends Authenticatable implements HasName
     public function Hashtags(): HasMany
     {
         return $this->hasMany(Hashtag::class);
+    }
+    public function getNameAttribute() {
+        return $this->first_name . " " . $this->last_name;
     }
 }

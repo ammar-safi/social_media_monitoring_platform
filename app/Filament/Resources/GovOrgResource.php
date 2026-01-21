@@ -2,12 +2,18 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\UserTypeEnum;
 use App\Filament\Resources\GovOrgResource\Pages;
 use App\Filament\Resources\GovOrgResource\RelationManagers;
+use App\Filament\Resources\GovOrgResource\RelationManagers\RatingsRelationManager;
 use App\Models\GovOrg;
 use App\Models\Rating;
+use Filament\Facades\Filament;
+use Filament\Infolists\Components\Section as InfoListSection;
 use Filament\Forms;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
@@ -35,14 +41,7 @@ class GovOrgResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->maxLength(255),
-            ]);
+            ->schema(GovOrg::getForm());
     }
 
     public static function table(Table $table): Table
@@ -59,7 +58,13 @@ class GovOrgResource extends Resource
                     ->color(function (string $state) {
                         return Rating::color($state);
                     })
-                    ->searchable(),
+                    ->formatStateUsing(function ($record, $state) {
+                        if (! GovOrg::IsThereRating($record->id)) {
+                            return "No rating";
+                        }
+                        return $state;
+                    }),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -84,12 +89,45 @@ class GovOrgResource extends Resource
             ]);
     }
 
-   
+    public static function infolist(Infolist $infolist): infolist
+    {
+        return $infolist
+            ->schema([
+                InfoListSection::make("Organization information")
+                    ->icon("heroicon-o-building-library")
+                    ->columns(3)
+                    ->schema([
+                        TextEntry::make("name")
+                            ->label("Organization name"),
+                        TextEntry::make("email")
+                            ->icon("heroicon-o-envelope"),
+                    ]),
+                InfoListSection::make("My Rating")
+                    ->hidden(function () {
+                        if (Filament::auth()->user()->type == UserTypeEnum::ADMIN) {
+                            return true;
+                        }
+                        return false;
+                    })
+                    ->icon("heroicon-o-star")
+                    ->columns(2)
+                    ->schema([
+                        // TODO
+                        // TextEntry::make("ratings.rating")
+                            // ->getEloquentQuery(function($q) {
+                            //     return null;
+                            // }),
+                    ]),
+
+
+            ]);
+    }
+
 
     public static function getRelations(): array
     {
         return [
-            //
+            RatingsRelationManager::class
         ];
     }
 

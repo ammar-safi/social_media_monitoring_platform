@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\UserTypeEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -27,8 +28,7 @@ class UserFactory extends Factory
             'first_name' => fake()->firstName(),
             "last_name" => fake()->lastName(),
             "phone_number" => fake()->phoneNumber(),
-            // TODO after I make enums
-            // "type" => [enum::value , enum::value][random number between 1 and 0]
+            "type" => [UserTypeEnum::USER , UserTypeEnum::POLICY_MAKER][rand(0,1)],
             "active" => rand(0,1),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
