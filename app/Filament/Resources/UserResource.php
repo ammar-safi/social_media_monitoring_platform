@@ -28,6 +28,8 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationGroup = 'management';
+    protected static ?int $navigationSort = 1;
+
 
     public static function form(Form $form): Form
     {
@@ -54,26 +56,26 @@ class UserResource extends Resource
                                 ->maxLength(255),
 
                         ]),
-                        
-                        Section::make("Password Section")
+
+                    Section::make("Password Section")
                         ->columns(2)
                         ->description("Leave blank to keep current password.")
                         ->schema([
-                    Forms\Components\TextInput::make('password')
-                        ->password()
-                        ->revealable()
-                        ->required(fn(string $context) => $context === 'create')
-                        ->confirmed()
-                        ->dehydrated(fn($state) => filled($state))
-                        ->maxLength(255),
-                    Forms\Components\TextInput::make('password_confirmation')
-                        ->label("password confirmation")
-                        ->password()
-                        ->revealable()
-                        ->required(fn(string $context) => $context === 'create')
-                        ->dehydrated(false)
-                        ->maxLength(255),
-                    ]),
+                            Forms\Components\TextInput::make('password')
+                                ->password()
+                                ->revealable()
+                                ->required(fn(string $context) => $context === 'create')
+                                ->confirmed()
+                                ->dehydrated(fn($state) => filled($state))
+                                ->maxLength(255),
+                            Forms\Components\TextInput::make('password_confirmation')
+                                ->label("password confirmation")
+                                ->password()
+                                ->revealable()
+                                ->required(fn(string $context) => $context === 'create')
+                                ->dehydrated(false)
+                                ->maxLength(255),
+                        ]),
                     Forms\Components\Toggle::make('active')
                         ->required()
                         ->columnSpanFull(),
@@ -138,8 +140,6 @@ class UserResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }
