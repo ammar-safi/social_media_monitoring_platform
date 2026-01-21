@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources\GovOrgResource\RelationManagers;
 
+use App\Enums\UserTypeEnum;
 use App\Models\GovOrg;
 use App\Models\Rating;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -53,7 +55,16 @@ class RatingsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                // Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->hidden(function () {
+                        if (Filament::auth()->user()->type == UserTypeEnum::ADMIN) {
+                            return true;
+                        }
+                        return false;
+                    })
+                    ->disabled(function () {
+                        // TODO How to get the id of the gov ??????????? i want to use it to check if the auth user have a rating or not 
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

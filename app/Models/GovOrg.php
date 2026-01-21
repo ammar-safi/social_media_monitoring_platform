@@ -67,10 +67,10 @@ class GovOrg extends Model
 
     public function getMyRatingAttribute()
     {
-        return Rating::where("user_id", Filament::auth()->user()?->id)->where("gov_org_id", $this->id)->get("rating")->first()->rating;
+        return Rating::where("user_id", Filament::auth()->user()?->id)->where("gov_org_id", $this->id)->get("rating")->first()?->rating;
     }
     public function getMyCommentAttribute()
     {
-        return Rating::where("user_id", Filament::auth()->user()?->id)->where("gov_org_id", $this->id)->get("comment")->first()->comment;
+        return Rating::where("user_id", Filament::auth()->user()?->id)->where("gov_org_id", $this->id)->get("comment")->first()?->comment;
     }
 }

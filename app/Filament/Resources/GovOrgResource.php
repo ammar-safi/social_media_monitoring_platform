@@ -8,11 +8,14 @@ use App\Filament\Resources\GovOrgResource\RelationManagers;
 use App\Filament\Resources\GovOrgResource\RelationManagers\RatingsRelationManager;
 use App\Models\GovOrg;
 use App\Models\Rating;
+use Filament\Actions\DeleteAction as ActionsDeleteAction;
 use Filament\Facades\Filament;
 use Filament\Infolists\Components\Section as InfoListSection;
 use Filament\Forms;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Actions;
+use Filament\Infolists\Components\Group as ComponentsGroup;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -102,33 +105,39 @@ class GovOrgResource extends Resource
                         TextEntry::make("email")
                             ->icon("heroicon-o-envelope"),
                     ]),
-                InfoListSection::make("My Rating")
-                    ->hidden(function () {
-                        if (Filament::auth()->user()->type == UserTypeEnum::ADMIN) {
-                            return true;
-                        }
-                        return false;
-                    })
-                    ->icon("heroicon-o-star")
-                    ->columns(2)
-                    ->hidden(function ($record) {
-                        $myRating = Rating::query()
-                            ->where("user_id", Filament::auth()->user()?->id)
-                            ->where("gov_org_id", $record->id)
-                            ->first();
+                // InfoListSection::make("My Rating")
+                //     ->headerActions([
+                //         //TODO
+                //         // Actions::make(["delete"])
+                //         ComponentsGroup::make()
+                //     ])
+                //     ->hidden(function () {
+                //         if (Filament::auth()->user()->type == UserTypeEnum::ADMIN) {
+                //             return true;
+                //         }
+                //         return false;
+                //     })
+                //     ->icon("heroicon-o-user")
+                //     ->columns(2)
+                //     ->hidden(function ($record) {
+                //         $myRating = Rating::query()
+                //             ->where("user_id", Filament::auth()->user()?->id)
+                //             ->where("gov_org_id", $record->id)
+                //             ->first();
 
-                        if($myRating) {
-                            return false;
-                        }
-                        return true;
-                    })
-                    ->schema([
-                        // TODO
-                        TextEntry::make("my_rating")
-                            ->label("rating"),
-                        TextEntry::make("my_comment")
-                            ->label("comment"),
-                    ]),
+                //         if ($myRating) {
+                //             return false;
+                //         }
+                //         return true;
+                //     })
+                //     ->schema([
+                //         TextEntry::make("my_rating")
+                //             ->icon("heroicon-o-star")
+                //             ->label("rating"),
+                //         TextEntry::make("my_comment")
+                //             // ->icon("heroicon-o-")
+                //             ->label("comment"),
+                //     ]),
 
 
             ]);
