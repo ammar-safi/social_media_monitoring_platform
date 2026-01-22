@@ -12,6 +12,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class RatingsRelationManager extends RelationManager
@@ -39,6 +40,12 @@ class RatingsRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('Rating')
+            ->modifyQueryUsing(function (Builder $query) {
+                $userId = Filament::auth()->user()->id;
+                return $query
+                    ->orderByRaw("CASE WHEN user_id = ? THEN 0 ELSE 1 END", [$userId])
+                    ->orderByDesc("created_at");
+            })
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
                     ->icon("heroicon-o-user")
@@ -56,14 +63,19 @@ class RatingsRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
+                    ->createAnother(false)
                     ->hidden(function () {
                         if (Filament::auth()->user()->type == UserTypeEnum::ADMIN) {
                             return true;
                         }
+                        if ($this->ownerRecord->my_rating) {
+                            return true;
+                        }
                         return false;
                     })
-                    ->disabled(function () {
-                        // TODO How to get the id of the gov ??????????? i want to use it to check if the auth user have a rating or not 
+                    ->mutateFormDataUsing(function (array $data): array {
+                        $data["user_id"] = Filament::auth()->user()->id;
+                        return $data;
                     }),
             ])
             ->actions([

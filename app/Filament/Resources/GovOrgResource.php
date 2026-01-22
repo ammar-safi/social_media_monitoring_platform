@@ -105,41 +105,6 @@ class GovOrgResource extends Resource
                         TextEntry::make("email")
                             ->icon("heroicon-o-envelope"),
                     ]),
-                // InfoListSection::make("My Rating")
-                //     ->headerActions([
-                //         //TODO
-                //         // Actions::make(["delete"])
-                //         ComponentsGroup::make()
-                //     ])
-                //     ->hidden(function () {
-                //         if (Filament::auth()->user()->type == UserTypeEnum::ADMIN) {
-                //             return true;
-                //         }
-                //         return false;
-                //     })
-                //     ->icon("heroicon-o-user")
-                //     ->columns(2)
-                //     ->hidden(function ($record) {
-                //         $myRating = Rating::query()
-                //             ->where("user_id", Filament::auth()->user()?->id)
-                //             ->where("gov_org_id", $record->id)
-                //             ->first();
-
-                //         if ($myRating) {
-                //             return false;
-                //         }
-                //         return true;
-                //     })
-                //     ->schema([
-                //         TextEntry::make("my_rating")
-                //             ->icon("heroicon-o-star")
-                //             ->label("rating"),
-                //         TextEntry::make("my_comment")
-                //             // ->icon("heroicon-o-")
-                //             ->label("comment"),
-                //     ]),
-
-
             ]);
     }
 
