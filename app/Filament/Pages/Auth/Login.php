@@ -31,21 +31,21 @@ class Login extends BasePage
         $user = Filament::auth()->user();
 
         if (
-            ($user instanceof FilamentUser) &&
-            (! $user->canAccessPanel(Filament::getCurrentPanel()))
-        ) {
-            Filament::auth()->logout();
-
-            $this->throwFailureValidationException();
-        } elseif (
-            ! $user -> active && 
-            ! $user -> type == UserTypeEnum::ADMIN->value
+            ! $user->active &&
+            ! ($user->type == UserTypeEnum::ADMIN)
         ) {
             Filament::auth()->logout();
 
             throw ValidationException::withMessages([
                 "data.email" => "Your account is not active , please contact with the admin"
             ]);
+        } elseif (
+            ($user instanceof FilamentUser) &&
+            (! $user->canAccessPanel(Filament::getCurrentPanel()))
+        ) {
+            Filament::auth()->logout();
+
+            $this->throwFailureValidationException();
         }
 
         session()->regenerate();

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('phone_number');
             $table->enum("type" , [UserTypeEnum::USER->value , UserTypeEnum::ADMIN->value , UserTypeEnum::POLICY_MAKER->value])->default(UserTypeEnum::USER->value);
-            $table->boolean("active");
+            $table->boolean("active")->default(0);
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();

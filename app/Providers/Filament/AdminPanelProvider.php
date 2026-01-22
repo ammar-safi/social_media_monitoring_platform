@@ -22,6 +22,7 @@ use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugi
 use App\Http\Middleware\IsUserActive;
 use App\Filament\Pages\Auth\Login;
 use Filament\Navigation\NavigationGroup;
+use App\Filament\Pages\Auth\Register;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -32,6 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('user')
             ->path('')
             ->login(Login::class)
+            ->registration(Register::class)
             // ->topNavigation()
             ->colors([
                 'primary' => Color::Indigo,

@@ -20,7 +20,7 @@ class IsUserActive
     {
         if (
             ! Filament::auth()->user()?->active &&
-            ! Filament::auth()->user()?->type == UserTypeEnum::ADMIN->value
+            ! (Filament::auth()->user()?->type == UserTypeEnum::ADMIN)
         ) {
             Filament::auth()->logout();
             abort(403, "Your account not active\npleas contact with tha admin");
