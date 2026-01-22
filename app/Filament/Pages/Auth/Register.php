@@ -2,8 +2,12 @@
 
 namespace App\Filament\Pages\Auth;
 
+use App\Enums\ApproveUserStatusEnum;
 use App\Enums\UserTypeEnum;
+use App\Filament\Resources\ApproveUserResource;
+use App\Models\ApproveUser;
 use App\Models\User;
+use Carbon\Carbon;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Exception;
 use Filament\Events\Auth\Registered;
@@ -54,6 +58,7 @@ class Register extends BaseRegister
     }
     public function register(): ?RegistrationResponse
     {
+        DB::beginTransaction();
         try {
             $this->rateLimit(2);
         } catch (TooManyRequestsException $exception) {
@@ -82,6 +87,17 @@ class Register extends BaseRegister
             return $user;
         });
 
+        $request = ApproveUser::create([
+            "user_id" => $user->id,
+            "admin_id" => null ,
+            "expired_at" => Carbon::now()->addDays(config("approve_expired" , 5)),
+            "expired" => 0,
+            "status" => ApproveUserStatusEnum::PENDING,
+        ]);
+
+
+
+
         // TODO 
         Notification::make()
             ->success()
@@ -96,9 +112,13 @@ class Register extends BaseRegister
                 Action::make("goToRequest")
                     ->button()
                     ->color("primary")
-                    ->url()
+                    //TODO 
+                    ->url(ApproveUserResource::getUrl('edit' , ['record' => $request->id]))
             ])
             ->sendToDatabase(User::where("type", UserTypeEnum::ADMIN->value)->first());
+
+        DB::commit();
+
         return app(RegistrationResponse::class);
     }
 }

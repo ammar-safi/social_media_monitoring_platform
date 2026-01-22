@@ -186,4 +186,17 @@ return [
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Expiration For Approve to user account 
+    |--------------------------------------------------------------------------
+    | this key take a value in days
+    | ex :  
+    | 'expired' => 5 days
+    */
+
+    'approve_expired' => env("APPROVE_EXPIRED" , '5'),
+
 ];

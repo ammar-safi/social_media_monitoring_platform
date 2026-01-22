@@ -200,6 +200,8 @@ class UserResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->where('type', '!=', 'admin');
+        return parent::getEloquentQuery()
+            ->where('type', '!=', 'admin')
+            ->where("active" , 1);
     }
 }
