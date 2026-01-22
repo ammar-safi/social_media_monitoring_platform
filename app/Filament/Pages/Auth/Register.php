@@ -32,6 +32,7 @@ class Register extends BaseRegister
                 TextInput::make("last_name")
                     ->required(),
                 TextInput::make("email")
+                    ->unique("users" , "email")
                     ->required(),
                 TextInput::make("phone_number")
                     ->required(),
@@ -77,6 +78,13 @@ class Register extends BaseRegister
 
             return $user;
         });
+
+        // TODO 
+        Notification::make()
+            ->success()
+            ->title("Your account has been created")
+            ->body("Your account need to be verified , We will send an email to you once it's verified")
+            ->send();
         return app(RegistrationResponse::class);
     }
 }
