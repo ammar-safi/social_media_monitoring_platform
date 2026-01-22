@@ -17,6 +17,7 @@ use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
 use App\Enums\UserRoleEnum;
 use App\Enums\UserTypeEnum;
 use Filament\Forms;
+use Illuminate\Support\Facades\Mail;
 
 class User extends Authenticatable implements HasName
 {
@@ -43,6 +44,12 @@ class User extends Authenticatable implements HasName
             if ($user->type === UserTypeEnum::ADMIN) {
                 throw new \Exception('you cannot delete this admin');
             }
+        });
+
+        static::deleted(function ($user) {
+            $user->update([
+                "email" => $user->email . ".deleted"
+            ]);
         });
 
 
@@ -96,7 +103,18 @@ class User extends Authenticatable implements HasName
     {
         return $this->hasMany(Hashtag::class);
     }
-    public function getNameAttribute() {
+    public function getNameAttribute()
+    {
         return $this->first_name . " " . $this->last_name;
+    }
+
+    public function sendEmail($messageContent)
+    {
+        Mail::send('email.email', [
+            'recipientName' => $this->first_name,
+            'messageContent' => $messageContent
+        ], function ($message)  {
+            $message->to($this->email)->subject("");
+        });
     }
 }

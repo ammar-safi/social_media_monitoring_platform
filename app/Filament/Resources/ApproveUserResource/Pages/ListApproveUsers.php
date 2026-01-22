@@ -2,8 +2,12 @@
 
 namespace App\Filament\Resources\ApproveUserResource\Pages;
 
+use App\Enums\ApproveUserStatusEnum;
 use App\Filament\Resources\ApproveUserResource;
+use App\Models\ApproveUser;
 use Filament\Actions;
+use Filament\Actions\Action;
+use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 
 class ListApproveUsers extends ListRecords
@@ -13,7 +17,41 @@ class ListApproveUsers extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Action::make("Approve to all")
+
+                ->requiresConfirmation()
+                ->action(function (ApproveUser $approve) {
+                    $approve->approveAll();
+                })
+
+        ];
+    }
+
+    public function getTabs(): array
+    {
+        return [
+            'all' => Tab::make("all"),
+            'pending' => Tab::make("pending")
+                ->modifyQueryUsing(function ($query) {
+                    $query
+                        ->where("status", ApproveUserStatusEnum::PENDING)
+                        ->where("expired", 0);
+                }),
+            'approved' => Tab::make("approved")
+                ->modifyQueryUsing(function ($query) {
+                    $query
+                        ->where("status", ApproveUserStatusEnum::APPROVED);
+                }),
+            'rejected' => Tab::make("rejected")
+                ->modifyQueryUsing(function ($query) {
+                    $query
+                        ->where("status", ApproveUserStatusEnum::REJECTED);
+                }),
+            'expired' => Tab::make("expired")
+                ->modifyQueryUsing(function ($query) {
+                    $query
+                        ->where("expired", 1);
+                }),
         ];
     }
 }

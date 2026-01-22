@@ -118,13 +118,16 @@ class UserResource extends Resource
             ->filters([
                 SelectFilter::make('type')
                     ->label("User type (Role)")
-                    ->options(UserTypeEnum::asSelectArray()),
-                SelectFilter::make("active")
-                    ->label("active accounts")
                     ->options([
-                        '1' => 'active',
-                        '0' => 'not active'
-                    ])
+                        UserTypeEnum::USER->value => UserTypeEnum::USER->label(), 
+                        UserTypeEnum::POLICY_MAKER->value => UserTypeEnum::POLICY_MAKER->label()
+                    ]),
+                // SelectFilter::make("active")
+                //     ->label("active accounts")
+                //     ->options([
+                //         '1' => 'active',
+                //         '0' => 'not active'
+                //     ])
 
             ])
             ->actions([
@@ -202,6 +205,6 @@ class UserResource extends Resource
     {
         return parent::getEloquentQuery()
             ->where('type', '!=', 'admin')
-            ->where("active" , 1);
+            ->where("active", 1);
     }
 }

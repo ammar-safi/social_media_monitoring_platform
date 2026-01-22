@@ -114,6 +114,7 @@ class Register extends BaseRegister
                     ->color("primary")
                     //TODO 
                     ->url(ApproveUserResource::getUrl('edit' , ['record' => $request->id]))
+                    ->markAsRead()
             ])
             ->sendToDatabase(User::where("type", UserTypeEnum::ADMIN->value)->first());
 

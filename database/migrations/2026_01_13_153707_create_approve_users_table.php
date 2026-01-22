@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ApproveUserStatusEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -21,7 +22,7 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamp('expired_at');
             $table->boolean('expired')->default(0);
-            $table->enum('status', ["pending","approved","rejected"])->default('pending');
+            $table->enum('status', [ApproveUserStatusEnum::PENDING->value, ApproveUserStatusEnum::REJECTED->value, ApproveUserStatusEnum::APPROVED->value])->default(ApproveUserStatusEnum::PENDING->value);
             $table->timestamps();
             $table->softDeletes();
         });

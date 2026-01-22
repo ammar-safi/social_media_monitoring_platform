@@ -2,10 +2,17 @@
 
 namespace App\Models;
 
+use App\Enums\ApproveUserStatusEnum;
+use Carbon\Carbon;
+use Exception;
+use Filament\Facades\Filament;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
+use Livewire\Features\SupportConsoleCommands\Commands\Upgrade\ThirdPartyUpgradeNotice;
 
 class ApproveUser extends Model
 {
@@ -25,6 +32,7 @@ class ApproveUser extends Model
         ];
     }
 
+
     public function Admin(): BelongsTo
     {
         return $this->belongsTo(User::class, "admin_id");
@@ -32,6 +40,66 @@ class ApproveUser extends Model
 
     public function User(): BelongsTo
     {
-        return $this->belongsTo(User::class , "user_id");
+        return $this->belongsTo(User::class, "user_id");
+    }
+
+    public function approveAll()
+    {
+        DB::beginTransaction();
+        try {
+
+            $requests = $this->query()
+                ->where("status", ApproveUserStatusEnum::PENDING->value)
+                ->where("expired", 0)
+                ->where("expired_at", ">", Carbon::now())
+                ->get();
+
+            $requests->each->approve();
+        } catch (Exception $e) {
+            Notification::make()
+                ->warning()
+                ->title("Error")
+                ->body("Something went wrong , pleas try again")
+                ->send();
+        }
+
+        Notification::make()
+            ->success()
+            ->title("Approved")
+            ->body("All requests was approved")
+            ->send();
+
+
+        DB::commit();
+    }
+
+    public function approve()
+    {
+        $this->update([
+            'status' => ApproveUserStatusEnum::APPROVED,
+            'admin_id' => Filament::auth()->user()->id,
+        ]);
+
+        $user = User::find($this->user_id);
+
+        if ($user) {
+            $user->update([
+                "active" => 1
+            ]);
+            $user->sendEmail("Happy news !!  your account has been verified , you can access our site now");
+        }
+    }
+    public function reject()
+    {
+        $this->update([
+            'status' => ApproveUserStatusEnum::APPROVED,
+            'admin_id' => Filament::auth()->user()->id,
+        ]);
+
+        $user = User::find($this->user_id);
+
+        if ($user) {
+            $user->sendEmail("We have Bad news for you ,  your account has been rejected");
+        }
     }
 }

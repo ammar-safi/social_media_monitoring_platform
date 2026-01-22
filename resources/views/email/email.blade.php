@@ -12,13 +12,16 @@
         body {
             margin : 5px;
         }
+        table.tr {
+            text-align: center
+        }
     </style>
 
     <body>
-        <table role="presentation" cellspacing="0" cellpadding="0" width="100%" bgcolor="#f4f4f4">
+        <table width="100%" >
             <tr>
                 <td>
-                    <table role="presentation" cellspacing="0" cellpadding="0" class="email-container">
+                    <table class="email-container">
                         <!-- Header -->
                         <tr>
                             <td class="email-header">
@@ -33,18 +36,17 @@
                             <td class="email-body">
                                 <h3>
                                     <p> Hello {{ $recipientName }}</p>
-                                    <p>{{ $messageContent }}</p>
                                 </h3>
+                                <p>{{ $messageContent }}</p>
                             </td>
                         </tr>
 
                         <!-- Footer -->
                         <tr>
                             <td class="email-footer">
-                                {{-- <p>{{ config('app.name') }} مع تحيات فريق</p> --}}
                                 <p>for more info , contact us : </p>
                                 <p>
-                                    ammar.ahmed.safi@gmail.com.net
+                                    ammar.ahmed.safi@gmail.com
                                 </p>
                             </td>
                         </tr>
