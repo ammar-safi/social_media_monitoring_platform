@@ -70,7 +70,10 @@ class AdminPanelProvider extends PanelProvider
             ], isPersistent: true)
             ->navigationGroups([
                 NavigationGroup::make()
-                    ->label('management')
+                    ->label('Users management')
+                    ->collapsed(false),
+                NavigationGroup::make()
+                    ->label('Government management')
                     ->collapsed(false),
             ])
         ;

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Pages\Auth;
 
+use App\Enums\UserTypeEnum;
+use App\Models\User;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Exception;
 use Filament\Events\Auth\Registered;
@@ -11,6 +13,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\RegistrationResponse;
+use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Auth\Register as BaseRegister;
 use Illuminate\Database\Eloquent\Model;
@@ -32,7 +35,7 @@ class Register extends BaseRegister
                 TextInput::make("last_name")
                     ->required(),
                 TextInput::make("email")
-                    ->unique("users" , "email")
+                    ->unique("users", "email")
                     ->required(),
                 TextInput::make("phone_number")
                     ->required(),
@@ -85,6 +88,17 @@ class Register extends BaseRegister
             ->title("Your account has been created")
             ->body("Your account need to be verified , We will send an email to you once it's verified")
             ->send();
+        Notification::make()
+            ->title('New User')
+            ->icon("heroicon-o-user")
+            ->body("new User need to be verified")
+            ->actions([
+                Action::make("goToRequest")
+                    ->button()
+                    ->color("primary")
+                    ->url()
+            ])
+            ->sendToDatabase(User::where("type", UserTypeEnum::ADMIN->value)->first());
         return app(RegistrationResponse::class);
     }
 }
