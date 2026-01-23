@@ -4,11 +4,14 @@ namespace App\Filament\Resources;
 
 use App\Enums\ApproveUserStatusEnum;
 use App\Filament\Resources\ApproveUserResource\Pages;
+use App\Filament\Resources\ApproveUserResource\Pages\viewApproveUser;
 use App\Filament\Resources\ApproveUserResource\RelationManagers;
 use App\Models\ApproveUser;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -16,6 +19,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -90,6 +94,11 @@ class ApproveUserResource extends Resource
                     ->color(function ($state): string {
                         return ApproveUserStatusEnum::from($state)->badgeColor();
                     }),
+                TextColumn::make("user.email")
+                    ->label("email")
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -187,6 +196,20 @@ class ApproveUserResource extends Resource
             ]);
     }
 
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                TextEntry::make("user.first_name"),
+                TextEntry::make("user.last_name"),
+                TextEntry::make("user.email"),
+                TextEntry::make("expired_at"),
+                TextEntry::make("status"),
+                TextEntry::make("expired"),
+                TextEntry::make("created_at"),
+            ]);
+    }
+
     public static function getRelations(): array
     {
         return [
@@ -198,8 +221,9 @@ class ApproveUserResource extends Resource
     {
         return [
             'index' => Pages\ListApproveUsers::route('/'),
-            'create' => Pages\CreateApproveUser::route('/create'),
-            'edit' => Pages\EditApproveUser::route('/{record}/edit'),
+            // 'create' => Pages\CreateApproveUser::route('/create'),
+            // 'edit' => Pages\EditApproveUser::route('/{record}/edit'),
+            'view' => viewApproveUser::route("{record}/view"),
         ];
     }
 }

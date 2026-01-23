@@ -49,7 +49,16 @@ class RatingsRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
                     ->icon("heroicon-o-user")
-                    ->label("user Name"),
+                    ->label("user name"),
+                    Tables\Columns\TextColumn::make('user.type')
+                    ->label("user type")
+                    ->formatStateUsing(function ($state) {
+                        return UserTypeEnum::from($state->value)->label();
+                    })
+                    ->badge()
+                    ->color(function ($state): string {
+                        return UserTypeEnum::from($state->value)->badgeColor();
+                    }),
                 Tables\Columns\TextColumn::make('rating')
                     ->badge()
                     ->icon('heroicon-o-star')

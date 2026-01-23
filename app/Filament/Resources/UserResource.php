@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources;
 
+use Althinect\FilamentSpatieRolesPermissions\Resources\RoleResource\RelationManager\UserRelationManager;
 use App\Enums\UserTypeEnum;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Filament\Resources\UserResource\RelationManagers\RatingsRelationManager;
 use App\Models\User;
 use Doctrine\DBAL\Schema\Column;
 use Filament\Forms;
@@ -168,6 +170,7 @@ class UserResource extends Resource
                     ]),
                 InfoListSection::make("Other information")
                     ->columns(3)
+                    ->icon("heroicon-o-information-circle")
                     ->schema([
                         TextEntry::make("type")
                             ->badge()
@@ -187,7 +190,7 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RatingsRelationManager::class,
         ];
     }
 

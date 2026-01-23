@@ -78,40 +78,69 @@ class ApproveUser extends Model
     public function approve(): bool
     {
         DB::beginTransaction();
-        $this->update([
-            'status' => ApproveUserStatusEnum::APPROVED,
-            'admin_id' => Filament::auth()->user()->id,
-        ]);
-
-        $user = User::find($this->user_id);
-
-        if ($user) {
-            $user->update([
-                "active" => 1
+        try {
+            $this->update([
+                'status' => ApproveUserStatusEnum::APPROVED,
+                'admin_id' => Filament::auth()->user()->id,
             ]);
 
-            DB::commit();
-            event(new EmailEvent($user, "Happy news !!  your account has been verified , you can access our site now", "Account approved"));
-            return true;
+            $user = User::find($this->user_id);
+
+            if ($user) {
+                $user->update([
+                    "active" => 1
+                ]);
+
+                DB::commit();
+                event(new EmailEvent($user, "Happy news !!  your account has been verified , you can access our site now", "Account approved"));
+                return true;
+            }
+            return false;
+        } catch (Exception $e) {
+            \Log::info($e->getMessage());
+            return false;
         }
-        return false;
     }
     public function reject(): bool
     {
         DB::beginTransaction();
+        try {
 
-        $this->update([
-            'status' => ApproveUserStatusEnum::APPROVED,
-            'admin_id' => Filament::auth()->user()->id,
-        ]);
+            $this->update([
+                'status' => ApproveUserStatusEnum::APPROVED,
+                'admin_id' => Filament::auth()->user()->id,
+            ]);
 
-        $user = User::find($this->user_id);
+            $user = User::find($this->user_id);
 
-        if ($user) {
-            DB::commit();
-            event(new EmailEvent($user, "We have Bad news for you ,  your account has been rejected", "Account rejected"));
-            return true;
+            if ($user) {
+                DB::commit();
+                event(new EmailEvent($user, "We have Bad news for you ,  your account has been rejected", "Account rejected"));
+                return true;
+            }
+
+            return false;
+        } catch (Exception $e) {
+            \Log::info($e->getMessage());
+            return false;
         }
-        return false;
+    }
+    public static function CheckExpiration()
+    {
+        DB::beginTransaction();
+        try {
+            $requests = self::query()
+                ->where("expired_at", "<", Carbon::now())
+                ->where("status", ApproveUserStatusEnum::PENDING->value)
+                ->get();
+            foreach ($requests as $request) {
+                $request->update([
+                    "expired" => 1,
+                ]);
+            }
+            DB::commit();
+        } catch (Exception $e) {
+            \Log::info($e->getMessage());
+        }
     }
 }

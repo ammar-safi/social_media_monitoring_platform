@@ -89,31 +89,27 @@ class Register extends BaseRegister
 
         $request = ApproveUser::create([
             "user_id" => $user->id,
-            "admin_id" => null ,
-            "expired_at" => Carbon::now()->addDays(config("approve_expired" , 5)),
+            "admin_id" => null,
+            "expired_at" => Carbon::now()->addDays(config("approve_expired", 5)),
             "expired" => 0,
             "status" => ApproveUserStatusEnum::PENDING,
         ]);
 
-
-
-
-        // TODO 
         Notification::make()
             ->success()
             ->title("Your account has been created")
             ->body("Your account need to be verified , We will send an email to you once it's verified")
             ->send();
         Notification::make()
-            ->title('New User')
+            ->title('New Government official')
             ->icon("heroicon-o-user")
-            ->body("new User need to be verified")
+            ->body($request->user?->name . " requested to verify a new account")
             ->actions([
                 Action::make("goToRequest")
                     ->button()
                     ->color("primary")
                     //TODO 
-                    ->url(ApproveUserResource::getUrl('edit' , ['record' => $request->id]))
+                    ->url(ApproveUserResource::getUrl('index', ['tableSearch' => $request->user->email]))
                     ->markAsRead()
             ])
             ->sendToDatabase(User::where("type", UserTypeEnum::ADMIN->value)->first());
