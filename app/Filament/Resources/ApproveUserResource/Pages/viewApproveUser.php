@@ -21,9 +21,40 @@ class viewApproveUser extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make("approve")
+                ->requiresConfirmation()
+                ->color("primary")
+                ->action(function (ApproveUser $approve) {
+                    if ($approve->approve()) {
+                        Notification::make()
+                            ->success()
+                            ->icon("heroicon-o-check")
+                            ->title("Approved")
+                            ->body("account approved and an email sent to the government official")
+                            ->send();
+                    } else {
+
+                        Notification::make()
+                            ->warning()
+                            ->title("Error")
+                            ->body("pleas try again")
+                            ->send();
+                    }
+                })
+                ->hidden(function ($record) {
+                    if ($record->status != ApproveUserStatusEnum::PENDING->value) {
+                        return true;
+                    }
+                    if ($record->expired) {
+                        return true;
+                    }
+                    return false;
+                }),
             Action::make("delete")
                 ->requiresConfirmation()
-                ->color("danger")
+                ->modalIconColor("danger")
+                ->modalIcon("heroicon-o-trash")
+                ->color("gray")
                 // ->icon("heroicon-o-trash")
                 ->action(function ($record) {
                     $record->delete();
@@ -39,8 +70,9 @@ class viewApproveUser extends ViewRecord
             Action::make("reject")
                 // ->icon("heroicon-o-x-circle")
                 ->requiresConfirmation()
-
-                ->color("warning")
+                ->modalIconColor("warning")
+                ->modalIcon("heroicon-o-no-symbol")
+                ->color("gray")
                 ->action(function (ApproveUser $approve) {
                     if ($approve->reject()) {
                         Notification::make()
@@ -68,36 +100,7 @@ class viewApproveUser extends ViewRecord
                 }),
 
 
-            Action::make("approve")
-                ->button()
-                ->requiresConfirmation()
-                ->color("success")
-                ->action(function (ApproveUser $approve) {
-                    if ($approve->approve()) {
-                        Notification::make()
-                            ->success()
-                            ->icon("heroicon-o-check")
-                            ->title("Approved")
-                            ->body("account approved and an email sent to the government official")
-                            ->send();
-                    } else {
 
-                        Notification::make()
-                            ->warning()
-                            ->title("Error")
-                            ->body("pleas try again")
-                            ->send();
-                    }
-                })
-                ->hidden(function ($record) {
-                    if ($record->status != ApproveUserStatusEnum::PENDING->value) {
-                        return true;
-                    }
-                    if ($record->expired) {
-                        return true;
-                    }
-                    return false;
-                }),
 
         ];
     }

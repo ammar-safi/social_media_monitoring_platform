@@ -120,7 +120,8 @@ class ApproveUserResource extends Resource
             ->actions([
                 Action::make("approve")
                     ->button()
-                    ->color("success")
+                    ->requiresConfirmation()
+                    ->color("primary")
                     ->action(function (ApproveUser $approve) {
                         if ($approve->approve()) {
                             Notification::make()
@@ -150,8 +151,10 @@ class ApproveUserResource extends Resource
                 ActionGroup::make([
                     Action::make("reject")
                         ->icon("heroicon-o-x-circle")
-                        ->color("warning")
                         ->requiresConfirmation()
+                        ->modalIconColor("warning")
+                        ->modalIcon("heroicon-o-no-symbol")
+                        ->color("gray")
                         ->action(function (ApproveUser $approve) {
                             if ($approve->reject()) {
                                 Notification::make()
@@ -179,6 +182,8 @@ class ApproveUserResource extends Resource
                         }),
                     Action::make("delete")
                         ->requiresConfirmation()
+                        ->modalIconColor("danger")
+                        ->modalIcon("heroicon-o-trash")
                         ->color("danger")
                         ->icon("heroicon-o-trash")
                         ->action(function ($record) {
