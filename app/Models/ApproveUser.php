@@ -75,6 +75,7 @@ class ApproveUser extends Model
 
     public function approve()
     {
+        DB::beginTransaction();
         $this->update([
             'status' => ApproveUserStatusEnum::APPROVED,
             'admin_id' => Filament::auth()->user()->id,
@@ -86,11 +87,15 @@ class ApproveUser extends Model
             $user->update([
                 "active" => 1
             ]);
-            $user->sendEmail("Happy news !!  your account has been verified , you can access our site now");
+
+            DB::commit();
+            $user->sendEmail("Happy news !!  your account has been verified , you can access our site now" , "Account approved");
         }
     }
     public function reject()
     {
+        DB::beginTransaction();
+
         $this->update([
             'status' => ApproveUserStatusEnum::APPROVED,
             'admin_id' => Filament::auth()->user()->id,
@@ -99,7 +104,8 @@ class ApproveUser extends Model
         $user = User::find($this->user_id);
 
         if ($user) {
-            $user->sendEmail("We have Bad news for you ,  your account has been rejected");
+            DB::commit();
+            $user->sendEmail("We have Bad news for you ,  your account has been rejected" , "Account rejected");
         }
     }
 }
