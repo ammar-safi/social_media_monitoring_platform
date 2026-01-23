@@ -111,7 +111,21 @@ class ApproveUserResource extends Resource
                     ->button()
                     ->color("success")
                     ->action(function (ApproveUser $approve) {
-                        $approve->approve();
+                        if ($approve->approve()) {
+                            Notification::make()
+                                ->success()
+                                ->icon("heroicon-o-check")
+                                ->title("Approved")
+                                ->body("account approved and an email sent to the government official")
+                                ->send();
+                        } else {
+
+                            Notification::make()
+                                ->warning()
+                                ->title("Error")
+                                ->body("pleas try again")
+                                ->send();
+                        }
                     })
                     ->hidden(function ($record) {
                         if ($record->status != ApproveUserStatusEnum::PENDING->value) {
@@ -127,7 +141,20 @@ class ApproveUserResource extends Resource
                         ->icon("heroicon-o-x-circle")
                         ->color("warning")
                         ->action(function (ApproveUser $approve) {
-                            $approve->reject();
+                            if ($approve->reject()) {
+                                Notification::make()
+                                    ->danger()
+                                    ->icon("heroicon-o-x-circle")
+                                    ->title("Rejected")
+                                    ->body("account rejected and an email sent to the government official")
+                                    ->send();
+                            } else {
+                                Notification::make()
+                                    ->warning()
+                                    ->title("Error")
+                                    ->body("pleas try again")
+                                    ->send();
+                            }
                         })
                         ->hidden(function ($record) {
                             if ($record->status != ApproveUserStatusEnum::PENDING->value) {

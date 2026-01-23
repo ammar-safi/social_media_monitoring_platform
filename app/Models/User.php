@@ -108,13 +108,4 @@ class User extends Authenticatable implements HasName
         return $this->first_name . " " . $this->last_name;
     }
 
-    public function sendEmail($messageContent , $subject="New message")
-    {
-        Mail::send('email.email', [
-            'recipientName' => $this->first_name,
-            'messageContent' => $messageContent
-        ], function ($message) use ($subject) {
-            $message->to($this->email)->subject($subject);
-        });
-    }
 }

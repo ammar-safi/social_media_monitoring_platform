@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ApproveUserStatusEnum;
+use App\Events\EmailEvent;
 use Carbon\Carbon;
 use Exception;
 use Filament\Facades\Filament;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Livewire\Features\SupportConsoleCommands\Commands\Upgrade\ThirdPartyUpgradeNotice;
+use Spatie\FlareClient\Flare;
 
 class ApproveUser extends Model
 {
@@ -73,7 +75,7 @@ class ApproveUser extends Model
         DB::commit();
     }
 
-    public function approve()
+    public function approve(): bool
     {
         DB::beginTransaction();
         $this->update([
@@ -89,10 +91,12 @@ class ApproveUser extends Model
             ]);
 
             DB::commit();
-            $user->sendEmail("Happy news !!  your account has been verified , you can access our site now" , "Account approved");
+            event(new EmailEvent($user, "Happy news !!  your account has been verified , you can access our site now", "Account approved"));
+            return true;
         }
+        return false;
     }
-    public function reject()
+    public function reject(): bool
     {
         DB::beginTransaction();
 
@@ -105,7 +109,9 @@ class ApproveUser extends Model
 
         if ($user) {
             DB::commit();
-            $user->sendEmail("We have Bad news for you ,  your account has been rejected" , "Account rejected");
+            event(new EmailEvent($user, "We have Bad news for you ,  your account has been rejected", "Account rejected"));
+            return true;
         }
+        return false;
     }
 }

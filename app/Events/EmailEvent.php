@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -13,24 +14,16 @@ use Illuminate\Queue\SerializesModels;
 class EmailEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
+    public $message;
+    public $subject;
 
     /**
      * Create a new event instance.
      */
-    public function __construct()
+    public function __construct(public User $user, $message, $subject)
     {
-        //
+        $this->message = $message;
+        $this->subject = $subject ?? "New message";
     }
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
-     */
-    public function broadcastOn(): array
-    {
-        return [
-            new PrivateChannel('channel-name'),
-        ];
-    }
 }
