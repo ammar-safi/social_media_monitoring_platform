@@ -20,12 +20,12 @@ class EditUser extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make()
-                ->visible(function (User $record) {
-                    return $record->type != UserTypeEnum::ADMIN;
-                }),
-            Actions\ForceDeleteAction::make(),
-            Actions\RestoreAction::make(),
+            Actions\DeleteAction::make(),
+                // ->visible(function (User $record) {
+                //     return $record->type != UserTypeEnum::ADMIN;
+                // }),
+            // Actions\ForceDeleteAction::make(),
+            // Actions\RestoreAction::make(),
         ];
     }
 }

@@ -7,9 +7,11 @@ use App\Filament\Resources\ApproveUserResource\Pages;
 use App\Filament\Resources\ApproveUserResource\Pages\viewApproveUser;
 use App\Filament\Resources\ApproveUserResource\RelationManagers;
 use App\Models\ApproveUser;
+use BladeUI\Icons\Components\Icon;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
@@ -149,6 +151,7 @@ class ApproveUserResource extends Resource
                     Action::make("reject")
                         ->icon("heroicon-o-x-circle")
                         ->color("warning")
+                        ->requiresConfirmation()
                         ->action(function (ApproveUser $approve) {
                             if ($approve->reject()) {
                                 Notification::make()
@@ -179,7 +182,6 @@ class ApproveUserResource extends Resource
                         ->color("danger")
                         ->icon("heroicon-o-trash")
                         ->action(function ($record) {
-                            $record->user->delete();
                             $record->delete();
                             Notification::make()
                                 ->success()
@@ -200,13 +202,29 @@ class ApproveUserResource extends Resource
     {
         return $infolist
             ->schema([
-                TextEntry::make("user.first_name"),
-                TextEntry::make("user.last_name"),
-                TextEntry::make("user.email"),
-                TextEntry::make("expired_at"),
-                TextEntry::make("status"),
-                TextEntry::make("expired"),
-                TextEntry::make("created_at"),
+                Section::make("Government official Information")
+                    ->icon("heroicon-o-user")
+                    ->columns(3)
+                    ->schema([
+                        TextEntry::make("user.name")
+                            ->icon("heroicon-o-identification")
+                            ->label("name"),
+                        TextEntry::make("user.email")
+                            ->icon("heroicon-o-envelope")
+                            ->label("email"),
+                        TextEntry::make("user.phone_number")
+                            ->icon("heroicon-o-phone")
+                            ->label("phone number"),
+                    ]),
+                Section::make("User Information")
+                    ->icon("heroicon-o-user-plus")
+                    ->columns(2)
+                    ->schema([
+                        TextEntry::make("expired_at"),
+                        TextEntry::make("status"),
+                        TextEntry::make("expired"),
+                        TextEntry::make("created_at"),
+                    ]),
             ]);
     }
 
