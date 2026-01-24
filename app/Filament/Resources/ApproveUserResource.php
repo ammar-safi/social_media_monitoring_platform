@@ -69,9 +69,9 @@ class ApproveUserResource extends Resource
                     ->formatStateUsing(function ($state) {
                         $date = Carbon::parse($state);
                         $readable_date = $date->diffForHumans();
-                        return $readable_date;
-                    })
-                    ->sortable(),
+                        $state = Carbon::parse($state)->format("d/M/Y");
+                        return $state . " (" .  $readable_date . ")";
+                    })->sortable(),
                 Tables\Columns\TextColumn::make('expired')
                     ->formatStateUsing(function ($state) {
                         if ($state) {
@@ -102,15 +102,13 @@ class ApproveUserResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime()
+                    ->label("Requested at")
+                    ->formatStateUsing(function ($state) {
+                        $date = Carbon::parse($state);
+                        $readable_date = $date->diffForHumans();
+                        $state = Carbon::parse($state)->format("d/M/Y");
+                        return $state . " (" .  $readable_date . ")";
+                    })
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -122,13 +120,13 @@ class ApproveUserResource extends Resource
                     ->button()
                     ->requiresConfirmation()
                     ->color("primary")
-                    ->action(function (ApproveUser $approve) {
+                    ->action(function (ApproveUser $approve , $record) {
                         if ($approve->approve()) {
                             Notification::make()
                                 ->success()
                                 ->icon("heroicon-o-check")
                                 ->title("Approved")
-                                ->body("account approved and an email sent to the government official")
+                                ->body("account approved and an email sent to " . $record->user?->first_name)
                                 ->send();
                         } else {
 
@@ -155,13 +153,13 @@ class ApproveUserResource extends Resource
                         ->modalIconColor("warning")
                         ->modalIcon("heroicon-o-no-symbol")
                         ->color("gray")
-                        ->action(function (ApproveUser $approve) {
+                        ->action(function (ApproveUser $approve , $record) {
                             if ($approve->reject()) {
                                 Notification::make()
                                     ->danger()
                                     ->icon("heroicon-o-x-circle")
                                     ->title("Rejected")
-                                    ->body("account rejected and an email sent to the government official")
+                                    ->body("account rejected and an email sent to " . $record->user?->first_name)
                                     ->send();
                             } else {
                                 Notification::make()
@@ -221,14 +219,50 @@ class ApproveUserResource extends Resource
                             ->icon("heroicon-o-phone")
                             ->label("phone number"),
                     ]),
-                Section::make("User Information")
+                Section::make("Account request")
                     ->icon("heroicon-o-user-plus")
-                    ->columns(2)
+                    ->columns(4)
                     ->schema([
-                        TextEntry::make("expired_at"),
-                        TextEntry::make("status"),
-                        TextEntry::make("expired"),
-                        TextEntry::make("created_at"),
+                        TextEntry::make("expired_at")
+                            ->formatStateUsing(function ($state) {
+                                $date = Carbon::parse($state);
+                                $readable_date = $date->diffForHumans();
+                                $state = Carbon::parse($state)->format("d/M/Y");
+                                return $state . " (" .  $readable_date . ")";
+                            }),
+                        TextEntry::make("status")
+                            ->badge()
+                            ->formatStateUsing(function ($state) {
+                                return ApproveUserStatusEnum::from($state)->label();
+                            })
+                            ->color(function ($state): string {
+                                return ApproveUserStatusEnum::from($state)->badgeColor();
+                            }),
+                        TextEntry::make("expired")
+                            ->label('Request expiration')
+                            ->formatStateUsing(function ($state) {
+                                if ($state) {
+                                    return "request is expired";
+                                }
+
+                                return "request is active";
+                            })
+                            ->badge()
+                            ->color(function ($state) {
+                                if ($state) {
+                                    return "danger";
+                                }
+
+                                return "success";
+                            }),
+                        TextEntry::make("created_at")
+                            ->label("Requested at")
+                            ->formatStateUsing(function ($state) {
+                                $date = Carbon::parse($state);
+                                $readable_date = $date->diffForHumans();
+                                $state = Carbon::parse($state)->format("d/M/Y");
+                                return $state . " (" .  $readable_date . ")";
+                            }),
                     ]),
             ]);
     }

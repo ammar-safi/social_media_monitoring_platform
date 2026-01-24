@@ -31,7 +31,7 @@ enum ApproveUserStatusEnum :string
         return match ($this) {
             self::PENDING => 'gray',
             self::APPROVED => 'success',
-            self::REJECTED => 'warning',
+            self::REJECTED => 'danger',
         };
     }
     

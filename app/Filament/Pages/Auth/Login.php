@@ -37,7 +37,7 @@ class Login extends BasePage
             Filament::auth()->logout();
 
             throw ValidationException::withMessages([
-                "data.email" => "Your account is not active , please contact with the admin"
+                "data.email" => "Your account is not active"
             ]);
         } elseif (
             ($user instanceof FilamentUser) &&

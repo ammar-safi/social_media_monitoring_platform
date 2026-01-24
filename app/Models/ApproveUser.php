@@ -80,7 +80,7 @@ class ApproveUser extends Model
         DB::beginTransaction();
         try {
             $this->update([
-                'status' => ApproveUserStatusEnum::APPROVED,
+                'status' => ApproveUserStatusEnum::APPROVED->value,
                 'admin_id' => Filament::auth()->user()->id,
             ]);
 
@@ -107,7 +107,7 @@ class ApproveUser extends Model
         try {
 
             $this->update([
-                'status' => ApproveUserStatusEnum::APPROVED,
+                'status' => ApproveUserStatusEnum::APPROVED->value,
                 'admin_id' => Filament::auth()->user()->id,
             ]);
 

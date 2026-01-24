@@ -108,8 +108,7 @@ class Register extends BaseRegister
                 Action::make("goToRequest")
                     ->button()
                     ->color("primary")
-                    //TODO 
-                    ->url(ApproveUserResource::getUrl('index', ['tableSearch' => $request->user->email]))
+                    ->url(ApproveUserResource::getUrl('view', ['record' => $request->id]))
                     ->markAsRead()
             ])
             ->sendToDatabase(User::where("type", UserTypeEnum::ADMIN->value)->first());

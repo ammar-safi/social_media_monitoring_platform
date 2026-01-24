@@ -34,7 +34,7 @@ class ApproveUserFactory extends Factory
             'admin_id' => User::factory(),
             'user_id' => User::factory(),
             'expired_at' => $date,
-            'expired' => $date->isPast() ? 0 : 1,
+            'expired' => $date->isPast() ? 1 : 0,
             'status' => fake()->randomElement(["pending", "approved", "rejected"]),
         ];
     }
