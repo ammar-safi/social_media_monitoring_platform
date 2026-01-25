@@ -45,18 +45,20 @@ class ApproveUser extends Model
         return $this->belongsTo(User::class, "user_id");
     }
 
-    public function approveAll()
+    public function approveAll($admin_id = null)
     {
         DB::beginTransaction();
         try {
-
-            $requests = $this->query()
+            \Log::info("approving to all users");
+            $requests = Self::query()
                 ->where("status", ApproveUserStatusEnum::PENDING->value)
                 ->where("expired", 0)
                 ->where("expired_at", ">", Carbon::now())
                 ->get();
 
-            $requests->each->approve();
+            $requests->each->approve($admin_id);
+
+            DB::commit();
         } catch (Exception $e) {
             Notification::make()
                 ->warning()
@@ -70,18 +72,15 @@ class ApproveUser extends Model
             ->title("Approved")
             ->body("All requests was approved")
             ->send();
-
-
-        DB::commit();
     }
 
-    public function approve(): bool
+    public function approve($admin_id=null): bool
     {
         DB::beginTransaction();
         try {
             $this->update([
                 'status' => ApproveUserStatusEnum::APPROVED->value,
-                'admin_id' => Filament::auth()->user()->id,
+                'admin_id' => $admin_id ?? Filament::auth()->user()?->id,
             ]);
 
             $user = User::find($this->user_id);

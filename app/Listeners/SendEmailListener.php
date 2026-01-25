@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Mail;
 
-class SendEmailListener
+class SendEmailListener implements ShouldQueue
 {
     /**
      * Create the event listener.
@@ -23,7 +23,7 @@ class SendEmailListener
     public function handle(EmailEvent $event): void
     {
         \Log::info("--- Sending an email ---");
-        \Log::info("--- to " . $event->user?->first_name ." ---");
+        \Log::info("--- to " . $event->user?->email ." ---");
         Mail::send('email.email', [
             'recipientName' => $event->user?->first_name,
             'messageContent' => $event->message,

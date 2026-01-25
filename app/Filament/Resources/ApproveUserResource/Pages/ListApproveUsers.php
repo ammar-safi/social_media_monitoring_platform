@@ -3,10 +3,13 @@
 namespace App\Filament\Resources\ApproveUserResource\Pages;
 
 use App\Enums\ApproveUserStatusEnum;
+use App\Events\ApproveToAllUsersEvent;
 use App\Filament\Resources\ApproveUserResource;
 use App\Models\ApproveUser;
 use Filament\Actions;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
+use Filament\Notifications\Notification;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 
@@ -20,8 +23,15 @@ class ListApproveUsers extends ListRecords
             Action::make("Approve to all")
 
                 ->requiresConfirmation()
-                ->action(function (ApproveUser $approve) {
-                    $approve->approveAll();
+                ->action(function () {
+                    Notification::make()
+                        ->info()
+                        ->title("Approving ...")
+                        ->body("This operation will take a few second")
+                        ->send();
+                    $admin_id = Filament::auth()->user()->id;
+                    event(new ApproveToAllUsersEvent($admin_id));
+                    // ApproveToAllUsersEvent::dispatch($admin_id);
                 })
 
         ];
