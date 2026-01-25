@@ -86,14 +86,18 @@ class Register extends BaseRegister
 
             return $user;
         });
-
-        $request = ApproveUser::create([
-            "user_id" => $user->id,
-            "admin_id" => null,
-            "expired_at" => Carbon::now()->addDays(config("approve_expired", 5)),
-            "expired" => 0,
-            "status" => ApproveUserStatusEnum::PENDING,
-        ]);
+        try {
+            $request = ApproveUser::create([
+                "user_id" => $user->id,
+                "admin_id" => null,
+                "expired_at" => Carbon::now()->addDays(config("approve_expired", 5)),
+                "expired" => 0,
+                "status" => ApproveUserStatusEnum::PENDING,
+            ]);
+        } catch (Exception $e) {
+            DB::rollBack();
+        }
+        DB::commit();
 
         Notification::make()
             ->success()
@@ -113,7 +117,6 @@ class Register extends BaseRegister
             ])
             ->sendToDatabase(User::where("type", UserTypeEnum::ADMIN->value)->first());
 
-        DB::commit();
 
         return app(RegistrationResponse::class);
     }
