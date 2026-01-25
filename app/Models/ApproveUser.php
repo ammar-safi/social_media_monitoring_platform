@@ -60,21 +60,11 @@ class ApproveUser extends Model
 
             DB::commit();
         } catch (Exception $e) {
-            Notification::make()
-                ->warning()
-                ->title("Error")
-                ->body("Something went wrong , pleas try again")
-                ->send();
+            DB::rollBack();
         }
-
-        Notification::make()
-            ->success()
-            ->title("Approved")
-            ->body("All requests was approved")
-            ->send();
     }
 
-    public function approve($admin_id=null): bool
+    public function approve($admin_id = null): bool
     {
         DB::beginTransaction();
         try {
@@ -96,6 +86,7 @@ class ApproveUser extends Model
             }
             return false;
         } catch (Exception $e) {
+            DB::rollBack();
             \Log::info($e->getMessage());
             return false;
         }
@@ -117,9 +108,10 @@ class ApproveUser extends Model
                 event(new EmailEvent($user, "We have Bad news for you ,  your account has been rejected", "Account rejected"));
                 return true;
             }
-
+            DB::rollBack();
             return false;
         } catch (Exception $e) {
+            DB::rollBack();
             \Log::info($e->getMessage());
             return false;
         }
@@ -139,6 +131,7 @@ class ApproveUser extends Model
             }
             DB::commit();
         } catch (Exception $e) {
+            DB::rollBack();
             \Log::info($e->getMessage());
         }
     }
