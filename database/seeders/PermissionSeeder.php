@@ -72,7 +72,7 @@ class PermissionSeeder extends Seeder
                 $masterUser = User::Create(
                     [
                         'first_name' => 'admin',
-                        'email' => 'ammar.ahmed.safi@gmail.com',
+                        'email' => 'admin@gmail.com',
                         "password" => Hash::make("123456"),
                         "phone_number" => "0988845619",
                         'type' => UserTypeEnum::ADMIN->value,
