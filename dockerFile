@@ -1,0 +1,38 @@
+FROM php:8.2-apache
+
+# تثبيت الإضافات المطلوبة
+RUN apt-get update && apt-get install -y \
+    libicu-dev \
+    libzip-dev \
+    zip \
+    unzip \
+    curl \
+    git \
+    libpng-dev \
+    nodejs \
+    npm \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install intl zip pdo_mysql gd \
+    && a2enmod rewrite
+
+# تثبيت Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# نسخ المشروع
+WORKDIR /var/www/html
+COPY . .
+
+# تثبيت dependencies
+RUN composer install --optimize-autoloader --no-scripts --no-interaction
+RUN npm install && npm run build
+
+# تعديل الصلاحيات
+RUN chown -R www-data:www-data /var/www/html/storage
+RUN chown -R www-data:www-data /var/www/html/bootstrap/cache
+
+# تعيين Apache document root
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+CMD ["apache2-foreground"]
