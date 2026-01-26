@@ -2,17 +2,19 @@
 
 namespace App\Enums;
 
-enum InviteStatusEnum :string 
+enum PolicyRequestEnum : string
 {
     case PENDING = 'pending';
-    case USED = 'used';
+    case APPROVED = 'approved';
+    case REJECTED = 'rejected';
     case EXPIRED = 'expired';
 
     public function label(): string
     {
         return match ($this) {
             self::PENDING => 'pending',
-            self::USED => 'used',
+            self::APPROVED => 'approved',
+            self::REJECTED => 'rejected',
             self::EXPIRED => 'expired',
         };
     }
@@ -30,8 +32,8 @@ enum InviteStatusEnum :string
     {
         return match ($this) {
             self::PENDING => 'gray',
-            self::USED => 'success',
-            self::EXPIRED => 'danger',
+            self::APPROVED => 'success',
+            self::REJECTED => 'danger',
         };
     }
     
@@ -39,8 +41,8 @@ enum InviteStatusEnum :string
     {
         return match ($this) {
             self::PENDING => 'heroicon-o-clock',
-            self::USED => 'heroicon-o-check-circle',
-            self::EXPIRED => 'heroicon-o-x-circle',
+            self::APPROVED => 'heroicon-o-check-circle',
+            self::REJECTED => 'heroicon-o-x-circle',
         };
     }
 }

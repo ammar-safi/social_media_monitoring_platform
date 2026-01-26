@@ -27,14 +27,14 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             MainRoles::class
         ]);
-        User::factory(10)->create();
-        Analyst::factory(10)->create();
-        ApproveUser::factory(10)->create();
+        // User::factory(10)->create();
+        // Analyst::factory(10)->create();
+        // ApproveUser::factory(10)->create();
         // GovOrg::factory(10)->create();
         // Hashtag::factory(10)->create();
         // Post::factory(10)->create();
-        HashtagPost::factory(10)->create();
-        Invite::factory(10)->create();
-        Rating::factory(10)->create();
+        // HashtagPost::factory(10)->create();
+        // Invite::factory(10)->create();
+        // Rating::factory(10)->create();
     }
 }

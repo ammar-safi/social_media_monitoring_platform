@@ -20,9 +20,8 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
             $table->string('email');
-            $table->enum('status', [InviteStatusEnum::APPROVED->value , InviteStatusEnum::PENDING->value , InviteStatusEnum::REJECTED->value ])->default(InviteStatusEnum::PENDING->value);
+            $table->enum('status', [InviteStatusEnum::USED->value , InviteStatusEnum::PENDING->value , InviteStatusEnum::EXPIRED->value ])->default(InviteStatusEnum::PENDING->value);
             $table->timestamp('expired_at')->nullable();
-            $table->boolean('expired')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

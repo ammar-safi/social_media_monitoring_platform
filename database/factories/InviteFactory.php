@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\InviteStatusEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use App\Models\Invite;
@@ -32,9 +33,13 @@ class InviteFactory extends Factory
             'token' => fake()->word(),
             'user_id' => User::factory(),
             'email' => fake()->safeEmail(),
-            'status' => fake()->randomElement(["pending", "approved", "rejected"]),
+            'status' => $date->isPast() ?
+                InviteStatusEnum::EXPIRED->value :
+                fake()->randomElement([
+                    InviteStatusEnum::PENDING->value,
+                    InviteStatusEnum::USED->value
+                ]),
             'expired_at' => $date,
-            'expired' => $date->isPast() ? 0 : 1,
         ];
     }
 }
