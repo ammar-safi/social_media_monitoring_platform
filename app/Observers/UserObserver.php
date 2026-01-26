@@ -2,11 +2,13 @@
 
 namespace App\Observers;
 
+use App\Enums\UserTypeEnum;
 use App\Events\EmailEvent;
 use App\Models\User;
 use Filament\Notifications\Notification;
+use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 
-class UserObserver
+class UserObserver implements ShouldHandleEventsAfterCommit
 {
     /**
      * Handle the User "created" event.
@@ -37,6 +39,13 @@ class UserObserver
         }
     }
 
+    public function saved(User $user)
+    {
+        if ($user->wasRecentlyCreated || $user->wasChanged('type')) {
+            $user->assignRoleBasedOnType();
+        }
+    }
+
     /**
      * Handle the User "deleted" event.
      */
@@ -45,6 +54,13 @@ class UserObserver
         $user->update([
             "email" => $user->email . ".deleted"
         ]);
+    }
+
+    public function deleting(User $user)
+    {
+        if ($user->type === UserTypeEnum::ADMIN) {
+            throw new \Exception('you cannot delete this admin');
+        }
     }
 
     /**

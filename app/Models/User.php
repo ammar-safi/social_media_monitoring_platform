@@ -42,22 +42,6 @@ class User extends Authenticatable implements HasName
     ];
     protected $appends = ["name"];
 
-    protected static function booted(): void
-    {
-        static::deleting(function ($user) {
-            if ($user->type === UserTypeEnum::ADMIN) {
-                throw new \Exception('you cannot delete this admin');
-            }
-        });
-
-        static::saved(function ($user) {
-            if ($user->wasRecentlyCreated || $user->wasChanged('type')) {
-                $user->assignRoleBasedOnType();
-            }
-        });
-
-    }
-
     public function assignRoleBasedOnType(): void
     {
         // Remove existing roles first
