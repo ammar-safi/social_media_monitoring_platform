@@ -71,7 +71,8 @@ class ApproveUserResource extends Resource
                         $readable_date = $date->diffForHumans();
                         $state = Carbon::parse($state)->format("d/M/Y");
                         return $state . " (" .  $readable_date . ")";
-                    })->sortable(),
+                    })
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('expired')
                     ->formatStateUsing(function ($state) {
                         if ($state) {
@@ -120,7 +121,7 @@ class ApproveUserResource extends Resource
                     ->button()
                     ->requiresConfirmation()
                     ->color("primary")
-                    ->action(function (ApproveUser $approve , $record) {
+                    ->action(function (ApproveUser $approve, $record) {
                         if ($approve->approve()) {
                             Notification::make()
                                 ->success()
@@ -153,7 +154,7 @@ class ApproveUserResource extends Resource
                         ->modalIconColor("warning")
                         ->modalIcon("heroicon-o-no-symbol")
                         ->color("gray")
-                        ->action(function (ApproveUser $approve , $record) {
+                        ->action(function (ApproveUser $approve, $record) {
                             if ($approve->reject()) {
                                 Notification::make()
                                     ->danger()

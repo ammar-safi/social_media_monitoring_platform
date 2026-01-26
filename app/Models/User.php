@@ -16,7 +16,11 @@ use Spatie\Permission\Traits\HasRoles;
 use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
 use App\Enums\UserRoleEnum;
 use App\Enums\UserTypeEnum;
+use App\Events\EmailEvent;
+use Exception;
 use Filament\Forms;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class User extends Authenticatable implements HasName
@@ -46,18 +50,12 @@ class User extends Authenticatable implements HasName
             }
         });
 
-        static::deleted(function ($user) {
-            $user->update([
-                "email" => $user->email . ".deleted"
-            ]);
-        });
-
-
         static::saved(function ($user) {
             if ($user->wasRecentlyCreated || $user->wasChanged('type')) {
                 $user->assignRoleBasedOnType();
             }
         });
+
     }
 
     public function assignRoleBasedOnType(): void
@@ -108,4 +106,16 @@ class User extends Authenticatable implements HasName
         return $this->first_name . " " . $this->last_name;
     }
 
+    public function ActivateAccount()
+    {
+        DB::beginTransaction();
+        try {
+            $this->update([
+                "active" => 1
+            ]);
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+        }
+    }
 }

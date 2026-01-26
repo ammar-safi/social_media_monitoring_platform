@@ -8,6 +8,7 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Filament\Resources\UserResource\RelationManagers\RatingsRelationManager;
 use App\Models\User;
+use Carbon\Carbon;
 use Doctrine\DBAL\Schema\Column;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
@@ -19,6 +20,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -117,26 +119,22 @@ class UserResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                // SelectFilter::make('type')
-                //     ->label("User type (Role)")
-                //     ->options([
-                //         UserTypeEnum::USER->value => UserTypeEnum::USER->label(), 
-                //         UserTypeEnum::POLICY_MAKER->value => UserTypeEnum::POLICY_MAKER->label()
-                //     ]),
-                // SelectFilter::make("active")
-                //     ->label("active accounts")
-                //     ->options([
-                //         '1' => 'active',
-                //         '0' => 'not active'
-                //     ])
-
-            ])
+            ->filters([])
             ->actions([
                 ActionGroup::make([
+                    Action::make("Activate")
+                        ->color('success')
+                        ->icon("heroicon-o-check-circle")
+                        ->action(function ($record) {
+                            $record->ActivateAccount();
+                        })
+                        ->hidden(function ($record): bool {
+                            return $record->active;
+                        }),
                     ViewAction::make(),
                     EditAction::make(),
-                    DeleteAction::make()
+                    DeleteAction::make(),
+
                 ]),
             ])
             ->bulkActions([
@@ -180,7 +178,13 @@ class UserResource extends Resource
                         IconEntry::make('active')
                             ->label("Account active")
                             ->boolean(),
-                        TextEntry::make("created_at"),
+                        TextEntry::make("created_at")
+                            ->formatStateUsing(function ($state) {
+                                $date = Carbon::parse($state);
+                                $readable_date = $date->diffForHumans();
+                                $state = Carbon::parse($state)->format("d/M/Y");
+                                return $state . " (" .  $readable_date . ")";
+                            }),
 
                     ])
 
@@ -209,6 +213,6 @@ class UserResource extends Resource
         return parent::getEloquentQuery()
             ->where('type', '!=', 'admin')
             // ->where("active", 1)
-            ;
+        ;
     }
 }
