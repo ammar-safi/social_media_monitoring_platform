@@ -30,7 +30,7 @@ class ApproveUserResource extends Resource
 {
     protected static ?string $model = ApproveUser::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-plus';
+    // protected static ?string $navigationIcon = 'heroicon-o-user-plus';
     protected static ?string $navigationLabel, $label = 'Government official Requests';
     protected static ?int $navigationSort = 3;
     protected static ?string $navigationGroup = "Users management";
