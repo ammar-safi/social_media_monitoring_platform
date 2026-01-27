@@ -14,8 +14,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->call(ApproveUser::CheckExpiration())->daily();
-        $schedule->call(Invite::CheckExpiration())->daily();
+        $schedule->call(function () {
+            ApproveUser::CheckExpiration(); 
+        })->daily();
+        $schedule->call(function () {
+            Invite::CheckExpiration();
+        })->everyMinute();
     }
 
     /**

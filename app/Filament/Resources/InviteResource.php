@@ -3,11 +3,14 @@
 namespace App\Filament\Resources;
 
 use App\Enums\InviteStatusEnum;
+use App\Enums\UserTypeEnum;
 use App\Filament\Resources\InviteResource\Pages;
 use App\Filament\Resources\InviteResource\RelationManagers;
 use App\Models\Invite;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Actions\Action as InfoListAction;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
@@ -63,12 +66,19 @@ class InviteResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
-                    ->color(function ($state) {
+                    ->formatStateUsing(function ($state) {
+                        return InviteStatusEnum::from($state)->label();
+                    })
+                    ->color(function ($state): string {
                         return InviteStatusEnum::from($state)->badgeColor();
                     }),
                 Tables\Columns\TextColumn::make('expired_at')
-                    ->dateTime()
-                    ->sortable(),
+                    ->formatStateUsing(function ($state) {
+                        $date = Carbon::parse($state);
+                        $readable_date = $date->diffForHumans();
+                        $state = Carbon::parse($state)->format("d/M/Y");
+                        return $state . " (" .  $readable_date . ")";
+                    }),
                 Tables\Columns\IconColumn::make('expired')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -108,16 +118,56 @@ class InviteResource extends Resource
             ->schema([
                 Section::make("Request information")
                     ->icon("heroicon-o-information-circle")
-                    ->columns(2)
+                    ->columns(3)
                     ->schema([
-                        TextEntry::make("email"),
-                        TextEntry::make("status"),
+                        TextEntry::make("email")
+                            ->icon('heroicon-o-envelope'),
+                        TextEntry::make('status')
+                            ->badge()
+                            ->formatStateUsing(function ($state) {
+                                return InviteStatusEnum::from($state)->label();
+                            })
+                            ->color(function ($state): string {
+                                return InviteStatusEnum::from($state)->badgeColor();
+                            }),
+                        TextEntry::make('expired_at')
+                            //TODO ايقونة روزناما
+                            // ->icon('heroicon-o-date')
+                            ->formatStateUsing(function ($state) {
+                                $date = Carbon::parse($state);
+                                $readable_date = $date->diffForHumans();
+                                $state = Carbon::parse($state)->format("d/M/Y");
+                                return $state . " (" .  $readable_date . ")";
+                            }),
+
                     ]),
                 Section::make("Request by")
                     ->icon("heroicon-o-user")
+                    ->columns(3)
                     ->schema([
-
+                        TextEntry::make('user.name')
+                            ->default("( DELETED ACCOUNT )")
+                            ->label("Invited by"),
+                        TextEntry::make('user.email')
+                            ->default("( DELETED ACCOUNT )")
+                            ->label("Email"),
+                        TextEntry::make('user.type')
+                            ->label("Type")
+                            ->badge()
+                            ->color(function ($state) {
+                                return $state->badgeColor();
+                            })
                     ])
+                    ->headerActions([
+                        InfoListAction::make("view account")
+                            ->color("gray")
+                            ->url(function ($record) {
+                                if ($record->user) {
+                                    return UserResource::getUrl("view", ["record" => $record->user?->id]);
+                                }
+                            })
+                    ])
+
             ]);
     }
 

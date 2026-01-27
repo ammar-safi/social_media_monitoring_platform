@@ -123,11 +123,11 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('type')
                     ->formatStateUsing(function ($state) {
-                        return UserTypeEnum::from($state->value)->label();
+                        return $state->label();
                     })
                     ->badge()
                     ->color(function ($state): string {
-                        return UserTypeEnum::from($state->value)->badgeColor();
+                        return $state->badgeColor();
                     }),
                 Tables\Columns\IconColumn::make('active')
                     ->boolean(),
