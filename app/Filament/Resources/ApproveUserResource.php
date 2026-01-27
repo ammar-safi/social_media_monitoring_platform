@@ -125,7 +125,7 @@ class ApproveUserResource extends Resource
                         if ($approve->approve()) {
                             Notification::make()
                                 ->success()
-                                ->icon("heroicon-o-check")
+                                ->icon("heroicon-o-check-circle")
                                 ->title("Approved")
                                 ->body("account approved and an email sent to " . $record->user?->first_name)
                                 ->send();

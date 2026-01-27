@@ -87,7 +87,7 @@ class User extends Authenticatable implements HasName
     }
     public function PolicyRequest(): HasMany
     {
-        return $this->hasMany(PolicyRequest::class , "admin_id");
+        return $this->hasMany(PolicyRequest::class, "admin_id");
     }
     public function getNameAttribute()
     {

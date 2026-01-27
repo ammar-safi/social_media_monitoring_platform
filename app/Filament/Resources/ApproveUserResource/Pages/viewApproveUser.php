@@ -24,11 +24,11 @@ class viewApproveUser extends ViewRecord
             Action::make("approve")
                 ->requiresConfirmation()
                 ->color("primary")
-                ->action(function (ApproveUser $approve , $record) {
+                ->action(function (ApproveUser $approve, $record) {
                     if ($approve->approve()) {
                         Notification::make()
                             ->success()
-                            ->icon("heroicon-o-check")
+                            ->icon("heroicon-o-check-circle")
                             ->title("Approved")
                             ->body("account approved and an email sent to " . $record->user?->first_name)
                             ->send();
@@ -73,7 +73,7 @@ class viewApproveUser extends ViewRecord
                 ->modalIconColor("warning")
                 ->modalIcon("heroicon-o-no-symbol")
                 ->color("gray")
-                ->action(function (ApproveUser $approve , $record) {
+                ->action(function (ApproveUser $approve, $record) {
                     if ($approve->reject()) {
                         Notification::make()
                             ->danger()

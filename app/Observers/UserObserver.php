@@ -33,6 +33,7 @@ class UserObserver implements ShouldHandleEventsAfterCommit
             event(new EmailEvent($user, $message, "Reactivate"));
             Notification::make()
                 ->success()
+                ->icon("heroicon-o-check-circle")
                 ->title("Activated")
                 ->body("An email was sent to " . $user->first_name)
                 ->send();

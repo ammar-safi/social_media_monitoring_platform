@@ -75,6 +75,9 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Government management')
                     ->collapsed(false),
+                NavigationGroup::make()
+                    ->label('Other options')
+                    ->collapsed(false),
             ])
         ;
     }

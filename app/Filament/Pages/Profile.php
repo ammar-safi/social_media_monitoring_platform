@@ -23,7 +23,7 @@ class Profile extends Page
 
     protected static ?string $navigationLabel = 'Profile';
 
-    protected static ?int $navigationSort = 99;
+    protected static ?int $navigationSort = 1;
 
     public ?array $data = [];
 
