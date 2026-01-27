@@ -90,7 +90,19 @@ class UserResource extends Resource
                             ->options([
                                 UserTypeEnum::USER->value => "Government official",
                                 UserTypeEnum::POLICY_MAKER->value => "Policy Maker"
-                            ]),
+                            ])
+                            ->default(function () {
+                                // TODO Do it better 
+                                $type = $_GET["type"] ?? null;
+                                if (
+                                    $type &&
+                                    in_array($type, array_keys(UserTypeEnum::asSelectArray()))
+                                ) {
+                                    return $type;
+                                }
+                                
+                            }),
+
 
                         Forms\Components\Toggle::make('active')
                             ->required()
