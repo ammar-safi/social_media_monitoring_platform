@@ -16,14 +16,15 @@ class EmailEvent
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $message;
     public $subject;
+    public $email;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(public User $user, $message, $subject)
+    public function __construct(public User $user, $message, $subject = "New message", $email = null)
     {
         $this->message = $message;
-        $this->subject = $subject ?? "New message";
+        $this->subject = $subject;
+        $this->email = $email;
     }
-
 }

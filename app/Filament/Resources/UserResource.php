@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Doctrine\DBAL\Schema\Column;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\IconEntry;
@@ -45,7 +46,7 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Section::make("User info")
+                Section::make("User information")
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('first_name')
@@ -81,9 +82,19 @@ class UserResource extends Resource
                             ->dehydrated(false)
                             ->maxLength(255),
                     ]),
-                Forms\Components\Toggle::make('active')
-                    ->required()
-                    ->columnSpanFull(),
+                Section::make("Account Status Section")
+                    ->schema([
+                        Select::make("type")
+                            ->label("Account Type")
+                            ->hint("account role")
+                            ->options([
+                                UserTypeEnum::USER->value => "Government official",
+                                UserTypeEnum::POLICY_MAKER->value => "Policy Maker"
+                            ]),
+
+                        Forms\Components\Toggle::make('active')
+                            ->required()
+                    ]),
 
             ]);
     }

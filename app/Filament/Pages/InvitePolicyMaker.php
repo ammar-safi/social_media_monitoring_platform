@@ -4,11 +4,13 @@ namespace App\Filament\Pages;
 
 use App\Enums\InviteStatusEnum;
 use App\Enums\UserTypeEnum;
+use App\Events\EmailEvent;
 use App\Models\Invite;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
@@ -30,7 +32,7 @@ class InvitePolicyMaker extends Page implements HasTable
 
     public static function canAccess(): bool
     {
-        if (Filament::auth()->user()->type == UserTypeEnum::USER) {
+        if (Filament::auth()->user()->type == UserTypeEnum::USER || Filament::auth()->user()->type == UserTypeEnum::ADMIN) {
             return true;
         }
         return false;
@@ -47,7 +49,8 @@ class InvitePolicyMaker extends Page implements HasTable
                             ->required()
                             ->email()
                             ->maxLength(255)
-
+                            ->markAsRequired(False)
+                            ->prefixIcon("heroicon-o-envelope")
                     ])
             ])
             ->statePath('data')
@@ -72,12 +75,21 @@ class InvitePolicyMaker extends Page implements HasTable
     public function save(): void
     {
         $user = Filament::auth()->user();
-        $data = $this->form->validate();
+        $data = $this->form->getState();
 
-        $user->PolicyMakersThatUserInvites()->create([
+        $invite = $user->PolicyMakersThatUserInvites()->create([
             "email" => $data["email"],
             "status" => InviteStatusEnum::PENDING->value
         ]);
+
+        event(new EmailEvent($invite, "You are invited to Sign up in our site " . $this->user->first_name, "Invitation", $data["email"]));
+
+        Notification::make()
+            ->success()
+            ->title("Success")
+            ->body("Invitation Sent")
+            ->send();
+
 
         $this->form->fill([]);
     }
@@ -90,6 +102,7 @@ class InvitePolicyMaker extends Page implements HasTable
             )
             ->columns([
                 TextColumn::make('email')
+                    ->label("My invites")
                     ->searchable(),
                 TextColumn::make('status')
                     ->badge(),

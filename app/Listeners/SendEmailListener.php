@@ -22,15 +22,24 @@ class SendEmailListener implements ShouldQueue
      */
     public function handle(EmailEvent $event): void
     {
+        //TODO 
         \Log::info("--- Sending an email ---");
-        \Log::info("--- to " . $event->user?->email ." ---");
-        Mail::send('email.email', [
-            'recipientName' => $event->user?->first_name,
-            'messageContent' => $event->message,
-        ], function ($message) use ($event) {
-            $message->to($event->user?->email)->subject($event->subject);
-        });
+        \Log::info("--- to " . $event->user?->email . " ---");
+        if ($event->email) {
+            Mail::send('email.email', [
+                'recipientName' => "Policy Maker",
+                'messageContent' => $event->message,
+            ], function ($message) use ($event) {
+                $message->to($event->user?->email)->subject($event->subject);
+            });
+        } else {
+            Mail::send('email.email', [
+                'recipientName' => $event->user?->first_name,
+                'messageContent' => $event->message,
+            ], function ($message) use ($event) {
+                $message->to($event->user?->email)->subject($event->subject);
+            });
+        }
         \Log::info("--- Sending an email ---");
-
     }
 }
