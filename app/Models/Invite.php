@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
@@ -43,6 +44,11 @@ class Invite extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function PolicyRequest(): HasOne
+    {
+        return $this->hasOne(PolicyRequest::class);
+    }
+    
     public static function CheckExpiration()
     {
         DB::beginTransaction();

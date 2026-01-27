@@ -17,10 +17,14 @@ class PolicyRequest extends Model
         "status" => PolicyRequestEnum::class,
     ];
 
-    
+
 
     public function Admin(): BelongsTo
     {
         return $this->belongsTo(User::class, "admin_id");
+    }
+    public function Invite(): BelongsTo
+    {
+        return $this->belongsTo(Invite::class);
     }
 }

@@ -14,8 +14,13 @@ return new class extends Migration
     {
         Schema::create('policy_requests', function (Blueprint $table) {
             $table->id();
+
             $table->unsignedBigInteger("admin_id");
             $table->foreign("admin_id")->references("id")->on("users");
+
+            $table->unsignedBigInteger("invite_id");
+            $table->foreign("invite_id")->references("id")->on("invites");
+            
             $table->enum(
                 "status",
                 [
