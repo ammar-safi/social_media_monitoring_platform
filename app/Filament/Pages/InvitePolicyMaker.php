@@ -88,7 +88,7 @@ class InvitePolicyMaker extends Page implements HasTable
             "status" => InviteStatusEnum::PENDING->value
         ]);
 
-        event(new EmailEvent($invite, "You are invited to Sign up in our site " . $this->user->first_name, "Invitation", $data["email"]));
+        event(new EmailEvent($user, "You are invited to Sign up in our site " . $user->first_name, "Invitation", $data["email"]));
 
         Notification::make()
             ->success()

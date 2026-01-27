@@ -30,7 +30,7 @@ class SendEmailListener implements ShouldQueue
                 'recipientName' => "Policy Maker",
                 'messageContent' => $event->message,
             ], function ($message) use ($event) {
-                $message->to($event->user?->email)->subject($event->subject);
+                $message->to($event->email)->subject($event->subject);
             });
         } else {
             Mail::send('email.email', [
