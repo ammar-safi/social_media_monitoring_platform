@@ -26,13 +26,19 @@ class InvitePolicyMaker extends Page implements HasTable
     protected static string $view = 'filament.pages.invite-policy-maker';
     protected static ?string $navigationGroup = "Other options";
     protected static ?int $navigationSort = 2;
-
     public ?array $data = [];
 
 
     public static function canAccess(): bool
     {
         if (Filament::auth()->user()->type == UserTypeEnum::USER || Filament::auth()->user()->type == UserTypeEnum::ADMIN) {
+            return true;
+        }
+        return false;
+    }
+    public static function shouldRegisterNavigation(): bool
+    {
+        if (Filament::auth()->user()->type == UserTypeEnum::USER) {
             return true;
         }
         return false;

@@ -126,8 +126,8 @@ class UserResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
                     ->sortable()
+                    ->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([])

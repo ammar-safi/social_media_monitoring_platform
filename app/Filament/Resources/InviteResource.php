@@ -18,8 +18,8 @@ class InviteResource extends Resource
     protected static ?string $model = Invite::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-plus';
-    protected static ?string $navigationGroup = 'Users management'; 
-        protected static ?string $navigationLabel = 'Policy makers invites';
+    protected static ?string $navigationGroup = 'Users management';
+    protected static ?string $navigationLabel = 'Policy makers invites';
     protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
@@ -100,6 +100,7 @@ class InviteResource extends Resource
             'index' => Pages\ListInvites::route('/'),
             'create' => Pages\CreateInvite::route('/create'),
             'edit' => Pages\EditInvite::route('/{record}/edit'),
+            
         ];
     }
 }
