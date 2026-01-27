@@ -92,15 +92,13 @@ class UserResource extends Resource
                                 UserTypeEnum::POLICY_MAKER->value => "Policy Maker"
                             ])
                             ->default(function () {
-                                // TODO Do it better 
-                                $type = $_GET["type"] ?? null;
+                                $type = request("type") ?? null;
                                 if (
                                     $type &&
                                     in_array($type, array_keys(UserTypeEnum::asSelectArray()))
                                 ) {
                                     return $type;
                                 }
-                                
                             }),
 
 

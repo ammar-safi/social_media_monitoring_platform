@@ -5,7 +5,13 @@ namespace App\Filament\Pages;
 use App\Enums\InviteStatusEnum;
 use App\Enums\UserTypeEnum;
 use App\Events\EmailEvent;
+use App\Filament\Resources\InviteResource;
+use App\Filament\Resources\InviteResource\Pages\CreateInvite;
+use App\Filament\Resources\InviteResource\Pages\EditInvite;
+use App\Filament\Resources\InviteResource\Pages\ListInvites;
 use App\Models\Invite;
+use Carbon\Carbon;
+use Exception;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -13,11 +19,18 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Nette\Utils\Random;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Concerns\InteractsWithTable;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class InvitePolicyMaker extends Page implements HasTable
 {
@@ -69,35 +82,40 @@ class InvitePolicyMaker extends Page implements HasTable
             Action::make("send")
                 ->color("info")
                 ->label("Send Invitation")
-                ->requiresConfirmation()
-                ->modalIcon("heroicon-o-info")
-                ->modalDescription(function ($form): string {
-                    return "";
-                })
+                ->button()
                 ->submit("save")
         ];
     }
 
     public function save(): void
     {
-        $user = Filament::auth()->user();
-        $data = $this->form->getState();
+        DB::beginTransaction();
+        try {
+            $user = Filament::auth()->user();
+            $data = $this->form->getState();
+            $token = Str::random(config("app.otp_length", '5'));
+            $invite = $user->PolicyMakersThatUserInvites()->create([
+                "email" => $data["email"],
+                "status" => InviteStatusEnum::PENDING->value,
+                "token" => $token,
+            ]);
 
-        $invite = $user->PolicyMakersThatUserInvites()->create([
-            "email" => $data["email"],
-            "status" => InviteStatusEnum::PENDING->value
-        ]);
+            $message =  "You are invited to Sign up in our site " . $user->first_name . ", pleas when rejecter enter this secret code : " . $token;
+            event(new EmailEvent($user, $message, "Invitation", $data["email"]));
 
-        event(new EmailEvent($user, "You are invited to Sign up in our site " . $user->first_name, "Invitation", $data["email"]));
-
-        Notification::make()
-            ->success()
-            ->title("Success")
-            ->body("Invitation Sent")
-            ->send();
+            Notification::make()
+                ->success()
+                ->title("Success")
+                ->body("Invitation Sent")
+                ->send();
 
 
-        $this->form->fill([]);
+            $this->form->fill([]);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+        }
     }
 
     public function table(Table $table): Table
@@ -111,7 +129,37 @@ class InvitePolicyMaker extends Page implements HasTable
                     ->label("My invites")
                     ->searchable(),
                 TextColumn::make('status')
-                    ->badge(),
+                    ->badge()
+                    ->formatStateUsing(function ($state) {
+                        return InviteStatusEnum::from($state)->label();
+                    })
+                    ->color(function ($state): string {
+                        return InviteStatusEnum::from($state)->badgeColor();
+                    }),
+                TextColumn::make('expired_at')
+                    ->formatStateUsing(function ($state) {
+                        $date = Carbon::parse($state);
+                        $readable_date = $date->diffForHumans();
+                        $state = Carbon::parse($state)->format("d/M/Y");
+                        return $state . " (" .  $readable_date . ")";
+                    })
+            ])
+            ->actions([
+                ActionGroup::make([
+                    DeleteAction::make("delete"),
+                    Action::make("edit")
+                        ->color("info")
+                        ->icon("heroicon-m-pencil-square")
+                        ->url(function ($record) {
+                            return InviteResource::getUrl("edit", ['record' => $record->id]);
+                        })
+                ])
+
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
             ]);
     }
 }

@@ -4,42 +4,37 @@ namespace App\Listeners;
 
 use App\Events\EmailEvent;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class SendEmailListener implements ShouldQueue
 {
-    /**
-     * Create the event listener.
-     */
-    public function __construct()
-    {
-        //
-    }
-
-    /**
-     * Handle the event.
-     */
     public function handle(EmailEvent $event): void
     {
-        //TODO 
-        \Log::info("--- Sending an email ---");
-        \Log::info("--- to " . $event->user?->email . " ---");
-        if ($event->email) {
-            Mail::send('email.email', [
-                'recipientName' => "Policy Maker",
-                'messageContent' => $event->message,
-            ], function ($message) use ($event) {
-                $message->to($event->email)->subject($event->subject);
-            });
-        } else {
-            Mail::send('email.email', [
-                'recipientName' => $event->user?->first_name,
-                'messageContent' => $event->message,
-            ], function ($message) use ($event) {
-                $message->to($event->user?->email)->subject($event->subject);
-            });
+        $recipientEmail = $event->email ?? $event->user?->email;
+        $recipientName  = $event->email 
+            ? 'Policy Maker' 
+            : ($event->user?->first_name ?? 'User');
+
+        if (! $recipientEmail) {
+            Log::warning('Email skipped: no recipient found', [
+                'event' => EmailEvent::class,
+            ]);
+            return;
         }
-        \Log::info("--- Sending an email ---");
+
+        Log::info('Sending email', [
+            'to' => $recipientEmail,
+            'subject' => $event->subject,
+        ]);
+
+        Mail::send('email.email', [
+            'recipientName'  => $recipientName,
+            'messageContent' => $event->message,
+        ], function ($message) use ($event, $recipientEmail) {
+            $message->to($recipientEmail)->subject($event->subject);
+        });
+
+        Log::info('Email sent successfully');
     }
 }

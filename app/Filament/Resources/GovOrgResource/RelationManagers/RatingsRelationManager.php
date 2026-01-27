@@ -48,6 +48,7 @@ class RatingsRelationManager extends RelationManager
             })
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
+                    ->default("( DELETED ACCOUNT )")
                     ->icon("heroicon-o-user")
                     ->label("user name"),
                     Tables\Columns\TextColumn::make('user.type')

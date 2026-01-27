@@ -35,7 +35,7 @@ class GovOrgResource extends Resource
     protected static ?string $model = GovOrg::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-building-library';
-    protected static ?string $navigationLabel = 'Government Organizations';
+    protected static ?string $navigationLabel, $label= 'Government Organizations';
     protected static ?string $navigationGroup = 'Government management';
     protected static ?int $navigationSort = 1;
 

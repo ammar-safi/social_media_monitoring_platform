@@ -4,7 +4,7 @@ namespace App\Enums;
 
 enum InviteStatusEnum :string 
 {
-    case PENDING = 'pending';
+    case PENDING = 'pending' ;
     case USED = 'used';
     case EXPIRED = 'expired';
 

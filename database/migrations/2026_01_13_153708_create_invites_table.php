@@ -17,6 +17,7 @@ return new class extends Migration
         Schema::create('invites', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
+            $table->string("token")->require();
             $table->foreign('user_id')->references('id')->on('users');
             $table->string('email');
             $table->enum('status', [InviteStatusEnum::USED->value , InviteStatusEnum::PENDING->value , InviteStatusEnum::EXPIRED->value ])->default(InviteStatusEnum::PENDING->value);

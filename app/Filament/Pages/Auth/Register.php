@@ -90,7 +90,7 @@ class Register extends BaseRegister
             $request = ApproveUser::create([
                 "user_id" => $user->id,
                 "admin_id" => null,
-                "expired_at" => Carbon::now()->addDays(config("approve_expired", 5)),
+                "expired_at" => Carbon::now()->addDays(config("app.approve_expired", 5)),
                 "expired" => 0,
                 "status" => ApproveUserStatusEnum::PENDING,
             ]);

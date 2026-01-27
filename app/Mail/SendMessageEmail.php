@@ -24,7 +24,7 @@ class SendMessageEmail extends Mailable
 
     public function build()
     {
-        return $this->from('qosaykorde@gmail.com')->subject('new message')->view('email.email')
+        return $this->from('')->subject('new message')->view('email.email')
             ->with([
                 'messageContent' => $this->messageContent,
                 'recipientName' => $this->recipientName,
