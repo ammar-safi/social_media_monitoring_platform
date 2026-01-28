@@ -47,6 +47,12 @@ class UserObserver implements ShouldHandleEventsAfterCommit
         }
     }
 
+    public function saving(User $user)
+    {
+        if ($user->type == null) {
+            $user->type = 'user';
+        }
+    }
     /**
      * Handle the User "deleted" event.
      */

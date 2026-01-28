@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\PolicyRequestEnum;
 use App\Filament\Resources\PolicyRequestResource\Pages;
 use App\Filament\Resources\PolicyRequestResource\RelationManagers;
 use App\Models\PolicyRequest;
@@ -17,19 +18,15 @@ class PolicyRequestResource extends Resource
 {
     protected static ?string $model = PolicyRequest::class;
 
-    // protected static ?string $navigationIcon = 'heroicon-o-user-plus';
     protected static ?string $navigationGroup = 'Users management';
     protected static ?string $navigationLabel, $label = 'Policy Maker Requests';
     protected static ?int $navigationSort = 4;
-    
+
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('admin_id')
-                    ->relationship('admin', 'id')
-                    ->required(),
                 Forms\Components\TextInput::make('status')
                     ->required(),
                 Forms\Components\DateTimePicker::make('expired_at'),
@@ -40,10 +37,14 @@ class PolicyRequestResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('admin.id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('status'),
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->formatStateUsing(function ($state) {
+                        return PolicyRequestEnum::from($state)->label();
+                    })
+                    ->color(function ($state): string {
+                        return PolicyRequestEnum::from($state)->badgeColor();
+                    }),
                 Tables\Columns\TextColumn::make('expired_at')
                     ->dateTime()
                     ->sortable(),

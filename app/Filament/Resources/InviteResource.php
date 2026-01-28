@@ -31,7 +31,7 @@ class InviteResource extends Resource
     protected static ?string $model = Invite::class;
     // protected static ?string $navigationIcon = 'heroicon-o-user-plus';
     protected static ?string $navigationGroup = 'Users management';
-    protected static ?string $navigationLabel, $label = 'Policy makers invites';
+    protected static ?string $navigationLabel, $label = 'Policy maker invites';
     protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
