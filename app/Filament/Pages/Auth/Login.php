@@ -2,16 +2,19 @@
 
 namespace App\Filament\Pages\Auth;
 
-use Filament\Pages\Auth\Login as BasePage;
+use Filament\Pages\Auth\Login as BaseLogin;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Facades\Filament;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Validation\ValidationException;
 use App\Enums\UserTypeEnum;
+use Filament\Actions\Action;
 
-class Login extends BasePage
+class Login extends BaseLogin
 {
+    protected static string $view = 'filament.pages.auth.login';
+
     public function authenticate(): ?LoginResponse
     {
         try {
@@ -51,5 +54,14 @@ class Login extends BasePage
         session()->regenerate();
 
         return app(LoginResponse::class);
+    }
+
+    public function SignUpAsPolicyMakerAction(): Action
+    {
+        return Action::make('signup_as_policy_maker')
+            ->link()
+            ->label("sign up as policy maker")
+            // ->url(PolicyMakerRegister::getUrl())
+        ;
     }
 }

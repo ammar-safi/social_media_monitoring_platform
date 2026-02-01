@@ -174,7 +174,7 @@ class Profile extends Page
     {
         // Only show profile page for users who have 'show user' permission
         // This excludes Policy Makers who don't have this permission
-        return auth()->user()?->can('show user') ?? false;
+        return auth()->user()?->can('show user') ? true : false;
     }
 
 

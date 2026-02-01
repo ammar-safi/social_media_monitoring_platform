@@ -21,6 +21,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
 use App\Http\Middleware\IsUserActive;
 use App\Filament\Pages\Auth\Login;
+use App\Filament\Pages\Auth\PolicyMakerRegister;
 use Filament\Navigation\NavigationGroup;
 use App\Filament\Pages\Auth\Register;
 
