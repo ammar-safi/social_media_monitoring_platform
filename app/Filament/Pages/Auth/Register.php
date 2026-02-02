@@ -6,6 +6,7 @@ use App\Enums\ApproveUserStatusEnum;
 use App\Enums\InviteStatusEnum;
 use App\Enums\UserTypeEnum;
 use App\Filament\Resources\ApproveUserResource;
+use App\Filament\Resources\PolicyRequestResource;
 use App\Models\ApproveUser;
 use App\Models\Invite;
 use App\Models\PolicyRequest;
@@ -27,6 +28,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Auth\Register as BaseRegister;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use PhpParser\Node\Expr\FuncCall;
 
@@ -67,6 +69,157 @@ class Register extends BaseRegister
 
         return app(RegistrationResponse::class);
     }
+    protected function handleRegistration(array $data): Model
+    {
+        if (isset($data['sign_up_as_policy']) && $data["sign_up_as_policy"] == true) {
+            $data["type"] = UserTypeEnum::POLICY_MAKER->value;
+        }
+        return $this->getUserModel()::create($data);
+    }
+    public function GovRegister()
+    {
+        try {
+            $this->rateLimit(2);
+        } catch (TooManyRequestsException $exception) {
+            $this->getRateLimitedNotification($exception)?->send();
+
+            return null;
+        }
+
+        $user = $this->wrapInDatabaseTransaction(function (): Model {
+            $this->callHook('beforeValidate');
+
+            $data = $this->form->getState();
+
+            $this->callHook('afterValidate');
+
+            $data = $this->mutateFormDataBeforeRegister($data);
+
+            $this->callHook('beforeRegister');
+
+            $user = $this->handleRegistration($data);
+
+            $this->form->model($user)->saveRelationships();
+
+            $this->callHook('afterRegister');
+
+            return $user;
+        });
+        DB::beginTransaction();
+        try {
+            $request = ApproveUser::create([
+                "user_id" => $user->id,
+                "admin_id" => null,
+                "expired_at" => Carbon::now()->addDays(config("app.approve_expired", 5)),
+                "expired" => 0,
+                "status" => ApproveUserStatusEnum::PENDING,
+            ]);
+        } catch (Exception $e) {
+            DB::rollBack();
+        }
+        Notification::make()
+            ->title('New Government official')
+            ->icon("heroicon-o-user")
+            ->body($request->user?->name . " requested to verify a new account")
+            ->actions([
+                Action::make("goToRequest")
+                    ->button()
+                    ->color("primary")
+                    ->url(ApproveUserResource::getUrl('view', ['record' => $request->id]))
+                    ->markAsRead()
+            ])
+            ->sendToDatabase(User::where("type", UserTypeEnum::ADMIN->value)->first());
+        DB::commit();
+    }
+    public function PolicyRegister()
+    {
+        try {
+            $this->rateLimit(2);
+        } catch (TooManyRequestsException $exception) {
+            $this->getRateLimitedNotification($exception)?->send();
+
+            return null;
+        }
+
+
+        [$user, $invite] = $this->wrapInDatabaseTransaction(function () {
+            $this->callHook('beforeValidate');
+
+            $data = $this->form->getState();
+
+            $this->callHook('afterValidate');
+
+            $data = $this->mutateFormDataBeforeRegister($data);
+
+
+            $invite = Invite::where("email", $data["email"])->first();
+
+            if (is_null($invite)) {
+                throw ValidationException::withMessages([
+                    "data.email" => "email is not correct"
+                ]);
+            }
+
+            if ($invite->status == InviteStatusEnum::EXPIRED->value || $invite->status == InviteStatusEnum::USED->value) {
+                throw ValidationException::withMessages([
+                    "data.email" => "Your Invitation has been expired"
+                ]);
+            }
+            if ($invite->token != $data["token"]) {
+                throw ValidationException::withMessages([
+                    "data.token" => "Token is not correct"
+                ]);
+            }
+
+            $data = [
+                "type" => UserTypeEnum::POLICY_MAKER->value,
+                'first_name' => $data['first_name'],
+                'last_name' => $data['last_name'],
+                'email' => $data['email'],
+                'phone_number' => $data['phone_number'],
+                'password' => Hash::make($data['password']),
+            ];
+
+            $invite->update([
+                "status" => InviteStatusEnum::USED->value
+            ]);
+
+            $this->callHook('beforeRegister');
+
+            $user = $this->handleRegistration($data);
+
+            $this->form->model($user)->saveRelationships();
+
+            $this->callHook('afterRegister');
+
+
+
+            $request = PolicyRequest::create([
+                "invite_id" => $invite->id,
+                "admin_id" => null,
+                "expired_at" => Carbon::now()->addDays(config("app.approve_expired", 5)),
+                "status" => ApproveUserStatusEnum::PENDING,
+            ]);
+
+            Notification::make()
+                ->title('New Policy Maker')
+                ->icon("heroicon-o-user")
+                ->body($user?->name . " requested to verify a new account")
+                ->actions([
+                    Action::make("goToRequest")
+                        ->button()
+                        ->color("primary")
+                        ->url(PolicyRequestResource::getUrl('view', ['record' => $request->id]))
+                        ->markAsRead()
+                ])
+                ->sendToDatabase(User::where("type", UserTypeEnum::ADMIN->value)->first());
+            return [$user, $invite];
+        });
+    }
+
+
+
+
     public function loginAction(): ActionsAction
     {
         return ActionsAction::make('login')
@@ -147,152 +300,5 @@ class Register extends BaseRegister
             ->reactive()
             ->dehydrated(fn(callable $get) => ($get("sign_up_as_policy") ? true : False))
             ->columnSpanFull();
-    }
-
-    protected function handleRegistration(array $data): Model
-    {
-        if (isset($data['sign_up_as_policy']) && $data["sign_up_as_policy"] == true) {
-            $data["type"] = UserTypeEnum::POLICY_MAKER->value;
-
-            return $this->getUserModel()::create($data);
-        } else {
-            return $this->getUserModel()::create($data);
-        }
-    }
-    public function GovRegister()
-    {
-        try {
-            $this->rateLimit(2);
-        } catch (TooManyRequestsException $exception) {
-            $this->getRateLimitedNotification($exception)?->send();
-
-            return null;
-        }
-
-        $user = $this->wrapInDatabaseTransaction(function (): Model {
-            $this->callHook('beforeValidate');
-
-            $data = $this->form->getState();
-
-            $this->callHook('afterValidate');
-
-            $data = $this->mutateFormDataBeforeRegister($data);
-
-            $this->callHook('beforeRegister');
-
-            $user = $this->handleRegistration($data);
-
-            $this->form->model($user)->saveRelationships();
-
-            $this->callHook('afterRegister');
-
-            return $user;
-        });
-        DB::beginTransaction();
-        try {
-            $request = ApproveUser::create([
-                "user_id" => $user->id,
-                "admin_id" => null,
-                "expired_at" => Carbon::now()->addDays(config("app.approve_expired", 5)),
-                "expired" => 0,
-                "status" => ApproveUserStatusEnum::PENDING,
-            ]);
-        } catch (Exception $e) {
-            DB::rollBack();
-        }
-        Notification::make()
-            ->title('New Government official')
-            ->icon("heroicon-o-user")
-            ->body($request->user?->name . " requested to verify a new account")
-            ->actions([
-                Action::make("goToRequest")
-                    ->button()
-                    ->color("primary")
-                    ->url(ApproveUserResource::getUrl('view', ['record' => $request->id]))
-                    ->markAsRead()
-            ])
-            ->sendToDatabase(User::where("type", UserTypeEnum::ADMIN->value)->first());
-        DB::commit();
-    }
-    public function PolicyRegister()
-    {
-        try {
-            $this->rateLimit(2);
-        } catch (TooManyRequestsException $exception) {
-            $this->getRateLimitedNotification($exception)?->send();
-
-            return null;
-        }
-
-        $user = $this->wrapInDatabaseTransaction(function (): Model {
-            $this->callHook('beforeValidate');
-
-            $data = $this->form->getState();
-
-            $this->callHook('afterValidate');
-
-            $data = $this->mutateFormDataBeforeRegister($data);
-
-
-            $invite = Invite::where("email", $data["email"])->first();
-
-            if (is_null($invite)) {
-                throw ValidationException::withMessages([
-                    "data.email" => "email is not correct"
-                ]);
-            }
-
-            if ($invite->status == InviteStatusEnum::EXPIRED->value || $invite->status == InviteStatusEnum::USED->value) {
-
-                throw ValidationException::withMessages([
-                    "data.email" => "Your Invitation has been expired"
-                ]);
-            }
-            if ($invite->token != $data["token"]) {
-
-                throw ValidationException::withMessages([
-                    "data.email" => "Your Invitation has been used"
-                ]);
-            }
-
-
-
-            $data["type"] = UserTypeEnum::POLICY_MAKER->value;
-
-            $this->callHook('beforeRegister');
-
-            $user = $this->handleRegistration($data);
-
-            $this->form->model($user)->saveRelationships();
-
-            $this->callHook('afterRegister');
-
-            return $user;
-        });
-        DB::beginTransaction();
-        try {
-            $request = PolicyRequest::create([
-                "invite_id" => $user->id,
-                "admin_id" => null,
-                "expired_at" => Carbon::now()->addDays(config("app.approve_expired", 5)),
-                "expired" => 0,
-                "status" => ApproveUserStatusEnum::PENDING,
-            ]);
-        } catch (Exception $e) {
-            DB::rollBack();
-        }
-        Notification::make()
-            ->title('New Government official')
-            ->icon("heroicon-o-user")
-            ->body($request->user?->name . " requested to verify a new account")
-            ->actions([
-                Action::make("goToRequest")
-                    ->button()
-                    ->color("primary")
-                    ->url(ApproveUserResource::getUrl('view', ['record' => $request->id]))
-                    ->markAsRead()
-            ])
-            ->sendToDatabase(User::where("type", UserTypeEnum::ADMIN->value)->first());
-        DB::commit();
     }
 }

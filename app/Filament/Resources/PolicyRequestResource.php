@@ -83,6 +83,7 @@ class PolicyRequestResource extends Resource
             'index' => Pages\ListPolicyRequests::route('/'),
             'create' => Pages\CreatePolicyRequest::route('/create'),
             'edit' => Pages\EditPolicyRequest::route('/{record}/edit'),
+            'view' => Pages\ViewPolicyRequest::route('/{record}/view'),
         ];
     }
 }

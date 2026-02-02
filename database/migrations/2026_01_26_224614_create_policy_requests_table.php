@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('policy_requests', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedBigInteger("admin_id");
+            $table->unsignedBigInteger("admin_id")->nullable();
             $table->foreign("admin_id")->references("id")->on("users");
 
             $table->unsignedBigInteger("invite_id");
