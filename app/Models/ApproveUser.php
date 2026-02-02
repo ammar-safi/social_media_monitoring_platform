@@ -31,6 +31,7 @@ class ApproveUser extends Model
             'user_id' => 'integer',
             'expired_at' => 'timestamp',
             'expired' => 'boolean',
+            'status' => ApproveUserStatusEnum::class, 
         ];
     }
 

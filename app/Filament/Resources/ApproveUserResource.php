@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Enums\ApproveUserStatusEnum;
+use App\Filament\Pages\CustomResource;
 use App\Filament\Resources\ApproveUserResource\Pages;
 use App\Filament\Resources\ApproveUserResource\Pages\viewApproveUser;
 use App\Filament\Resources\ApproveUserResource\RelationManagers;
@@ -26,7 +27,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ApproveUserResource extends Resource
+class ApproveUserResource extends CustomResource
 {
     protected static ?string $model = ApproveUser::class;
 
@@ -65,14 +66,9 @@ class ApproveUserResource extends Resource
                     ->searchable()
                     ->label("last name")
                     ->sortable(),
-                Tables\Columns\TextColumn::make('expired_at')
-                    ->formatStateUsing(function ($state) {
-                        $date = Carbon::parse($state);
-                        $readable_date = $date->diffForHumans();
-                        $state = Carbon::parse($state)->format("d/M/Y");
-                        return $state . " (" .  $readable_date . ")";
-                    })
-                    ->sortable(),
+
+                parent::getDateFormattedColumn('expired_at'),
+
                 Tables\Columns\TextColumn::make('expired')
                     ->formatStateUsing(function ($state) {
                         if ($state) {

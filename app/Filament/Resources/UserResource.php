@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use Althinect\FilamentSpatieRolesPermissions\Resources\RoleResource\RelationManager\UserRelationManager;
 use App\Enums\UserTypeEnum;
+use App\Filament\Pages\CustomResource;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Filament\Resources\UserResource\RelationManagers\RatingsRelationManager;
@@ -33,7 +34,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 
-class UserResource extends Resource
+class UserResource extends CustomResource
 {
     protected static ?string $model = User::class;
 
@@ -121,14 +122,7 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('phone_number')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('type')
-                    ->formatStateUsing(function ($state) {
-                        return $state->label();
-                    })
-                    ->badge()
-                    ->color(function ($state): string {
-                        return $state->badgeColor();
-                    }),
+                parent::getStatusColumn("type"),
                 Tables\Columns\IconColumn::make('active')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')

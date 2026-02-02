@@ -3,9 +3,11 @@
 namespace App\Filament\Resources;
 
 use App\Enums\PolicyRequestEnum;
+use App\Filament\Pages\CustomResource;
 use App\Filament\Resources\PolicyRequestResource\Pages;
 use App\Filament\Resources\PolicyRequestResource\RelationManagers;
 use App\Models\PolicyRequest;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,7 +16,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class PolicyRequestResource extends Resource
+class PolicyRequestResource extends CustomResource
 {
     protected static ?string $model = PolicyRequest::class;
 
@@ -37,22 +39,24 @@ class PolicyRequestResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('policyMaker.name')
+                    ->default("( DELETED ACCOUNT )")
+                    ->label("Policy maker name"),
+                Tables\Columns\TextColumn::make('govWhoInvitePolicy.name')
+                    ->default("( DELETED ACCOUNT )")
+                    ->label("Invited by"),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->formatStateUsing(function ($state) {
-                        return PolicyRequestEnum::from($state)->label();
+                        return $state->label();
                     })
                     ->color(function ($state): string {
-                        return PolicyRequestEnum::from($state)->badgeColor();
+                        return $state->badgeColor();
                     }),
-                Tables\Columns\TextColumn::make('expired_at')
-                    ->dateTime()
-                    ->sortable(),
+
+                parent::getDateFormattedColumn("expired_at"),
+
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

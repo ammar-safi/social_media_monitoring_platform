@@ -18,6 +18,9 @@ return new class extends Migration
             $table->unsignedBigInteger("admin_id")->nullable();
             $table->foreign("admin_id")->references("id")->on("users");
 
+            $table->unsignedBigInteger("policy_id")->nullable();
+            $table->foreign("policy_id")->references("id")->on("users");
+
             $table->unsignedBigInteger("invite_id");
             $table->foreign("invite_id")->references("id")->on("invites");
             

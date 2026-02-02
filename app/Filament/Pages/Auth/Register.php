@@ -193,9 +193,9 @@ class Register extends BaseRegister
             $this->callHook('afterRegister');
 
 
-
             $request = PolicyRequest::create([
                 "invite_id" => $invite->id,
+                "policy_id" => $user->id,
                 "admin_id" => null,
                 "expired_at" => Carbon::now()->addDays(config("app.approve_expired", 5)),
                 "status" => ApproveUserStatusEnum::PENDING,
@@ -213,13 +213,10 @@ class Register extends BaseRegister
                         ->markAsRead()
                 ])
                 ->sendToDatabase(User::where("type", UserTypeEnum::ADMIN->value)->first());
+
             return [$user, $invite];
         });
     }
-
-
-
-
     public function loginAction(): ActionsAction
     {
         return ActionsAction::make('login')
@@ -227,7 +224,6 @@ class Register extends BaseRegister
             ->label("already have an account")
             ->url(filament()->getLoginUrl());
     }
-
     public function getFirstNameInput()
     {
         return

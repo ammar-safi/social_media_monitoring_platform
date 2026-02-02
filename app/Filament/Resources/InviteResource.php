@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\InviteStatusEnum;
 use App\Enums\UserTypeEnum;
+use App\Filament\Pages\CustomResource;
 use App\Filament\Resources\InviteResource\Pages;
 use App\Filament\Resources\InviteResource\RelationManagers;
 use App\Models\Invite;
@@ -26,7 +27,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class InviteResource extends Resource
+class InviteResource extends CustomResource
 {
     protected static ?string $model = Invite::class;
     // protected static ?string $navigationIcon = 'heroicon-o-user-plus';
@@ -72,13 +73,7 @@ class InviteResource extends Resource
                     ->color(function ($state): string {
                         return InviteStatusEnum::from($state)->badgeColor();
                     }),
-                Tables\Columns\TextColumn::make('expired_at')
-                    ->formatStateUsing(function ($state) {
-                        $date = Carbon::parse($state);
-                        $readable_date = $date->diffForHumans();
-                        $state = Carbon::parse($state)->format("d/M/Y");
-                        return $state . " (" .  $readable_date . ")";
-                    }),
+                parent::getDateFormattedColumn("expired_at"),
                 Tables\Columns\IconColumn::make('expired')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
