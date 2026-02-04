@@ -4,6 +4,7 @@ namespace App\Console;
 
 use App\Models\ApproveUser;
 use App\Models\Invite;
+use App\Models\PolicyRequest;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -17,9 +18,14 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             ApproveUser::CheckExpiration(); 
         })->daily();
+
         $schedule->call(function () {
             Invite::CheckExpiration();
-        })->everyMinute();
+        })->daily();
+        
+        $schedule->call(function () {
+            PolicyRequest::CheckExpiration();
+        })->daily();
     }
 
     /**

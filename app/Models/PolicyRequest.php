@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\PolicyRequestEnum;
 use App\Events\EmailEvent;
+use Carbon\Carbon;
 use Exception;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -54,8 +55,7 @@ class PolicyRequest extends Model
         try {
             \Log::info("approving to all users");
             $requests = Self::query()
-                ->where("status", ApproveUserStatusEnum::PENDING->value)
-                ->where("expired", 0)
+                ->where("status", PolicyRequestEnum::PENDING->value)
                 ->where("expired_at", ">", Carbon::now())
                 ->get();
 
@@ -100,7 +100,7 @@ class PolicyRequest extends Model
         try {
 
             $this->update([
-                'status' => ApproveUserStatusEnum::APPROVED->value,
+                'status' => PolicyRequestEnum::APPROVED->value,
                 'admin_id' => Filament::auth()->user()->id,
             ]);
 
@@ -125,11 +125,11 @@ class PolicyRequest extends Model
         try {
             $requests = self::query()
                 ->where("expired_at", "<", Carbon::now())
-                ->where("status", ApproveUserStatusEnum::PENDING->value)
+                ->where("status", PolicyRequestEnum::PENDING->value)
                 ->get();
             foreach ($requests as $request) {
                 $request->update([
-                    "expired" => 1,
+                    "status" => PolicyRequestEnum::EXPIRED->value,
                 ]);
             }
             DB::commit();
