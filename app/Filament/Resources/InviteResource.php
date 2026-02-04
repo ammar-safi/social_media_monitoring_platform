@@ -136,8 +136,8 @@ class InviteResource extends CustomResource
                             }),
 
                     ]),
-                Section::make("Request by")
-                    ->icon("heroicon-o-user")
+                Section::make("Requested by")
+                    ->icon("heroicon-m-user")
                     ->columns(3)
                     ->schema([
                         TextEntry::make('user.name')

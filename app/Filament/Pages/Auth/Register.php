@@ -38,6 +38,7 @@ use PhpParser\Node\Expr\FuncCall;
 class Register extends BaseRegister
 {
     protected static string $view = 'filament.pages.auth.register';
+    
     public function form(Form $form): Form
     {
         return $form

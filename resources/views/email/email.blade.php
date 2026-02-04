@@ -34,10 +34,10 @@
                         <!-- Body -->
                         <tr>
                             <td class="email-body">
-                                <h3>
-                                    <p> Hello {{ $recipientName }}</p>
-                                </h3>
-                                <p>{{ $messageContent }}</p>
+                                <h2>
+                                    <b> Hello {{ $recipientName }}</b>
+                                </h2>
+                                <h3>{{ $messageContent }}</h3>
                             </td>
                         </tr>
 

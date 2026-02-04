@@ -100,7 +100,7 @@ class InvitePolicyMaker extends Page implements HasTable
                 "token" => $token,
             ]);
 
-            $message =  "You are invited to Sign up in our site " . $user->first_name . ", pleas when rejecter enter this secret code : " . $token;
+            $message =  "You have been invited to Sign up in our site by " . $user->first_name . ", Use this secret code when you sign up : " . $token;
             event(new EmailEvent($user, $message, "Invitation", $data["email"]));
 
             Notification::make()
