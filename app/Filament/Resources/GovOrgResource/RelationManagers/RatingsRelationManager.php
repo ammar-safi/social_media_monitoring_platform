@@ -49,7 +49,14 @@ class RatingsRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
                     ->default("( DELETED ACCOUNT )")
-                    ->icon("heroicon-o-user")
+                    ->icon(function ($record) {
+                        if ($record->user->type == UserTypeEnum::USER) {
+                            return 'heroicon-o-user';
+                        }
+                        if ($record->user->type == UserTypeEnum::POLICY_MAKER) {
+                            return 'heroicon-m-user';
+                        }
+                    })
                     ->label("user name"),
                     Tables\Columns\TextColumn::make('user.type')
                     ->label("user type")

@@ -10,8 +10,11 @@ use App\Models\PolicyRequest;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -41,7 +44,10 @@ class PolicyRequestResource extends CustomResource
             ->columns([
                 Tables\Columns\TextColumn::make('policyMaker.name')
                     ->default("( DELETED ACCOUNT )")
-                    ->label("Policy maker name"),
+                    ->label("name"),
+                Tables\Columns\TextColumn::make('policyMaker.email')
+                    ->default("( DELETED ACCOUNT )")
+                    ->label("email"),
                 Tables\Columns\TextColumn::make('govWhoInvitePolicy.name')
                     ->default("( DELETED ACCOUNT )")
                     ->label("Invited by"),
@@ -65,7 +71,77 @@ class PolicyRequestResource extends CustomResource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Action::make("approve")
+                    ->button()
+                    ->requiresConfirmation()
+                    ->color("primary")
+                    ->action(function (PolicyRequest $policy_request, $record) {
+                        if ($policy_request->approve()) {
+                            Notification::make()
+                                ->success()
+                                ->icon("heroicon-o-check-circle")
+                                ->title("Approved")
+                                ->body("account approved and an email sent to " . $record->policyMaker?->first_name)
+                                ->send();
+                        } else {
+
+                            Notification::make()
+                                ->warning()
+                                ->title("Error")
+                                ->body("pleas try again")
+                                ->send();
+                        }
+                    })
+                    ->hidden(function ($record) {
+                        if ($record->status != PolicyRequestEnum::PENDING) {
+                            return true;
+                        }
+                        return false;
+                    }),
+                ActionGroup::make([
+                    Action::make("reject")
+                        ->icon("heroicon-o-x-circle")
+                        ->requiresConfirmation()
+                        ->modalIconColor("warning")
+                        ->modalIcon("heroicon-o-no-symbol")
+                        ->color("gray")
+                        ->action(function (PolicyRequest $policy_request, $record) {
+                            if ($policy_request->reject()) {
+                                Notification::make()
+                                    ->danger()
+                                    ->icon("heroicon-o-x-circle")
+                                    ->title("Rejected")
+                                    ->body("account rejected and an email sent to " . $record->user?->first_name)
+                                    ->send();
+                            } else {
+                                Notification::make()
+                                    ->warning()
+                                    ->title("Error")
+                                    ->body("pleas try again")
+                                    ->send();
+                            }
+                        })
+                        ->hidden(function ($record) {
+                            if ($record->status != PolicyRequestEnum::PENDING) {
+                                return true;
+                            }
+                            return false;
+                        }),
+                    Action::make("delete")
+                        ->requiresConfirmation()
+                        ->modalIconColor("danger")
+                        ->modalIcon("heroicon-o-trash")
+                        ->color("danger")
+                        ->icon("heroicon-o-trash")
+                        ->action(function ($record) {
+                            $record->delete();
+                            Notification::make()
+                                ->success()
+                                ->title("the request deleted successfully")
+                                ->send();
+                        })
+                ])
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

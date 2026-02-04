@@ -50,6 +50,8 @@ class MainRoles extends Seeder
         "create rating",
         "update rating",
         "delete rating",
+        
+        "show organization",
 
         "show comment",
         "create comment",
