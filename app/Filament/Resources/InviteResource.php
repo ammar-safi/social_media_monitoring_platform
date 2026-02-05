@@ -126,8 +126,7 @@ class InviteResource extends CustomResource
                                 return InviteStatusEnum::from($state)->badgeColor();
                             }),
                         TextEntry::make('expired_at')
-                            //TODO ايقونة روزناما
-                            // ->icon('heroicon-o-date')
+                            ->icon('heroicon-o-calendar')
                             ->formatStateUsing(function ($state) {
                                 $date = Carbon::parse($state);
                                 $readable_date = $date->diffForHumans();

@@ -55,7 +55,6 @@ class viewApproveUser extends ViewRecord
                 ->modalIconColor("danger")
                 ->modalIcon("heroicon-o-trash")
                 ->color("gray")
-                // ->icon("heroicon-o-trash")
                 ->action(function ($record) {
                     $record->delete();
                     Notification::make()
