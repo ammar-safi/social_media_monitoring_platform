@@ -98,7 +98,7 @@ class ApproveUser extends Model
         try {
 
             $this->update([
-                'status' => ApproveUserStatusEnum::APPROVED->value,
+                'status' => ApproveUserStatusEnum::REJECTED->value,
                 'admin_id' => Filament::auth()->user()->id,
             ]);
 

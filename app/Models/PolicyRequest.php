@@ -33,7 +33,7 @@ class PolicyRequest extends Model
     {
         return $this->belongsTo(Invite::class);
     }
-    public function GovWhoInvitePolicy(): HasOneThrough
+    public function UserWhoInvitePolicy(): HasOneThrough
     {
         return $this->hasOneThrough(
             User::class,
@@ -100,11 +100,11 @@ class PolicyRequest extends Model
         try {
 
             $this->update([
-                'status' => PolicyRequestEnum::APPROVED->value,
+                'status' => PolicyRequestEnum::REJECTED->value,
                 'admin_id' => Filament::auth()->user()->id,
             ]);
 
-            $user = User::find($this->user_id);
+            $user = User::find($this->policy_id);
 
             if ($user) {
                 DB::commit();

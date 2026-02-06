@@ -12,7 +12,7 @@ enum UserTypeEnum :string
     {
         return match ($this) {
             self::ADMIN => 'admin',
-            self::USER => 'user',
+            self::USER => 'government official',
             self::POLICY_MAKER => 'policy maker',
         };
     }

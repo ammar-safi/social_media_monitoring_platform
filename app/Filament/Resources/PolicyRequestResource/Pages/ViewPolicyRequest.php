@@ -26,7 +26,7 @@ class ViewPolicyRequest extends ViewRecord
                             ->success()
                             ->icon("heroicon-o-check-circle")
                             ->title("Approved")
-                            ->body("account approved and an email sent to " . $record->user?->first_name)
+                            ->body("account approved and an email sent to " . $record->PolicyMaker?->first_name)
                             ->send();
                     } else {
 
@@ -70,7 +70,7 @@ class ViewPolicyRequest extends ViewRecord
                             ->danger()
                             ->icon("heroicon-o-x-circle")
                             ->title("Rejected")
-                            ->body("account rejected and an email sent to " . $record->user?->first_name)
+                            ->body("account rejected and an email sent to " . $record->PolicyMaker?->first_name)
                             ->send();
                     } else {
                         Notification::make()

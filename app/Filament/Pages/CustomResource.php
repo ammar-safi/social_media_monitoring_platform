@@ -2,14 +2,18 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Resources\UserResource;
 use Carbon\Carbon;
+use Closure;
+use Filament\Infolists\Components\Actions\Action as ActionsAction;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Notifications\Actions\Action;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 
 class CustomResource extends Resource
 {
-    public static function getDateFormattedColumn($column)
+    public static function getDateFormattedColumn(String $column)
     {
         return
             TextColumn::make($column)
@@ -22,7 +26,7 @@ class CustomResource extends Resource
         ;
     }
 
-    public static function getStatusColumn($column)
+    public static function getStatusColumn(String $column)
     {
         return
             TextColumn::make($column)
@@ -38,7 +42,7 @@ class CustomResource extends Resource
 
 
 
-    public static function getDateFormattedEntry($column)
+    public static function getDateFormattedEntry(String $column)
     {
         return
             TextEntry::make($column)
@@ -50,7 +54,7 @@ class CustomResource extends Resource
             })
         ;
     }
-    public static function getStatusEntry($column)
+    public static function getStatusEntry(String $column)
     {
         return
             TextEntry::make($column)
@@ -60,7 +64,8 @@ class CustomResource extends Resource
             })
             ->color(function ($state): string {
                 return $state->badgeColor();
-            })
-        ;
+            });
     }
+
+    
 }

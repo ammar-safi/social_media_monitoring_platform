@@ -185,11 +185,7 @@ class UserResource extends CustomResource
                     ->columns(3)
                     ->icon("heroicon-o-information-circle")
                     ->schema([
-                        TextEntry::make("type")
-                            ->badge()
-                            ->color(function ($state): string {
-                                return UserTypeEnum::from($state->value)->badgeColor();
-                            }),
+                        parent::getStatusEntry("type"),
                         IconEntry::make('active')
                             ->label("Account active")
                             ->boolean(),

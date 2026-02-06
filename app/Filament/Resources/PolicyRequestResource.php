@@ -3,10 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Enums\PolicyRequestEnum;
+use App\Enums\UserTypeEnum;
 use App\Filament\Pages\CustomResource;
 use App\Filament\Resources\PolicyRequestResource\Pages;
 use App\Models\PolicyRequest;
 use Filament\Actions\Action as ActionsAction;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Actions\Action as InfoListAction;
@@ -63,20 +65,19 @@ class PolicyRequestResource extends CustomResource
                 Tables\Columns\TextColumn::make('policyMaker.email')
                     ->default("( DELETED ACCOUNT )")
                     ->label("email"),
-                Tables\Columns\TextColumn::make('govWhoInvitePolicy.name')
+                Tables\Columns\TextColumn::make('UserWhoInvitePolicy.name')
                     ->default("( DELETED ACCOUNT )")
                     ->label("Invited by")
                     ->searchable(
                         query: function ($query, string $search) {
-                            return $query->whereHas("govWhoInvitePolicy", function ($q) use ($search) {
+                            return $query->whereHas("UserWhoInvitePolicy", function ($q) use ($search) {
                                 return $q
                                     ->where("first_name", "LIKE", "%" . $search . "%")
                                     ->orWhere("last_name", "LIKE", "%" . $search . "%")
                                 ;
                             });
                         }
-                    )
-                    ,
+                    ),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->formatStateUsing(function ($state) {
@@ -218,27 +219,34 @@ class PolicyRequestResource extends CustomResource
                     ->columns(3)
                     ->icon("heroicon-o-user-plus")
                     ->schema([
-                        TextEntry::make('govWhoInvitePolicy.name')
+                        TextEntry::make('UserWhoInvitePolicy.name')
                             ->default("( DELETED ACCOUNT )")
                             ->icon("heroicon-o-identification")
                             ->label("User name"),
-                        TextEntry::make('govWhoInvitePolicy.email')
+                        TextEntry::make('UserWhoInvitePolicy.email')
                             ->default("( DELETED ACCOUNT )")
                             ->icon("heroicon-o-envelope")
                             ->label("Email"),
-                        TextEntry::make('govWhoInvitePolicy.phone_number')
+                        TextEntry::make('UserWhoInvitePolicy.phone_number')
                             ->default("( DELETED ACCOUNT )")
                             ->icon("heroicon-o-phone")
                             ->label("Phone number"),
+                        parent::getStatusEntry("UserWhoInvitePolicy.type")
+                            ->label("type")
+
                     ])
                     ->headerActions([
                         InfoListAction::make("view account")
                             ->color("gray")
                             ->url(function ($record) {
-                                if ($record->govWhoInvitePolicy) {
-                                    return UserResource::getUrl("view", ["record" => $record->govWhoInvitePolicy?->id]);
+                                if (
+                                    $record->UserWhoInvitePolicy &&
+                                    $record->UserWhoInvitePolicy->id != Filament::auth()->user()?->id
+                                ) {
+                                    return UserResource::getUrl("view", ["record" => $record->UserWhoInvitePolicy?->id]);
                                 }
                             })
+
                     ]),
             ]);
     }

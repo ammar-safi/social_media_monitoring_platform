@@ -145,12 +145,9 @@ class InviteResource extends CustomResource
                         TextEntry::make('user.email')
                             ->default("( DELETED ACCOUNT )")
                             ->label("Email"),
-                        TextEntry::make('user.type')
-                            ->label("Type")
-                            ->badge()
-                            ->color(function ($state) {
-                                return $state->badgeColor();
-                            })
+                        parent::getStatusEntry("user.type")
+                            ->label("Type"),
+
                     ])
                     ->headerActions([
                         InfoListAction::make("view account")
