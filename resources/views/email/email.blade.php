@@ -35,7 +35,7 @@
                         <tr>
                             <td class="email-body">
                                 <h2>
-                                    <b> Hello {{ $recipientName }}</b>
+                                    <b> Hello {{ $ }}</b>
                                 </h2>
                                 <h3>{{ $messageContent }}</h3>
                             </td>
@@ -44,7 +44,7 @@
                         <!-- Footer -->
                         <tr>
                             <td class="email-footer">
-                                <p>for more info , contact us : </p>
+          recipientName                      <p>for more info , contact us : </p>
                                 <p>
                                     ammar.ahmed.safi@gmail.com
                                 </p>
