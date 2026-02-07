@@ -23,6 +23,7 @@ class NotifyUserListener implements ShouldQueue
             $event->email,
             $event->subject,
             $event->message,
+            $event->view,
         ));
         Log::info('Email sent successfully');
     }
