@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Enums\InviteStatusEnum;
 use App\Enums\UserTypeEnum;
 use App\Events\EmailEvent;
+use App\Events\InvitePolicyMakerEvent;
 use App\Filament\Resources\InviteResource;
 use App\Filament\Resources\InviteResource\Pages\CreateInvite;
 use App\Filament\Resources\InviteResource\Pages\EditInvite;
@@ -101,8 +102,12 @@ class InvitePolicyMaker extends Page implements HasTable
             ]);
 
             $message =  "You have been invited to Sign up in our site by " . $user->first_name . ", Use this secret code when you sign up : " . $token;
-            event(new EmailEvent($user, $message, "Invitation", $data["email"]));
-
+            event(new InvitePolicyMakerEvent(
+                user_name: $user->name,
+                email: $data["email"],
+                subject: "Invitation",
+                message: $message,
+            ));
             Notification::make()
                 ->success()
                 ->title("Success")

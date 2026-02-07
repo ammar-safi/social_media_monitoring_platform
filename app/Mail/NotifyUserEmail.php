@@ -18,6 +18,7 @@ class NotifyUserEmail extends Mailable
     public $email;
     public $subject;
     public $message;
+    public $view;
 
 
     /**
@@ -27,12 +28,14 @@ class NotifyUserEmail extends Mailable
         $user_name,
         $email,
         $subject,
-        $message
+        $message,
+        $view
     ) {
         $this->user_name = $user_name;
         $this->email = $email;
         $this->subject = $subject;
         $this->message = $message;
+        $this->view = $view;
     }
 
     /**
@@ -51,7 +54,7 @@ class NotifyUserEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'email.notify_user',
+            view: 'email.' . $this->view,
         );
     }
 
