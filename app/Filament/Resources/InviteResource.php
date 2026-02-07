@@ -65,6 +65,13 @@ class InviteResource extends CustomResource
                 Tables\Columns\TextColumn::make('email')
                     ->label("policy maker email")
                     ->searchable(),
+                Tables\Columns\TextColumn::make('token')
+                    ->label("Secret code")
+                    ->copyable()
+                    ->icon("heroicon-o-document-duplicate")
+                    ->copyMessage("copied")
+                    ->copyMessageDuration(15000)
+                    ,
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->formatStateUsing(function ($state) {

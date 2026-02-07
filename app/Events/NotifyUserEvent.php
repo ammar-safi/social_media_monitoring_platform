@@ -30,6 +30,6 @@ class NotifyUserEvent
         $this->email = $email;
         $this->subject = $subject;
         $this->message = $message;
-        $this->view = "notify_user";
+        $this->view = "notify-user";
     }
 }

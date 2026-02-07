@@ -19,18 +19,20 @@ class InvitePolicyMakerEvent
     public $subject;
     public $message;
     public $view;
+    public $otp;
 
     public function __construct(
         $email,
         $subject,
         $message,
         $user_name = "Policy Maker",
-
+        $otp
     ) {
         $this->user_name = $user_name;
         $this->email = $email;
         $this->subject = $subject;
         $this->message = $message;
-        $this->view = "invite_policy_maker";
+        $this->view = "invite-policy-maker";
+        $this->otp = $otp;
     }
 }

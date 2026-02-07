@@ -9,7 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class InvitePolicyMakerListener
+class InvitePolicyMakerListener implements ShouldQueue
 {
     public function handle(InvitePolicyMakerEvent $event): void
     {
@@ -18,11 +18,12 @@ class InvitePolicyMakerListener
             'subject' => $event->subject,
         ]);
         Mail::to($event->email)->send(new NotifyUserEmail(
-            $event->user_name,
-            $event->email,
-            $event->subject,
-            $event->message,
-            $event->view
+            user_name: $event->user_name,
+            email: $event->email,
+            subject: $event->subject,
+            message: $event->message,
+            view: $event->view,
+            otp: $event->otp
         ));
         Log::info('Email sent successfully');
     }

@@ -21,6 +21,7 @@ class NotifyUserEmail extends Mailable
     public $_message;
     public $_view;
     public $_sender;
+    public $_otp;
 
 
     /**
@@ -31,7 +32,8 @@ class NotifyUserEmail extends Mailable
         $email,
         $subject,
         $message,
-        $view
+        $view,
+        $otp = null
     ) {
         $this->_user_name = $user_name;
         $this->_email = $email;
@@ -39,6 +41,7 @@ class NotifyUserEmail extends Mailable
         $this->_message = $message;
         $this->_view = $view;
         $this->_sender = $this->appName();
+        $this->_otp = $otp;
 
         Log::info("data", [
             "user_name" => $this->_user_name,
@@ -46,6 +49,7 @@ class NotifyUserEmail extends Mailable
             "message" => $this->_message,
             "view" => $this->_view,
             "sender" => $this->_sender,
+            $this->_otp = $otp,
         ]);
     }
 
@@ -70,8 +74,8 @@ class NotifyUserEmail extends Mailable
                 "_user_name" => $this->_user_name,
                 "_email" => $this->_email,
                 "_message" => $this->_message,
-                "_view" => $this->_view,
                 "_sender" => $this->_sender,
+                "_otp" => $this->_otp,
             ]
         );
     }
