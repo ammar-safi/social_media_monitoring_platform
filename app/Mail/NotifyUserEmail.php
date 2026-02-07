@@ -9,17 +9,18 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class NotifyUserEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $user_name;
-    public $email;
-    public $subject;
-    public $message;
-    public $view;
-    public $sender;
+    public $_user_name;
+    public $_email;
+    public $_subject;
+    public $_message;
+    public $_view;
+    public $_sender;
 
 
     /**
@@ -32,12 +33,20 @@ class NotifyUserEmail extends Mailable
         $message,
         $view
     ) {
-        $this->user_name = $user_name;
-        $this->email = $email;
-        $this->subject = $subject;
-        $this->message = $message;
-        $this->view = $view;
-        $this->sender = $this->appName();
+        $this->_user_name = $user_name;
+        $this->_email = $email;
+        $this->_subject = $subject;
+        $this->_message = $message;
+        $this->_view = $view;
+        $this->_sender = $this->appName();
+
+        Log::info("data", [
+            "user_name" => $this->_user_name,
+            "email" => $this->_email,
+            "message" => $this->_message,
+            "view" => $this->_view,
+            "sender" => $this->_sender,
+        ]);
     }
 
     /**
@@ -46,7 +55,7 @@ class NotifyUserEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->subject,
+            subject: $this->_subject,
         );
     }
 
@@ -56,14 +65,13 @@ class NotifyUserEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'email.' . $this->view,
+            view: 'email.' . $this->_view,
             with: [
-                "user_name" => $this->user_name,
-                "email" => $this->email,
-                "subject" => $this->subject,
-                "message" => $this->message,
-                "view" => $this->view,
-                "sender" => $this->sender,
+                "_user_name" => $this->_user_name,
+                "_email" => $this->_email,
+                "_message" => $this->_message,
+                "_view" => $this->_view,
+                "_sender" => $this->_sender,
             ]
         );
     }

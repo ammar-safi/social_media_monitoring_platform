@@ -5,19 +5,6 @@
         <table>
             {{-- 
             
-                --- Header --
-            
-            --}}
-            <tr>
-                <td>
-                    <h1>
-                        A new message from {{ $sender }}
-                    </h1>
-                </td>
-            </tr>
-
-            {{-- 
-            
                 --- Body --
             
             --}}
@@ -25,7 +12,11 @@
                 <td>
                     <p style="font-size:1.2em ">
                         <b>
-                            Hello {{ $user_name }} , {{ $message }}
+                            Hello {{ $_user_name }}
+                           
+                            <br>
+                           
+                            {{ $_message }}
                         </b>
                     </p>
                 </td>
@@ -40,6 +31,8 @@
             <tr>
                 <td>
                     <p style="color: gray">
+                        from : {{ $_sender }}
+                        <br>
                         for more info , contact us :
                         <br>
                         ammar.ahmed.safi@gmail.com

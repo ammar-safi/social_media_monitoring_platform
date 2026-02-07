@@ -13,7 +13,6 @@ class NotifyUserListener implements ShouldQueue
 {
     public function handle(NotifyUserEvent $event): void
     {
-
         Log::info('Sending email', [
             'to' => $event->email,
             'subject' => $event->subject,
