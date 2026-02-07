@@ -19,7 +19,8 @@ class ApproveToAllUsersEvent
     /**
      * Create a new event instance.
      */
-    public function __construct(int $admin_id) {
+    public function __construct(int $admin_id)
+    {
         $this->admin_id = $admin_id;
     }
 }

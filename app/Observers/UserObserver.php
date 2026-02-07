@@ -3,7 +3,6 @@
 namespace App\Observers;
 
 use App\Enums\UserTypeEnum;
-use App\Events\EmailEvent;
 use App\Events\NotifyUserEvent;
 use App\Models\User;
 use Filament\Notifications\Notification;

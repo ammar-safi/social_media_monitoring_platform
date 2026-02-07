@@ -4,7 +4,6 @@ namespace App\Filament\Pages;
 
 use App\Enums\InviteStatusEnum;
 use App\Enums\UserTypeEnum;
-use App\Events\EmailEvent;
 use App\Events\InvitePolicyMakerEvent;
 use App\Filament\Resources\InviteResource;
 use App\Filament\Resources\InviteResource\Pages\CreateInvite;
