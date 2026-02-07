@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Enums\PolicyRequestEnum;
-use App\Events\EmailEvent;
+use App\Events\NotifyUserEvent;
 use Carbon\Carbon;
 use Exception;
 use Filament\Facades\Filament;
@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PolicyRequest extends Model
 {
@@ -53,7 +54,7 @@ class PolicyRequest extends Model
     {
         DB::beginTransaction();
         try {
-            \Log::info("approving to all users");
+            Log::info("approving to all users");
             $requests = Self::query()
                 ->where("status", PolicyRequestEnum::PENDING->value)
                 ->where("expired_at", ">", Carbon::now())
@@ -84,13 +85,18 @@ class PolicyRequest extends Model
                 ]);
 
                 DB::commit();
-                event(new EmailEvent($user, "Happy news !!  your account has been verified , you can access our site now", "Account approved"));
+                event(new NotifyUserEvent(
+                    user_name: $user->name,
+                    email: $user->email,
+                    subject: "Account approved",
+                    message: "Happy news !!  your account has been verified , you can access our site now"
+                ));
                 return true;
             }
             return false;
         } catch (Exception $e) {
             DB::rollBack();
-            \Log::info($e->getMessage());
+            Log::info($e->getMessage());
             return false;
         }
     }
@@ -108,14 +114,21 @@ class PolicyRequest extends Model
 
             if ($user) {
                 DB::commit();
-                event(new EmailEvent($user, "We have Bad news for you ,  your account has been rejected", "Account rejected"));
+
+                event(new NotifyUserEvent(
+                    user_name: $user->name,
+                    email: $user->email,
+                    subject: "Account rejected",
+                    message: "Bad news ,  your account has been rejected"
+                ));
+
                 return true;
             }
             DB::rollBack();
             return false;
         } catch (Exception $e) {
             DB::rollBack();
-            \Log::info($e->getMessage());
+            Log::info($e->getMessage());
             return false;
         }
     }
@@ -135,7 +148,7 @@ class PolicyRequest extends Model
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
-            \Log::info($e->getMessage());
+            Log::info($e->getMessage());
         }
     }
 }

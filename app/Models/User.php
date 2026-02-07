@@ -16,7 +16,6 @@ use Spatie\Permission\Traits\HasRoles;
 use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
 use App\Enums\UserRoleEnum;
 use App\Enums\UserTypeEnum;
-use App\Events\EmailEvent;
 use Exception;
 use Filament\Forms;
 use Filament\Notifications\Notification;

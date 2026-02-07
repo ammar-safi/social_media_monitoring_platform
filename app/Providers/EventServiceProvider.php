@@ -4,12 +4,14 @@ namespace App\Providers;
 
 use App\Events\ApproveToAllUsersEvent;
 use App\Events\EmailEvent;
+use App\Events\NotifyUserEvent;
 use App\Listeners\SendEmailListener;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
 use App\Listeners\ApproveToAllUsersListener;
+use App\Listeners\NotifyUserListener;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -29,6 +31,9 @@ class EventServiceProvider extends ServiceProvider
             ApproveToAllUsersListener::class,
         ],
 
+        NotifyUserEvent::class => [
+            NotifyUserListener::class,
+        ]
     ];
 
     /**

@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ApproveUserStatusEnum;
-use App\Events\EmailEvent;
+use App\Events\NotifyUserEvent;
 use Carbon\Carbon;
 use Exception;
 use Filament\Facades\Filament;
@@ -31,7 +31,7 @@ class ApproveUser extends Model
             'user_id' => 'integer',
             'expired_at' => 'timestamp',
             'expired' => 'boolean',
-            'status' => ApproveUserStatusEnum::class, 
+            'status' => ApproveUserStatusEnum::class,
         ];
     }
 
@@ -82,7 +82,12 @@ class ApproveUser extends Model
                 ]);
 
                 DB::commit();
-                event(new EmailEvent($user, "Happy news !!  your account has been verified , you can access our site now", "Account approved"));
+                event(new NotifyUserEvent(
+                    user_name: $user->name,
+                    email: $user->email,
+                    subject: "Account approved",
+                    message: "Happy news !!  your account has been verified , you can access our site now"
+                ));
                 return true;
             }
             return false;
@@ -106,7 +111,12 @@ class ApproveUser extends Model
 
             if ($user) {
                 DB::commit();
-                event(new EmailEvent($user, "We have Bad news for you ,  your account has been rejected", "Account rejected"));
+                event(new NotifyUserEvent(
+                    user_name: $user->name,
+                    email: $user->email,
+                    subject: "Account rejected",
+                    message: "Bad news,  your account has been rejected"
+                ));
                 return true;
             }
             DB::rollBack();

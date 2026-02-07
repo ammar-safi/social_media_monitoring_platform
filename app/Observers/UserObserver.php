@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Enums\UserTypeEnum;
 use App\Events\EmailEvent;
+use App\Events\NotifyUserEvent;
 use App\Models\User;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
@@ -30,7 +31,12 @@ class UserObserver implements ShouldHandleEventsAfterCommit
             && $user->isDirty("active")
         ) {
             $message = "your account was reactivate";
-            event(new EmailEvent($user, $message, "Reactivate"));
+            event(new NotifyUserEvent(
+                user_name: $user->name,
+                email: $user->email,
+                subject: "Reactivate",
+                message: $message
+            ));
             Notification::make()
                 ->success()
                 ->icon("heroicon-o-check-circle")
