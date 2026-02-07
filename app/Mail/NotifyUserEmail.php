@@ -19,6 +19,7 @@ class NotifyUserEmail extends Mailable
     public $subject;
     public $message;
     public $view;
+    public $sender;
 
 
     /**
@@ -36,6 +37,7 @@ class NotifyUserEmail extends Mailable
         $this->subject = $subject;
         $this->message = $message;
         $this->view = $view;
+        $this->sender = $this->appName();
     }
 
     /**
@@ -55,6 +57,14 @@ class NotifyUserEmail extends Mailable
     {
         return new Content(
             view: 'email.' . $this->view,
+            with: [
+                "user_name" => $this->user_name,
+                "email" => $this->email,
+                "subject" => $this->subject,
+                "message" => $this->message,
+                "view" => $this->view,
+                "sender" => $this->sender,
+            ]
         );
     }
 
@@ -66,5 +76,17 @@ class NotifyUserEmail extends Mailable
     public function attachments(): array
     {
         return [];
+    }
+
+    public function appName(): string
+    {
+        $app_name_camel_case = config('app.name');
+        $app_name_split_in_array = preg_split(
+            "/(?<=[a-z])(?=[A-Z])/",
+            $app_name_camel_case
+        );
+        $app_name = implode(' ', $app_name_split_in_array);
+        $app_name = ucfirst($app_name);
+        return $app_name;
     }
 }
