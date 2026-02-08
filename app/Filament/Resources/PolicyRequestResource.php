@@ -183,7 +183,7 @@ class PolicyRequestResource extends CustomResource
             ->schema([
                 Section::make("Policy maker information")
                     ->icon("heroicon-o-information-circle")
-                    ->columns(4)
+                    ->columns(2)
                     ->schema([
                         TextEntry::make('policyMaker.name')
                             ->default("( DELETED ACCOUNT )")
@@ -192,6 +192,8 @@ class PolicyRequestResource extends CustomResource
                         TextEntry::make('policyMaker.email')
                             ->default("( DELETED ACCOUNT )")
                             ->icon("heroicon-o-envelope")
+                            // ->limit(20)
+                            // ->tooltip(fn($record) => $record?->policyMaker?->email)
                             ->label("Email"),
                         TextEntry::make('policyMaker.phone_number')
                             ->default("( DELETED ACCOUNT )")
@@ -216,7 +218,7 @@ class PolicyRequestResource extends CustomResource
                     ]),
 
                 Section::make("Invited by")
-                    ->columns(3)
+                    ->columns(2)
                     ->icon("heroicon-o-user-plus")
                     ->schema([
                         TextEntry::make('UserWhoInvitePolicy.name')

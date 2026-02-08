@@ -80,7 +80,6 @@ class InvitePolicyMaker extends Page implements HasTable
     {
         return [
             Action::make("send")
-                ->color("info")
                 ->label("Send Invitation")
                 ->button()
                 ->submit("save")
@@ -102,7 +101,6 @@ class InvitePolicyMaker extends Page implements HasTable
 
             $message =  "You have been invited to Sign up in our site by " . $user->first_name . ", Use this secret code when you sign up : ";
             event(new InvitePolicyMakerEvent(
-                user_name: $user->name,
                 email: $data["email"],
                 subject: "Invitation",
                 message: $message,

@@ -25,8 +25,8 @@ class InvitePolicyMakerEvent
         $email,
         $subject,
         $message,
+        $otp,
         $user_name = "Policy Maker",
-        $otp
     ) {
         $this->user_name = $user_name;
         $this->email = $email;

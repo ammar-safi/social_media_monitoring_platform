@@ -157,7 +157,7 @@ class Register extends BaseRegister
 
             if (is_null($invite)) {
                 throw ValidationException::withMessages([
-                    "data.email" => "email is not correct"
+                    "data.email" => "incorrect email"
                 ]);
             }
 
@@ -168,7 +168,7 @@ class Register extends BaseRegister
             }
             if ($invite->token != $data["token"]) {
                 throw ValidationException::withMessages([
-                    "data.token" => "Token is not correct"
+                    "data.token" => "incorrect Token"
                 ]);
             }
 
@@ -286,7 +286,7 @@ class Register extends BaseRegister
             ->dehydrated(fn(callable $get) => !($get("sign_up_as_policy") ? False : true))
             ->required()
             ->markAsRequired(False)
-            ->hint("this token was sent to your email")
+            ->hint("this is the secret code that sent to your email")
             ->columnSpanFull();
     }
     public function getPolicyCheckInput()
