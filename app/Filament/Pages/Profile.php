@@ -11,6 +11,7 @@ use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Hash;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Group;
 use Illuminate\Validation\Rules\Password;
 use Livewire\Features\SupportFileUploads\FileUploadConfiguration;
 use Symfony\Component\Console\Color;
@@ -64,6 +65,7 @@ class Profile extends Page
             ->schema([
                 Forms\Components\Section::make('Basic Information')
                     ->description('Update your basic profile information.')
+                    ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('first_name')
                             ->label('First Name')
@@ -86,15 +88,16 @@ class Profile extends Page
                             ->tel()
                             ->required()
                             ->maxLength(255),
-                    ])
-                    ->columns(2),
+                    ]),
 
                 Forms\Components\Section::make('Change Password')
                     ->description('Update your password. Leave blank to keep current password.')
+                    ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('current_password')
                             ->label('Current Password')
                             ->password()
+                            ->columnSpanFull()
                             ->revealable()
                             ->dehydrated(false)
                             ->required(fn($get) => filled($get('password')))
@@ -121,7 +124,6 @@ class Profile extends Page
                             ->required(fn($get) => filled($get('password')))
                             ->same('password'),
                     ])
-                    ->columns(1),
             ])
             ->statePath('data')
             ->model(auth()->user());
