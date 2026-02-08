@@ -31,4 +31,7 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'analysis' => env("ANALYSIS_SERVICE"),
+    'analysis_timeout'=> env('ANALYSIS_SERVICE' , 30),
+
 ];
