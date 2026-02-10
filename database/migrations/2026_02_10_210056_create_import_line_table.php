@@ -11,17 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-        Schema::create('posts', function (Blueprint $table) {
+        Schema::create('import_line', function (Blueprint $table) {
             $table->id();
-            $table->text('content');
-            $table->string('platform')->nullable();
-            $table->string('account')->nullable();
+            $table->integer("line");
             $table->timestamps();
-            $table->softDeletes();
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -29,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('posts');
+        Schema::dropIfExists('import_line');
     }
 };
