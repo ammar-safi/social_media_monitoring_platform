@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Jobs\ExtractPostsJob;
 use App\Models\ApproveUser;
 use App\Models\Invite;
 use App\Models\PolicyRequest;
@@ -16,16 +17,18 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->call(function () {
-            ApproveUser::CheckExpiration(); 
+            ApproveUser::CheckExpiration();
         })->daily();
 
         $schedule->call(function () {
             Invite::CheckExpiration();
         })->daily();
-        
+
         $schedule->call(function () {
             PolicyRequest::CheckExpiration();
         })->daily();
+
+        $schedule->job(new ExtractPostsJob)->daily();
     }
 
     /**
