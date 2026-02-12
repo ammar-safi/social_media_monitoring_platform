@@ -28,7 +28,7 @@ class UserFactory extends Factory
             'first_name' => fake()->firstName(),
             "last_name" => fake()->lastName(),
             "phone_number" => fake()->phoneNumber(),
-            "type" => [UserTypeEnum::USER , UserTypeEnum::POLICY_MAKER][rand(0,1)],
+            "type" => [UserTypeEnum::USER->value , UserTypeEnum::POLICY_MAKER->value][rand(0,1)],
             "active" => rand(0,1),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),

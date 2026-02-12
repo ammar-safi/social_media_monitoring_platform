@@ -18,6 +18,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -131,6 +132,17 @@ class InvitePolicyMaker extends Page implements HasTable
                 TextColumn::make('email')
                     ->label("My invites")
                     ->searchable(),
+                // TODO 
+                TextColumn::make('token')
+                    ->label("Secret code")
+                    ->hidden(fn() => Filament::auth()->user()->type != UserTypeEnum::ADMIN)
+                    ->copyable()
+                    ->icon("heroicon-o-document-duplicate")
+                    ->copyMessage("copied")
+                    ->iconPosition(IconPosition::After)
+                    ->copyMessageDuration(15000),
+
+
                 TextColumn::make('status')
                     ->badge()
                     ->formatStateUsing(function ($state) {

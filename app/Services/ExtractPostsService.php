@@ -2,12 +2,25 @@
 
 namespace App\Services;
 
+use App\Models\Hashtag;
 use Exception;
+use Illuminate\Support\Collection;
 
 class ExtractPostsService
 {
     public function extractPosts(string $path, array $hashtags, int $start_line): array
     {
+        /*
+            TODO 
+
+            Validate the array , it have to be like this :
+            [
+                (int) id => (string) Hashtag,
+                (int) id => (string) Hashtag,
+                (int) id => (string) Hashtag,
+                (int) id => (string) Hashtag
+            ] 
+        */
         $posts = [];
         $start_line = $start_line ?? 0;
         if (empty($hashtags)) {
@@ -33,10 +46,11 @@ class ExtractPostsService
             }
             $post = $row[$index];
 
-            $has_hashtag = $this->DoseItContainHashtag($post, $hashtags);
-            if ($has_hashtag) {
+            $has_hashtag = $this->ExtractHashtag($post, $hashtags);
+            if (!empty($has_hashtag)) {
                 $posts[] = [
-                    "content" => $post
+                    "content" => $post,
+                    "hashtags" => $has_hashtag
                 ];
                 $collected++;
             }
@@ -55,10 +69,15 @@ class ExtractPostsService
         return $data;
     }
 
-    private function DoseItContainHashtag(string $post, array $hashtags): bool
+    private function ExtractHashtag(string $post, array $hashtags): array
     {
         $escaped = array_map('preg_quote', $hashtags);
-        $pattern = "/(" . implode("|", $escaped) . ")\b/i";
-        return preg_match($pattern, $post);
+        $extract_hashtags = [];
+        foreach ($escaped as $key => $hashtag) {
+            if (preg_match("/(" . $hashtag . ")\b/i", $post)) {
+                $extract_hashtags[] = $key;
+            }
+        }
+        return $extract_hashtags;
     }
 }

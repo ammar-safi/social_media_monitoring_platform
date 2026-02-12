@@ -28,6 +28,7 @@ class ExtractPostsJob implements ShouldQueue
      */
     public function handle(ExtractPostsService $extract_posts): void
     {
+        DB::beginTransaction();
         try {
 
             /**
@@ -38,11 +39,12 @@ class ExtractPostsJob implements ShouldQueue
              * 5 - save it in the data base 
              * 6 - in another job , classification (sync with post -> Governments)
              */
-
+            Log::info("Extracting post ...");
             $path = storage_path("app/posts/twitter_posts.csv");
             if (!file_exists($path)) {
                 throw new Exception("No CSV File");
             }
+
             $start_line = ImportLine::firstOrCreate(
                 ["id" => 1],
                 ["line" => 0]
@@ -50,21 +52,42 @@ class ExtractPostsJob implements ShouldQueue
             if (!$start_line) {
                 throw new Exception("Error with import line from DB");
             }
-            $hashtags = Hashtag::all()->pluck("name")->toArray();
+
+            $hashtags = Hashtag::all()->pluck("name", "id")->toArray();
             if (empty($hashtags)) {
                 throw new Exception("There is no hashtags");
             }
+
+            Log::info("Reading the csv file ...");
+
             $extracted_posts = $extract_posts->extractPosts($path, $hashtags, $start_line->line);
-            if (!empty($extracted_posts["posts"])) {
-                Post::insert($extracted_posts["posts"]);
-            }
+
+            $this->insert($extracted_posts["posts"]);
+
             $start_line->update([
                 'line' => $extracted_posts["current_line"]
             ]);
+
+            DB::commit();
         } catch (Exception $e) {
+            DB::rollBack();
             Log::error("Error in extraction posts", [
                 'error' => $e->getMessage()
             ]);
+        }
+    }
+
+    protected function insert($collection)
+    {
+        if (!empty($collection)) {
+            Log::info("inserting post ...");
+            foreach ($collection as $item) {
+                $post = Post::create([
+                    "content" =>
+                    $item['content']
+                ]);
+                $post->Hashtags()->attach($item["hashtags"]);
+            }
         }
     }
 }

@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
             app(ExpirationService::class)->CheckExpirationForPolicyRequest();
         })->daily();
 
-        $schedule->job(new ExtractPostsJob)->daily();
+        $schedule->job(new ExtractPostsJob);
     }
 
     /**

@@ -17,6 +17,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
@@ -65,12 +66,15 @@ class InviteResource extends CustomResource
                 Tables\Columns\TextColumn::make('email')
                     ->label("policy maker email")
                     ->searchable(),
+                    //TODO
                 Tables\Columns\TextColumn::make('token')
                     ->label("Secret code")
                     ->copyable()
                     ->icon("heroicon-o-document-duplicate")
                     ->copyMessage("copied")
                     ->copyMessageDuration(15000)
+                    ->iconPosition(IconPosition::After)
+
                     ,
                 Tables\Columns\TextColumn::make('status')
                     ->badge()

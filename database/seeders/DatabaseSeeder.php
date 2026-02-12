@@ -32,6 +32,16 @@ class DatabaseSeeder extends Seeder
         // ApproveUser::factory(10)->create();
         // GovOrg::factory(10)->create();
         // Hashtag::factory(10)->create();
+        Hashtag::insert([
+            [
+                "name" => "facebook",
+                "user_id" => 1
+            ],
+            [
+                "name" => "twitter",
+                "user_id" => 1
+            ]
+        ]);
         // Post::factory(10)->create();
         // HashtagPost::factory(10)->create();
         // Invite::factory(10)->create();
