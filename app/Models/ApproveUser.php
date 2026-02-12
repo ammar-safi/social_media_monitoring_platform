@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Livewire\Features\SupportConsoleCommands\Commands\Upgrade\ThirdPartyUpgradeNotice;
 use Spatie\FlareClient\Flare;
 
@@ -48,9 +49,8 @@ class ApproveUser extends Model
 
     public function approveAll($admin_id = null)
     {
-        DB::beginTransaction();
         try {
-            \Log::info("approving to all users");
+            Log::info("approving to all users");
             $requests = Self::query()
                 ->where("status", ApproveUserStatusEnum::PENDING->value)
                 ->where("expired", 0)
@@ -58,16 +58,13 @@ class ApproveUser extends Model
                 ->get();
 
             $requests->each->approve($admin_id);
-
-            DB::commit();
         } catch (Exception $e) {
-            DB::rollBack();
+            Log::info($e->getMessage());
         }
     }
 
     public function approve($admin_id = null): bool
     {
-        DB::beginTransaction();
         try {
             $this->update([
                 'status' => ApproveUserStatusEnum::APPROVED->value,
@@ -81,7 +78,6 @@ class ApproveUser extends Model
                     "active" => 1
                 ]);
 
-                DB::commit();
                 event(new NotifyUserEvent(
                     user_name: $user->name,
                     email: $user->email,
@@ -92,16 +88,13 @@ class ApproveUser extends Model
             }
             return false;
         } catch (Exception $e) {
-            DB::rollBack();
-            \Log::info($e->getMessage());
+            Log::info($e->getMessage());
             return false;
         }
     }
     public function reject(): bool
     {
-        DB::beginTransaction();
         try {
-
             $this->update([
                 'status' => ApproveUserStatusEnum::REJECTED->value,
                 'admin_id' => Filament::auth()->user()->id,
@@ -110,7 +103,6 @@ class ApproveUser extends Model
             $user = User::find($this->user_id);
 
             if ($user) {
-                DB::commit();
                 event(new NotifyUserEvent(
                     user_name: $user->name,
                     email: $user->email,
@@ -119,31 +111,10 @@ class ApproveUser extends Model
                 ));
                 return true;
             }
-            DB::rollBack();
             return false;
         } catch (Exception $e) {
-            DB::rollBack();
-            \Log::info($e->getMessage());
+            Log::info($e->getMessage());
             return false;
-        }
-    }
-    public static function CheckExpiration()
-    {
-        DB::beginTransaction();
-        try {
-            $requests = self::query()
-                ->where("expired_at", "<", Carbon::now())
-                ->where("status", ApproveUserStatusEnum::PENDING->value)
-                ->get();
-            foreach ($requests as $request) {
-                $request->update([
-                    "expired" => 1,
-                ]);
-            }
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollBack();
-            \Log::info($e->getMessage());
         }
     }
 }

@@ -38,7 +38,7 @@ use PhpParser\Node\Expr\FuncCall;
 class Register extends BaseRegister
 {
     protected static string $view = 'filament.pages.auth.register';
-    
+
     public function form(Form $form): Form
     {
         return $form
@@ -245,7 +245,11 @@ class Register extends BaseRegister
             TextInput::make("email")
             ->unique("users", "email")
             ->markAsRequired(False)
-            ->hint("Enter the invited email")
+            ->hint(
+                fn(callable $get) => $get("sign_up_as_policy")
+                    ? "Enter the invited email"
+                    : null
+            )
             ->required();
     }
     public function getPhoneNumberInput()

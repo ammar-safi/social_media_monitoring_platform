@@ -6,6 +6,7 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -25,9 +26,16 @@ class GovOrg extends Model
         ];
     }
 
-    public function Posts(): HasMany
+    public function Posts(): BelongsToMany
     {
-        return $this->HasMany(Post::class, "gov_org_id");
+        return $this->belongsToMany(
+            Post::class,
+            "post_id",
+            "gov_post",
+            "gov_org_id",
+            "id",
+            "id"
+        );
     }
     public function Ratings(): HasMany
     {

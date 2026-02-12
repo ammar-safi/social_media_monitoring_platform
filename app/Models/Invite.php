@@ -48,24 +48,5 @@ class Invite extends Model
     {
         return $this->hasOne(PolicyRequest::class);
     }
-    
-    public static function CheckExpiration()
-    {
-        DB::beginTransaction();
-        try {
-            $requests = self::query()
-                ->where("expired_at", "<", Carbon::now())
-                ->where("status", InviteStatusEnum::PENDING->value)
-                ->get();
-            foreach ($requests as $request) {
-                $request->update([
-                    "status" => InviteStatusEnum::EXPIRED->value,
-                ]);
-            }
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollBack();
-            \Log::info($e->getMessage());
-        }
-    }
+
 }

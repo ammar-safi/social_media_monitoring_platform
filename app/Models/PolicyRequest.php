@@ -52,7 +52,6 @@ class PolicyRequest extends Model
 
     public function approveAll($admin_id = null)
     {
-        DB::beginTransaction();
         try {
             Log::info("approving to all users");
             $requests = Self::query()
@@ -61,16 +60,13 @@ class PolicyRequest extends Model
                 ->get();
 
             $requests->each->approve($admin_id);
-
-            DB::commit();
         } catch (Exception $e) {
-            DB::rollBack();
+            Log::info($e->getMessage());
         }
     }
 
     public function approve($admin_id = null): bool
     {
-        DB::beginTransaction();
         try {
             $this->update([
                 'status' => PolicyRequestEnum::APPROVED->value,
@@ -84,7 +80,6 @@ class PolicyRequest extends Model
                     "active" => 1
                 ]);
 
-                DB::commit();
                 event(new NotifyUserEvent(
                     user_name: $user->name,
                     email: $user->email,
@@ -95,14 +90,11 @@ class PolicyRequest extends Model
             }
             return false;
         } catch (Exception $e) {
-            DB::rollBack();
             Log::info($e->getMessage());
-            return false;
         }
     }
     public function reject(): bool
     {
-        DB::beginTransaction();
         try {
 
             $this->update([
@@ -113,8 +105,6 @@ class PolicyRequest extends Model
             $user = User::find($this->policy_id);
 
             if ($user) {
-                DB::commit();
-
                 event(new NotifyUserEvent(
                     user_name: $user->name,
                     email: $user->email,
@@ -124,31 +114,10 @@ class PolicyRequest extends Model
 
                 return true;
             }
-            DB::rollBack();
             return false;
         } catch (Exception $e) {
-            DB::rollBack();
             Log::info($e->getMessage());
             return false;
-        }
-    }
-    public static function CheckExpiration()
-    {
-        DB::beginTransaction();
-        try {
-            $requests = self::query()
-                ->where("expired_at", "<", Carbon::now())
-                ->where("status", PolicyRequestEnum::PENDING->value)
-                ->get();
-            foreach ($requests as $request) {
-                $request->update([
-                    "status" => PolicyRequestEnum::EXPIRED->value,
-                ]);
-            }
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollBack();
-            Log::info($e->getMessage());
         }
     }
 }
