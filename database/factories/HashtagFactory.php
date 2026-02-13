@@ -22,6 +22,7 @@ class HashtagFactory extends Factory
     public function definition(): array
     {
         return [
+            'uuid' => Str::uuid(),
             'name' => fake()->word(),
             "user_id" => User::factory()
         ];

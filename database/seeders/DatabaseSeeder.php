@@ -15,6 +15,7 @@ use App\Models\Rating;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -34,10 +35,12 @@ class DatabaseSeeder extends Seeder
         // Hashtag::factory(10)->create();
         Hashtag::insert([
             [
+                'uuid' => Str::uuid(),
                 "name" => "facebook",
                 "user_id" => 1
             ],
             [
+                'uuid' => Str::uuid(),
                 "name" => "twitter",
                 "user_id" => 1
             ]

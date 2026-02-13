@@ -22,6 +22,7 @@ class ExtractPostsService
             ] 
         */
         $posts = [];
+        $matched_hashtags = [];
         $start_line = $start_line ?? 0;
         if (empty($hashtags)) {
             throw new Exception("There is no hashtags");
@@ -48,10 +49,10 @@ class ExtractPostsService
 
             $has_hashtag = $this->ExtractHashtag($post, $hashtags);
             if (!empty($has_hashtag)) {
-                $posts[] = [
-                    "content" => $post,
-                    "hashtags" => $has_hashtag
-                ];
+                $posts[] = $post;
+                $matched_hashtags[] = 
+                "hashtags" => $has_hashtag
+
                 $collected++;
             }
             $current_line++;

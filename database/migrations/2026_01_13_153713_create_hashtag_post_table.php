@@ -15,12 +15,8 @@ return new class extends Migration
 
         Schema::create('hashtag_post', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('hashtag_id');
-            $table->foreign('hashtag_id')->references('id')->on('hashtags');
-            $table->unsignedBigInteger('post_id');
-            $table->foreign('post_id')->references('id')->on('posts');
-            $table->timestamps();
-            $table->softDeletes();
+            $table->foreignUuid('hashtag_uuid')->references('uuid')->on('hashtags');
+            $table->foreignUuid('post_uuid')->references('uuid')->on('posts');
         });
 
         Schema::enableForeignKeyConstraints();

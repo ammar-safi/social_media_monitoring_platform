@@ -22,6 +22,7 @@ class Post extends Model
     {
         return [
             'id' => 'integer',
+            'uuid' => 'string',
             'gov_org_id' => 'integer',
         ];
     }
@@ -45,6 +46,6 @@ class Post extends Model
 
     public function Hashtags(): BelongsToMany
     {
-        return $this->belongsToMany(Hashtag::class, "hashtag_post", "post_id", "hashtag_id");
+        return $this->belongsToMany(Hashtag::class, "hashtag_post", "post_uuid", "hashtag_uuid" , "uuid" , "uuid");
     }
 }

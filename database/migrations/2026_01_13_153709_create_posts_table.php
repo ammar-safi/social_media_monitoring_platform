@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::disableForeignKeyConstraints();
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
+            $table->uuid()->unique();
             $table->text('content');
             $table->string('platform')->nullable();
             $table->string('account')->nullable();

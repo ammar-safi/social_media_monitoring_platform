@@ -20,12 +20,14 @@ class Hashtag extends Model
     {
         return [
             'id' => 'integer',
+            'uuid' => 'string',
+            'name' => 'string',
         ];
     }
 
     public function Posts(): BelongsToMany
     {
-        return $this->belongsToMany(Post::class, "hashtag_post", "hashtag_id", "post_id");
+        return $this->belongsToMany(Post::class, "hashtag_post", "hashtag_uuid", "post_uuid" , "uuid" , "uuid");
     }
     public function User(): BelongsTo
     {

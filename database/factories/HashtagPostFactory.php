@@ -23,8 +23,8 @@ class HashtagPostFactory extends Factory
     public function definition(): array
     {
         return [
-            'hashtag_id' => Hashtag::factory(),
-            'post_id' => Post::factory(),
+            'hashtag_uuid' => Hashtag::factory(),
+            'post_uuid' => Post::factory(),
         ];
     }
 }
