@@ -39,7 +39,7 @@ class ExtractPostsService
                 continue;
             }
 
-            $index = env("COMMENT_POSITION_IN_CSV", 3);
+            $index = config("app.cursor_position");
             if (!isset($row[$index])) {
                 $current_line++;
                 continue;

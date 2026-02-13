@@ -28,7 +28,6 @@ class ExtractPostsJob implements ShouldQueue
      */
     public function handle(ExtractPostsService $extract_posts): void
     {
-        DB::beginTransaction();
         try {
 
             /**
@@ -62,18 +61,18 @@ class ExtractPostsJob implements ShouldQueue
 
             $extracted_posts = $extract_posts->extractPosts($path, $hashtags, $start_line->line);
 
-            $this->insert($extracted_posts["posts"]);
+            DB::transaction(function () use ($extracted_posts, $start_line) {
+                $this->insert($extracted_posts["posts"]);
 
-            $start_line->update([
-                'line' => $extracted_posts["current_line"]
-            ]);
-
-            DB::commit();
+                $start_line->update([
+                    'line' => $extracted_posts["current_line"]
+                ]);
+            });
         } catch (Exception $e) {
-            DB::rollBack();
             Log::error("Error in extraction posts", [
                 'error' => $e->getMessage()
             ]);
+            throw $e;
         }
     }
 
@@ -83,8 +82,7 @@ class ExtractPostsJob implements ShouldQueue
             Log::info("inserting post ...");
             foreach ($collection as $item) {
                 $post = Post::create([
-                    "content" =>
-                    $item['content']
+                    "content" => $item['content']
                 ]);
                 $post->Hashtags()->attach($item["hashtags"]);
             }

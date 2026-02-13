@@ -197,7 +197,7 @@ return [
     | 'expired' => 5 days
     */
 
-    'approve_expired' => env("APPROVE_EXPIRED" , '5'),
+    'approve_expired' => env("APPROVE_EXPIRED", '5'),
 
     /*
     |--------------------------------------------------------------------------
@@ -205,6 +205,15 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'otp_length' => env("OTP_LENGTH" , '5')
+    'otp_length' => env("OTP_LENGTH", '5'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cursor position in csv file 
+    |--------------------------------------------------------------------------
+    | This key specifies the line where the extraction process takes place in the CSV file.    
+    |--------------------------------------------------------------------------
+    */
+    'cursor_position' => env("CURSOR_POSITION_IN_CSV", 3)
 
 ];
