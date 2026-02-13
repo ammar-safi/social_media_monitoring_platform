@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Hashtag;
+use App\Models\HashtagPost;
 use App\Models\ImportLine;
 use App\Models\Post;
 use App\Services\ExtractPostsService;
@@ -52,7 +53,7 @@ class ExtractPostsJob implements ShouldQueue
                 throw new Exception("Error with import line from DB");
             }
 
-            $hashtags = Hashtag::all()->pluck("name", "id")->toArray();
+            $hashtags = Hashtag::all()->pluck("name", "uuid")->toArray();
             if (empty($hashtags)) {
                 throw new Exception("There is no hashtags");
             }
@@ -62,7 +63,12 @@ class ExtractPostsJob implements ShouldQueue
             $extracted_posts = $extract_posts->extractPosts($path, $hashtags, $start_line->line);
 
             DB::transaction(function () use ($extracted_posts, $start_line) {
-                $this->insert($extracted_posts["posts"]);
+
+                if (!empty($extracted_posts)) {
+                    Log::info("inserting post ...");
+                    Post::insert($extracted_posts["data"]['posts']);
+                    HashtagPost::insert($extracted_posts["data"]["post_hashtag"]);
+                }
 
                 $start_line->update([
                     'line' => $extracted_posts["current_line"]
@@ -73,19 +79,6 @@ class ExtractPostsJob implements ShouldQueue
                 'error' => $e->getMessage()
             ]);
             throw $e;
-        }
-    }
-
-    protected function insert($collection)
-    {
-        if (!empty($collection)) {
-            Log::info("inserting post ...");
-            foreach ($collection as $item) {
-                $post = Post::create([
-                    "content" => $item['content']
-                ]);
-                $post->Hashtags()->attach($item["hashtags"]);
-            }
         }
     }
 }

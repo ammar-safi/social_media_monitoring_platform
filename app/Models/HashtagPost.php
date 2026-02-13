@@ -19,18 +19,18 @@ class HashtagPost extends Model
     {
         return [
             'id' => 'integer',
-            'hashtag_id' => 'integer',
-            'post_id' => 'integer',
+            'hashtag_uuid' => 'string',
+            'post_uuid' => 'string',
         ];
     }
 
     public function hashtag(): BelongsTo
     {
-        return $this->belongsTo(Hashtag::class);
+        return $this->belongsTo(Hashtag::class, "uuid", "hashtag_uuid");
     }
 
     public function post(): BelongsTo
     {
-        return $this->belongsTo(Post::class);
+        return $this->belongsTo(Post::class, "uuid", "post_uuid");
     }
 }

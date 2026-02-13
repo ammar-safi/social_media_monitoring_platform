@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Hashtag;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class ExtractPostsService
 {
@@ -47,12 +48,19 @@ class ExtractPostsService
             }
             $post = $row[$index];
 
-            $has_hashtag = $this->ExtractHashtag($post, $hashtags);
-            if (!empty($has_hashtag)) {
-                $posts[] = $post;
-                $matched_hashtags[] = 
-                "hashtags" => $has_hashtag
-
+            $hashtags_uuid = $this->ExtractHashtag($post, $hashtags);
+            if (!empty($hashtags_uuid)) {
+                $post_uuid = Str::uuid();
+                foreach ($hashtags_uuid as $hashtag_uuid) {
+                    $posts[] = [
+                        'content' => $post,
+                        'uuid' => $post_uuid
+                    ];
+                    $matched_hashtags[] = [
+                        'post_uuid' => $post_uuid,
+                        'hashtag_uuid' => $hashtag_uuid
+                    ];
+                }
                 $collected++;
             }
             $current_line++;
@@ -65,7 +73,10 @@ class ExtractPostsService
 
         $data = [
             "current_line" => $current_line,
-            "posts" => $posts
+            "data" => [
+                "posts" => $posts,
+                "post_hashtag" => $matched_hashtags
+            ]
         ];
         return $data;
     }
@@ -73,12 +84,12 @@ class ExtractPostsService
     private function ExtractHashtag(string $post, array $hashtags): array
     {
         $escaped = array_map('preg_quote', $hashtags);
-        $extract_hashtags = [];
-        foreach ($escaped as $key => $hashtag) {
+        $extracted_hashtags_uuid = [];
+        foreach ($escaped as $uuid => $hashtag) {
             if (preg_match("/(" . $hashtag . ")\b/i", $post)) {
-                $extract_hashtags[] = $key;
+                $extracted_hashtags_uuid[] = $uuid;
             }
         }
-        return $extract_hashtags;
+        return $extracted_hashtags_uuid;
     }
 }
