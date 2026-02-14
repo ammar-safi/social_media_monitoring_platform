@@ -1,61 +1,61 @@
-models:
-    # User:
-    #     id: id
-    #     first_name: string
-    #     last_name: string
-    #     user_name: string
-    #     password: string
-    #     email: string
-    #     phone_number: string
-    #     type: enum:"admin","user","policy_maker" default:"user"
-    #     active: boolean default:"0"
-    ApproveUser:
-        id: id
-        admin_id: unsignedBigInteger nullable foreign:users.id
-        user_id: unsignedBigInteger foreign:users.id
-        expired_at: timestamp
-        expired: boolean default:"0"
-        status: enum:"pending","approved","rejected" default:"pending"
-        softDeletes
-    Invite:
-        id: id
-        token: string
-        user_id: unsignedBigInteger foreign:users.id
-        email: string
-        status: enum:"pending","approved","rejected" default:"pending"
-        expired_at: timestamp nullable
-        expired: boolean default:"0"
-        softDeletes
-    Post:
-        id: id
-        content: text
-        platform: string nullable
-        account: string nullable
-        gov_org_id: unsignedBigInteger foreign:gov_org.id
-        softDeletes
-    GovOrg:
-        id: id
-        name: string
-        email: string nullable
-        softDeletes
-    Analysi:
-        id: id
-        post_id: unsignedBigInteger foreign:posts.id
-        sentiment: enum:"positive","negative","normal" nullable
-        stance: enum:"supportive","against" nullable
-        softDeletes
-    Hashtag:
-        id: id
-        name: string
-        softDeletes
-    HashtagPost:
-        id: id
-        hashtag_id: unsignedBigInteger foreign:hashtags.id
-        post_id: unsignedBigInteger foreign:posts.id
-        softDeletes
-    Rating:
-        id: id
-        user_id: unsignedBigInteger foreign:users.id
-        rating: unsignedBigInteger
-        comment: text nullable
-        softDeletes
+# models:
+#     # User:
+#     #     id: id
+#     #     first_name: string
+#     #     last_name: string
+#     #     user_name: string
+#     #     password: string
+#     #     email: string
+#     #     phone_number: string
+#     #     type: enum:"admin","user","policy_maker" default:"user"
+#     #     active: boolean default:"0"
+#     ApproveUser:
+#         id: id
+#         admin_id: unsignedBigInteger nullable foreign:users.id
+#         user_id: unsignedBigInteger foreign:users.id
+#         expired_at: timestamp
+#         expired: boolean default:"0"
+#         status: enum:"pending","approved","rejected" default:"pending"
+#         softDeletes
+#     Invite:
+#         id: id
+#         token: string
+#         user_id: unsignedBigInteger foreign:users.id
+#         email: string
+#         status: enum:"pending","approved","rejected" default:"pending"
+#         expired_at: timestamp nullable
+#         expired: boolean default:"0"
+#         softDeletes
+#     Post:
+#         id: id
+#         content: text
+#         platform: string nullable
+#         account: string nullable
+#         gov_org_id: unsignedBigInteger foreign:gov_org.id
+#         softDeletes
+#     GovOrg:
+#         id: id
+#         name: string
+#         email: string nullable
+#         softDeletes
+#     Analysi:
+#         id: id
+#         post_id: unsignedBigInteger foreign:posts.id
+#         sentiment: enum:"positive","negative","normal" nullable
+#         stance: enum:"supportive","against" nullable
+#         softDeletes
+#     Hashtag:
+#         id: id
+#         name: string
+#         softDeletes
+#     HashtagPost:
+#         id: id
+#         hashtag_id: unsignedBigInteger foreign:hashtags.id
+#         post_id: unsignedBigInteger foreign:posts.id
+#         softDeletes
+#     Rating:
+#         id: id
+#         user_id: unsignedBigInteger foreign:users.id
+#         rating: unsignedBigInteger
+#         comment: text nullable
+#         softDeletes

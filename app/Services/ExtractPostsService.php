@@ -11,17 +11,6 @@ class ExtractPostsService
 {
     public function extractPosts(string $path, array $hashtags, int $start_line): array
     {
-        /*
-            TODO 
-
-            Validate the array , it have to be like this :
-            [
-                (int) id => (string) Hashtag,
-                (int) id => (string) Hashtag,
-                (int) id => (string) Hashtag,
-                (int) id => (string) Hashtag
-            ] 
-        */
         $posts = [];
         $matched_hashtags = [];
         $start_line = $start_line ?? 0;
