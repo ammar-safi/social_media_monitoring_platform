@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Pages\CustomResource;
 use App\Filament\Resources\HashtagResource\Pages;
 use App\Filament\Resources\HashtagResource\RelationManagers;
 use App\Models\Hashtag;
@@ -13,27 +14,22 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class HashtagResource extends Resource
+class HashtagResource extends CustomResource
 {
     protected static ?string $model = Hashtag::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Analytic';
-    
+    // protected static ?string $navigationIcon = 'heroicon-o-hashtag';
+    protected static ?string $navigationGroup = 'Posts';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('uuid')
-                    ->label('UUID')
-                    ->required()
-                    ->maxLength(36),
                 Forms\Components\TextInput::make('name')
+                    ->unique(ignoreRecord: true)
                     ->required()
+                    ->columnSpanFull()
                     ->maxLength(255),
-                Forms\Components\Select::make('user_id')
-                    ->relationship('user', 'id')
-                    ->required(),
             ]);
     }
 
@@ -41,23 +37,14 @@ class HashtagResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('uuid')
-                    ->label('UUID')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('name')
+                    ->icon("heroicon-o-hashtag")
                     ->searchable(),
-                Tables\Columns\TextColumn::make('user.id')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label("created by"),
+                parent::getStatusColumn("user.type")
+                    ->label("user type"),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -86,8 +73,8 @@ class HashtagResource extends Resource
     {
         return [
             'index' => Pages\ListHashtags::route('/'),
-            'create' => Pages\CreateHashtag::route('/create'),
-            'edit' => Pages\EditHashtag::route('/{record}/edit'),
+            // 'create' => Pages\CreateHashtag::route('/create'),
+            // 'edit' => Pages\EditHashtag::route('/{record}/edit'),
         ];
     }
 }
