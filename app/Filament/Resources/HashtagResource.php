@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Pages\CustomResource;
 use App\Filament\Resources\HashtagResource\Pages;
 use App\Filament\Resources\HashtagResource\RelationManagers;
+use App\Models\GovOrg;
 use App\Models\Hashtag;
 use Filament\Facades\Filament;
 use Filament\Forms;
@@ -31,8 +32,15 @@ class HashtagResource extends CustomResource
                 Forms\Components\TextInput::make('name')
                     ->unique(ignoreRecord: true)
                     ->required()
-                    ->columnSpanFull()
+                    ->prefixIcon("heroicon-o-hashtag")
                     ->maxLength(255),
+                Forms\Components\Select::make('gov_id')
+                    ->label("government")
+                    ->options(fn() => GovOrg::all()->pluck("name", "id"))
+                    ->searchable()
+                    ->preload()
+                    ->required(),
+
             ]);
     }
 
@@ -49,6 +57,8 @@ class HashtagResource extends CustomResource
                 Tables\Columns\TextColumn::make('name')
                     ->icon("heroicon-o-hashtag")
                     ->searchable(),
+                Tables\Columns\TextColumn::make('gov.name')
+                    ->label("government"),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label("created by"),
                 parent::getStatusColumn("user.type")
@@ -77,9 +87,7 @@ class HashtagResource extends CustomResource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

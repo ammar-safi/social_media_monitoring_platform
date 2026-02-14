@@ -41,6 +41,10 @@ class GovOrg extends Model
     {
         return $this->HasMany(Rating::class, "gov_org_id");
     }
+    public function hashtag(): HasMany
+    {
+        return $this->hasMany(Hashtag::class, "gov_id");
+    }
 
     public function getRatingAttribute()
     {

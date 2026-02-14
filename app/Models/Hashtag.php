@@ -23,15 +23,17 @@ class Hashtag extends Model
         return [
             'id' => 'integer',
             'uuid' => 'string',
+            'user_id' => 'integer',
             'name' => 'string',
+            "gov_id" => 'integer',
         ];
     }
 
     protected static function booted()
     {
-        static::creating(function ($user) {
-            $user->uuid = (string) Str::uuid();
-            $user->user_id = Filament::auth()->user()->id;
+        static::creating(function ($hashtag) {
+            $hashtag->uuid = (string) Str::uuid();
+            $hashtag->user_id = Filament::auth()->user()->id;
         });
     }
 
@@ -43,4 +45,9 @@ class Hashtag extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function Gov(): BelongsTo
+    {
+        return $this->belongsTo(GovOrg::class, "gov_id");
+    }
+
 }

@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->unsignedBigInteger("user_id");
             $table->foreign("user_id")->references("id")->on('users');
+            $table->unsignedBigInteger("gov_id");
+            $table->foreign("gov_id")->references("id")->on('gov_orgs');
             $table->timestamps();
             $table->softDeletes();
         });
