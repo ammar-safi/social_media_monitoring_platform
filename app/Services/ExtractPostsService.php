@@ -25,6 +25,8 @@ class ExtractPostsService
         $posts = [];
         $matched_hashtags = [];
         $start_line = $start_line ?? 0;
+        $index = config("app.post_index");
+
         if (empty($hashtags)) {
             throw new Exception("There is no hashtags");
         }
@@ -41,7 +43,6 @@ class ExtractPostsService
                 continue;
             }
 
-            $index = config("app.cursor_position");
             if (!isset($row[$index])) {
                 $current_line++;
                 continue;
@@ -50,22 +51,23 @@ class ExtractPostsService
 
             $hashtags_uuid = $this->ExtractHashtag($post, $hashtags);
             if (!empty($hashtags_uuid)) {
-                $post_uuid = Str::uuid();
+                $post_hash = hash('sha256', $post);
+                $posts[] = [
+                    'uuid' => Str::uuid(),
+                    'hash' => $post_hash,
+                    'content' => $post,
+                ];
                 foreach ($hashtags_uuid as $hashtag_uuid) {
-                    $posts[] = [
-                        'content' => $post,
-                        'uuid' => $post_uuid
-                    ];
                     $matched_hashtags[] = [
-                        'post_uuid' => $post_uuid,
+                        'post_hash' => $post_hash,
                         'hashtag_uuid' => $hashtag_uuid
                     ];
                 }
                 $collected++;
             }
-            $current_line++;
 
-            if ($collected >= 10) {
+            $current_line++;
+            if ($collected >= (int) config("app.count_of_row")) {
                 break;
             }
         }
@@ -86,7 +88,7 @@ class ExtractPostsService
         $escaped = array_map('preg_quote', $hashtags);
         $extracted_hashtags_uuid = [];
         foreach ($escaped as $uuid => $hashtag) {
-            if (preg_match("/(" . $hashtag . ")\b/i", $post)) {
+            if (preg_match("/\b{$hashtag}\b/iu", $post)) {
                 $extracted_hashtags_uuid[] = $uuid;
             }
         }

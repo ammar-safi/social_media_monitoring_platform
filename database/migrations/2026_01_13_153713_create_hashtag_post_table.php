@@ -17,6 +17,9 @@ return new class extends Migration
             $table->id();
             $table->foreignUuid('hashtag_uuid')->references('uuid')->on('hashtags');
             $table->foreignUuid('post_uuid')->references('uuid')->on('posts');
+
+            $table->unique(['post_uuid', 'hashtag_uuid']);
+
         });
 
         Schema::enableForeignKeyConstraints();

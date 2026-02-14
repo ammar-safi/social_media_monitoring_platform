@@ -64,11 +64,7 @@ class ExtractPostsJob implements ShouldQueue
 
             DB::transaction(function () use ($extracted_posts, $start_line) {
 
-                if (!empty($extracted_posts)) {
-                    Log::info("inserting post ...");
-                    Post::insert($extracted_posts["data"]['posts']);
-                    HashtagPost::insert($extracted_posts["data"]["post_hashtag"]);
-                }
+                $this->insert($extracted_posts["data"]);
 
                 $start_line->update([
                     'line' => $extracted_posts["current_line"]
@@ -79,6 +75,40 @@ class ExtractPostsJob implements ShouldQueue
                 'error' => $e->getMessage()
             ]);
             throw $e;
+        }
+    }
+    private function insert($collection)
+    {
+        if (!empty($collection["posts"])) {
+            Log::info("inserting post ...");
+            Post::upsert(
+                $collection['posts'],
+                ["hash"],
+                ['content', 'updated_at']
+            );
+
+            $hashes = array_unique(array_column($collection["posts"], 'hash'));
+            $post_from_db = Post::whereIn("hash", $hashes)->get()->keyBy("hash");
+
+            $pivot = [];
+
+            foreach ($collection["post_hashtag"] as $relation_with_hash) {
+
+                $hash = $relation_with_hash["post_hash"];
+
+                if (!isset($post_from_db[$hash])) {
+                    continue;
+                }
+                $pivot[] = [
+                    "post_uuid" => $post_from_db[$hash]->uuid,
+                    "hashtag_uuid" => $relation_with_hash["hashtag_uuid"]
+                ];
+            }
+
+            HashtagPost::upsert(
+                $pivot,
+                ["post_uuid", "hashtag_uuid"]
+            );
         }
     }
 }

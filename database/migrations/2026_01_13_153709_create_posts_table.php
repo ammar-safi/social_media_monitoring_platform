@@ -15,6 +15,7 @@ return new class extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->uuid()->unique();
+            $table->string("hash",64)->unique();
             $table->text('content');
             $table->string('platform')->nullable();
             $table->string('account')->nullable();

@@ -214,6 +214,15 @@ return [
     | This key specifies the line where the extraction process takes place in the CSV file.    
     |--------------------------------------------------------------------------
     */
-    'cursor_position' => env("CURSOR_POSITION_IN_CSV", 3)
+    'post_index' => env("POST_INDEX_IN_CSV", 3),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Count of rows  
+    |--------------------------------------------------------------------------
+    | This key determines the number of rows to be extracted each time the extraction process is run.
+    |--------------------------------------------------------------------------
+    */
+    'count_of_row' => env("COUNT_OF_ROW", 10)
 
 ];
