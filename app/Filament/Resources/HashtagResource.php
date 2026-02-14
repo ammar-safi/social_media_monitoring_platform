@@ -11,6 +11,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -61,8 +62,11 @@ class HashtagResource extends CustomResource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                DeleteAction::make()
+                ActionGroup::make([
+
+                    Tables\Actions\EditAction::make(),
+                    DeleteAction::make()
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

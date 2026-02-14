@@ -33,6 +33,7 @@ class MainRoles extends Seeder
         "delete comment",
 
         "show hashtag",
+        "update hashtag",
         "create hashtag",
         "delete hashtag",
 
