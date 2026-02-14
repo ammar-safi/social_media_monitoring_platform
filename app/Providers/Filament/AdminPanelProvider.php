@@ -75,11 +75,16 @@ class AdminPanelProvider extends PanelProvider
                     ->icon("heroicon-o-users")
                     ->collapsed(),
                 NavigationGroup::make()
+                    ->label('Users management')
+                    ->icon("heroicon-o-users")
+                    ->collapsed(),
+                NavigationGroup::make()
                     ->label('Government management')
                     ->collapsed(false),
                 NavigationGroup::make()
                     ->label('Other options')
                     ->collapsed(false),
+
             ])
         ;
     }

@@ -22,28 +22,7 @@ class UserObserver implements ShouldHandleEventsAfterCommit
     /**
      * Handle the User "updated" event.
      */
-    public function updated(User $user): void
-    {
-        if (
-            $user->active == 1
-            && $user->getOriginal('active') == 0
-            && $user->isDirty("active")
-        ) {
-            $message = "your account was reactivate";
-            event(new NotifyUserEvent(
-                user_name: $user->name,
-                email: $user->email,
-                subject: "Reactivate",
-                message: $message
-            ));
-            Notification::make()
-                ->success()
-                ->icon("heroicon-o-check-circle")
-                ->title("Activated")
-                ->body("An email was sent to " . $user->first_name)
-                ->send();
-        }
-    }
+    public function updated(User $user): void {}
 
     public function saved(User $user)
     {
