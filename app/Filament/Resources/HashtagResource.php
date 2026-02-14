@@ -6,10 +6,12 @@ use App\Filament\Pages\CustomResource;
 use App\Filament\Resources\HashtagResource\Pages;
 use App\Filament\Resources\HashtagResource\RelationManagers;
 use App\Models\Hashtag;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -36,6 +38,12 @@ class HashtagResource extends CustomResource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                $userId = Filament::auth()->user()->id;
+                return $query
+                    ->orderByRaw("CASE WHEN user_id = ? THEN 0 ELSE 1 END", [$userId])
+                    ->orderByDesc("created_at");
+            })
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->icon("heroicon-o-hashtag")
@@ -54,6 +62,7 @@ class HashtagResource extends CustomResource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                DeleteAction::make()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
