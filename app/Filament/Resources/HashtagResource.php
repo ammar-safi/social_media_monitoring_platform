@@ -72,11 +72,7 @@ class HashtagResource extends CustomResource
                 //
             ])
             ->actions([
-                ActionGroup::make([
-
-                    Tables\Actions\EditAction::make(),
-                    DeleteAction::make()
-                ])
+                DeleteAction::make()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

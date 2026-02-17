@@ -19,11 +19,16 @@ class Analyst extends Model
         return [
             'id' => 'integer',
             'post_id' => 'integer',
+            'gov_id' => 'integer',
         ];
     }
 
     public function post(): BelongsTo
     {
         return $this->belongsTo(Post::class);
+    }
+    public function gov(): BelongsTo
+    {
+        return $this->belongsTo(GovOrg::class, "gov_id");
     }
 }

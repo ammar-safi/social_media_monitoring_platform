@@ -1,0 +1,102 @@
+<?php
+
+namespace App\Jobs\Analysis;
+
+use App\Enums\AnalystSentimentEnum;
+use App\Models\Analyst;
+use App\Services\AnalysisModelService;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
+use function PHPSTORM_META\map;
+
+class SentimentAnalysisJob implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public function handle(AnalysisModelService $analysis): void
+    {
+        Log::info("Starting sentiment analysis job.");
+
+        $data = $this->prepareData();
+
+        Log::info("Prepared data for sentiment analysis: " . count($data["items"]) . " items.");
+
+        $response = $analysis->post("sentiment-analysis/batch", $data);
+
+        Log::info("Received response from sentiment analysis API.");
+
+        if (isset($response["error"]) && $response["success"] == false) {
+            Log::error("Sentiment analysis API error: " . $response["error"]);
+            return;
+        }
+
+        $data = $this->validateResponse($response);
+
+        Log::info("Validated sentiment analysis response: " . count($data) . " valid items.");
+
+        Analyst::upsert(
+            $data,
+            ["id"],
+            ["sentiment", "sentiment_confidence"]
+        );
+    }
+
+    private function prepareData()
+    {
+        $query = DB::table("analysis")
+            ->join("posts", "posts.id", "=", "analysis.post_id")
+            ->join("gov_orgs", "gov_orgs.id", "=", "analysis.gov_id")
+            ->whereNull("analysis.deleted_at")
+            ->whereNull("posts.deleted_at")
+            ->whereNull("gov_orgs.deleted_at")
+            ->select([
+                "analysis.id as analysis_id",
+                "posts.content as post_content",
+            ]);
+        $result = $query->get()->map(function ($item) {
+            return [
+                "id" => $item->analysis_id,
+                "text" => $item->post_content,
+            ];
+        })->toArray();
+
+        $data = [
+            "items" => $result,
+        ];
+        return $data;
+    }
+
+    private function validateResponse($response): array
+    {
+        $data = [];
+        foreach ($response["results"] as $item) {
+            if ($item["status"] != "success") {
+                Log::warning("Sentiment analysis failed for item ID " . $item["id"] . ": " . ($item["error"] ?? "Unknown error"));
+                continue;
+            }
+            $id = $item["id"] ?? null;
+            if (!$id) {
+                Log::warning("Missing ID in sentiment result: " . json_encode($item));
+                continue;
+            }
+            try {
+                $sentiment = AnalystSentimentEnum::from($item["sentiment"])->value;
+            } catch (\InvalidArgumentException $e) {
+                Log::warning("Invalid sentiment value for item ID " . $item["id"] . ": " . $item["sentiment"]);
+                continue;
+            }
+            $data[] = [
+                "id" => $id,
+                "sentiment" => $sentiment,
+                "sentiment_confidence" => $item["confidence"],
+            ];
+        }
+        return $data;
+    }
+}
