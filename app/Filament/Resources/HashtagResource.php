@@ -57,15 +57,18 @@ class HashtagResource extends CustomResource
                     ->icon("heroicon-o-hashtag")
                     ->searchable(),
                 Tables\Columns\TextColumn::make('gov.name')
+                    ->default("( DELETED ACCOUNT )")
                     ->label("government"),
                 Tables\Columns\TextColumn::make('user.name')
+                    ->default("( DELETED ACCOUNT )")
                     ->label("created by"),
                 parent::getStatusColumn("user.type")
+                    ->default("( DELETED ACCOUNT )")
                     ->label("user type"),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                parent::getDateFormattedColumn("created_at")
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
             ])
             ->filters([
                 //

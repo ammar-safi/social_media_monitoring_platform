@@ -18,16 +18,13 @@ class Hashtag extends Model
     protected $guarded = [];
 
 
-    protected function casts(): array
-    {
-        return [
-            'id' => 'integer',
-            'uuid' => 'string',
-            'user_id' => 'integer',
-            'name' => 'string',
-            "gov_id" => 'integer',
-        ];
-    }
+    protected $casts = [
+        'id' => 'integer',
+        'uuid' => 'string',
+        'user_id' => 'integer',
+        'name' => 'string',
+        "gov_id" => 'integer',
+    ];
 
     protected static function booted()
     {
@@ -49,5 +46,4 @@ class Hashtag extends Model
     {
         return $this->belongsTo(GovOrg::class, "gov_id");
     }
-
 }

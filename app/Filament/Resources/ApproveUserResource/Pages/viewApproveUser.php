@@ -42,7 +42,7 @@ class viewApproveUser extends ViewRecord
                     }
                 })
                 ->hidden(function ($record) {
-                    if ($record->status != ApproveUserStatusEnum::PENDING->value) {
+                    if ($record->status != ApproveUserStatusEnum::PENDING) {
                         return true;
                     }
                     if ($record->expired) {
@@ -89,7 +89,7 @@ class viewApproveUser extends ViewRecord
                     }
                 })
                 ->hidden(function ($record) {
-                    if ($record->status != ApproveUserStatusEnum::PENDING->value) {
+                    if ($record->status != ApproveUserStatusEnum::PENDING) {
                         return true;
                     }
                     if ($record->expired) {

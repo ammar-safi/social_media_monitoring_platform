@@ -15,16 +15,14 @@ class Analyst extends Model
     protected $guarded = [];
     protected $table = "analysis";
 
-    protected $casts=
+    protected $casts = [
+        'id' => 'integer',
+        'post_id' => 'integer',
+        'gov_id' => 'integer',
+        "sentiment" => AnalystSentimentEnum::class,
+        "stance" => AnalystSentimentEnum::class,
+    ];
 
-        [
-            'id' => 'integer',
-            'post_id' => 'integer',
-            'gov_id' => 'integer',
-            "sentiment" => AnalystSentimentEnum::class,
-            "stance" => AnalystSentimentEnum::class,
-        ];
-    
 
     public function post(): BelongsTo
     {

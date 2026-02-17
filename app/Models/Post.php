@@ -17,15 +17,11 @@ class Post extends Model
 
     protected $guarded = [];
 
-
-    protected function casts(): array
-    {
-        return [
-            'id' => 'integer',
-            'uuid' => 'string',
-            'gov_org_id' => 'integer',
-        ];
-    }
+    protected $casts = [
+        'id' => 'integer',
+        'uuid' => 'string',
+        'gov_org_id' => 'integer',
+    ];
 
     public function GovOrgs(): BelongsToMany
     {
@@ -46,6 +42,6 @@ class Post extends Model
 
     public function Hashtags(): BelongsToMany
     {
-        return $this->belongsToMany(Hashtag::class, "hashtag_post", "post_uuid", "hashtag_uuid" , "uuid" , "uuid");
+        return $this->belongsToMany(Hashtag::class, "hashtag_post", "post_uuid", "hashtag_uuid", "uuid", "uuid");
     }
 }

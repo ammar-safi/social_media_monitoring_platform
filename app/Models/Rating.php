@@ -15,15 +15,12 @@ class Rating extends Model
     protected $guarded = [];
 
 
-    protected function casts(): array
-    {
-        return [
-            'id' => 'integer',
-            'user_id' => 'integer',
-            'gov_org_id' => 'integer',
-            'rating' => DecimalCast::class,
-        ];
-    }
+    protected $casts = [
+        'id' => 'integer',
+        'user_id' => 'integer',
+        'gov_org_id' => 'integer',
+        'rating' => DecimalCast::class,
+    ];
 
     public function user(): BelongsTo
     {

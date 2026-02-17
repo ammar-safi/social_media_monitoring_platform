@@ -10,19 +10,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class HashtagPost extends Model
 {
     use HasFactory, SoftDeletes;
-    
+
     protected $guarded = [];
     protected $table = "hashtag_post";
     public $timestamps = false;
-
-    protected function casts(): array
-    {
-        return [
-            'id' => 'integer',
-            'hashtag_uuid' => 'string',
-            'post_uuid' => 'string',
-        ];
-    }
+    protected $casts = [
+        'id' => 'integer',
+        'hashtag_uuid' => 'string',
+        'post_uuid' => 'string',
+    ];
 
     public function hashtag(): BelongsTo
     {

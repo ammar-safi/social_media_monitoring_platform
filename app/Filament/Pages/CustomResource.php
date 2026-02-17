@@ -20,7 +20,7 @@ class CustomResource extends Resource
             ->formatStateUsing(function ($state) {
                 $date = Carbon::parse($state);
                 $readable_date = $date->diffForHumans();
-                $state = Carbon::parse($state)->format("d/M/Y");
+                $state = Carbon::parse($state)->format("d-M-Y");
                 return $state . " (" .  $readable_date . ")";
             })
         ;
@@ -49,7 +49,7 @@ class CustomResource extends Resource
             ->formatStateUsing(function ($state) {
                 $date = Carbon::parse($state);
                 $readable_date = $date->diffForHumans();
-                $state = Carbon::parse($state)->format("d/M/Y");
+                $state = Carbon::parse($state)->format("d-M-Y");
                 return $state . " (" .  $readable_date . ")";
             })
         ;

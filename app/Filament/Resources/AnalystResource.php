@@ -31,12 +31,7 @@ class AnalystResource extends CustomResource
                     ->label("Government Organization"),
                 parent::getStatusColumn("sentiment"),
                 parent::getStatusColumn("stance"),
-                // Tables\Columns\TextColumn::make('sentiment_confidence')
-                //     ->searchable(),
-                // Tables\Columns\TextColumn::make('stance_confidence')
-                //     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                parent::getDateFormattedColumn("created_at")
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

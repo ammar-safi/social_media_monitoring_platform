@@ -61,11 +61,11 @@ class RatingsRelationManager extends RelationManager
                     Tables\Columns\TextColumn::make('user.type')
                     ->label("user type")
                     ->formatStateUsing(function ($state) {
-                        return UserTypeEnum::from($state->value)->label();
+                        return $state->label();
                     })
                     ->badge()
                     ->color(function ($state): string {
-                        return UserTypeEnum::from($state->value)->badgeColor();
+                        return $state->badgeColor();
                     }),
                 Tables\Columns\TextColumn::make('rating')
                     ->badge()

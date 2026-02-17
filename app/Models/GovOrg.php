@@ -19,12 +19,9 @@ class GovOrg extends Model
     protected $appends = ["rating", "my_rating", "my_comment"];
 
 
-    protected function casts(): array
-    {
-        return [
-            'id' => 'integer',
-        ];
-    }
+    protected $casts = [
+        'id' => 'integer',
+    ];
 
     public function Posts(): BelongsToMany
     {

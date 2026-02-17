@@ -85,27 +85,13 @@ class ApproveUserResource extends CustomResource
 
                         return "success";
                     }),
-                Tables\Columns\TextColumn::make('status')
-                    ->badge()
-                    ->formatStateUsing(function ($state) {
-                        return ApproveUserStatusEnum::from($state)->label();
-                    })
-                    ->color(function ($state): string {
-                        return ApproveUserStatusEnum::from($state)->badgeColor();
-                    }),
+                parent::getStatusColumn("status"),
                 TextColumn::make("user.email")
                     ->label("email")
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
-
-                Tables\Columns\TextColumn::make('created_at')
+                parent::getDateFormattedColumn('created_at')
                     ->label("Requested at")
-                    ->formatStateUsing(function ($state) {
-                        $date = Carbon::parse($state);
-                        $readable_date = $date->diffForHumans();
-                        $state = Carbon::parse($state)->format("d/M/Y");
-                        return $state . " (" .  $readable_date . ")";
-                    })
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -135,7 +121,7 @@ class ApproveUserResource extends CustomResource
                         }
                     })
                     ->hidden(function ($record) {
-                        if ($record->status != ApproveUserStatusEnum::PENDING->value) {
+                        if ($record->status != ApproveUserStatusEnum::PENDING) {
                             return true;
                         }
                         if ($record->expired) {
@@ -167,7 +153,7 @@ class ApproveUserResource extends CustomResource
                             }
                         })
                         ->hidden(function ($record) {
-                            if ($record->status != ApproveUserStatusEnum::PENDING->value) {
+                            if ($record->status != ApproveUserStatusEnum::PENDING) {
                                 return true;
                             }
                             if ($record->expired) {
@@ -218,23 +204,10 @@ class ApproveUserResource extends CustomResource
                     ]),
                 Section::make("Account request")
                     ->icon("heroicon-o-user-plus")
-                    ->columns(4)
+                    ->columns(2)
                     ->schema([
-                        TextEntry::make("expired_at")
-                            ->formatStateUsing(function ($state) {
-                                $date = Carbon::parse($state);
-                                $readable_date = $date->diffForHumans();
-                                $state = Carbon::parse($state)->format("d/M/Y");
-                                return $state . " (" .  $readable_date . ")";
-                            }),
-                        TextEntry::make("status")
-                            ->badge()
-                            ->formatStateUsing(function ($state) {
-                                return ApproveUserStatusEnum::from($state)->label();
-                            })
-                            ->color(function ($state): string {
-                                return ApproveUserStatusEnum::from($state)->badgeColor();
-                            }),
+                        parent::getDateFormattedEntry("expired_at"),
+                        parent::getStatusEntry("status"),
                         TextEntry::make("expired")
                             ->label('Request expiration')
                             ->formatStateUsing(function ($state) {
@@ -252,14 +225,8 @@ class ApproveUserResource extends CustomResource
 
                                 return "success";
                             }),
-                        TextEntry::make("created_at")
-                            ->label("Requested at")
-                            ->formatStateUsing(function ($state) {
-                                $date = Carbon::parse($state);
-                                $readable_date = $date->diffForHumans();
-                                $state = Carbon::parse($state)->format("d/M/Y");
-                                return $state . " (" .  $readable_date . ")";
-                            }),
+                        parent::getDateFormattedEntry("created_at")
+                            ->label("Requested at"),
                     ]),
             ]);
     }
