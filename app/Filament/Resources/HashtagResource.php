@@ -22,8 +22,7 @@ class HashtagResource extends CustomResource
 {
     protected static ?string $model = Hashtag::class;
 
-    // protected static ?string $navigationIcon = 'heroicon-o-hashtag';
-    protected static ?string $navigationGroup = 'Posts';
+    protected static ?string $navigationGroup = 'Analyst';
 
     public static function form(Form $form): Form
     {

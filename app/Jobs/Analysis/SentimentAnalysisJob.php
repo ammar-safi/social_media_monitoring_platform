@@ -54,6 +54,8 @@ class SentimentAnalysisJob implements ShouldQueue
             ->whereNull("analysis.deleted_at")
             ->whereNull("posts.deleted_at")
             ->whereNull("gov_orgs.deleted_at")
+            ->whereNull("analysis.sentiment")
+            ->whereNull("analysis.stance")
             ->select([
                 "analysis.id as analysis_id",
                 "posts.content as post_content",

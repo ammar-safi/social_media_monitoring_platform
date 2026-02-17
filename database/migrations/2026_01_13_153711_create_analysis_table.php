@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\AnalystSentimentEnum;
+use App\Enums\AnalystStanceEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -22,9 +24,17 @@ return new class extends Migration
             $table->unsignedBigInteger('gov_id');
             $table->foreign('gov_id')->references('id')->on('gov_orgs');
 
-            $table->enum('sentiment', ["positive", "negative", "normal"])->nullable();
+            $table->enum('sentiment', [
+                AnalystSentimentEnum::POSITIVE->value,
+                AnalystSentimentEnum::NEGATIVE->value,
+                AnalystSentimentEnum::NORMAL->value,
+            ])->nullable();
             $table->string('sentiment_confidence')->nullable();
-            $table->enum('stance', ["supportive", "neutral", "against"])->nullable();
+            $table->enum('stance', [
+                AnalystStanceEnum::SUPPORTIVE->value,
+                AnalystStanceEnum::AGAINST->value,
+                AnalystStanceEnum::NEUTRAL->value,
+            ])->nullable();
             $table->string("stance_confidence")->nullable();
             $table->timestamps();
             $table->softDeletes();

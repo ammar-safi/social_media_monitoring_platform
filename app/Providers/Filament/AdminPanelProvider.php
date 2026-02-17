@@ -76,7 +76,7 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Government management'),
                 NavigationGroup::make()
-                    ->label('Posts')
+                    ->label('Analyst')
                     ->icon("heroicon-o-chat-bubble-left-right"),
                 NavigationGroup::make()
                     ->label('Other options'),

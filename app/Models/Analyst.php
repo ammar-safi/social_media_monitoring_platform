@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AnalystSentimentEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,14 +15,16 @@ class Analyst extends Model
     protected $guarded = [];
     protected $table = "analysis";
 
-    protected function casts(): array
-    {
-        return [
+    protected $casts=
+
+        [
             'id' => 'integer',
             'post_id' => 'integer',
             'gov_id' => 'integer',
+            "sentiment" => AnalystSentimentEnum::class,
+            "stance" => AnalystSentimentEnum::class,
         ];
-    }
+    
 
     public function post(): BelongsTo
     {
