@@ -13,7 +13,6 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-use function PHPSTORM_META\map;
 
 class SentimentAnalysisJob implements ShouldQueue
 {
@@ -42,7 +41,7 @@ class SentimentAnalysisJob implements ShouldQueue
 
         Analyst::upsert(
             $data,
-            ["id"],
+            ["id" , "post_id", "gov_id"],
             ["sentiment", "sentiment_confidence"]
         );
     }
@@ -75,6 +74,10 @@ class SentimentAnalysisJob implements ShouldQueue
     private function validateResponse($response): array
     {
         $data = [];
+        $ids = array_map(function ($item) {
+            return $item["id"];
+        }, $response["results"]);
+        $data_db = Analyst::whereIn("id", $ids)->get()->keyBy("id");
         foreach ($response["results"] as $item) {
             if ($item["status"] != "success") {
                 Log::warning("Sentiment analysis failed for item ID " . $item["id"] . ": " . ($item["error"] ?? "Unknown error"));
@@ -91,11 +94,15 @@ class SentimentAnalysisJob implements ShouldQueue
                 Log::warning("Invalid sentiment value for item ID " . $item["id"] . ": " . $item["sentiment"]);
                 continue;
             }
-            $data[] = [
-                "id" => $id,
-                "sentiment" => $sentiment,
-                "sentiment_confidence" => $item["confidence"],
-            ];
+            if ($data_db->has($id)) {
+                $data[] = [
+                    "id" => $id,
+                    "sentiment" => $sentiment,
+                    "sentiment_confidence" => $item["confidence"],
+                    "post_id" => $data_db->get($id)->post_id,
+                    "gov_id" => $data_db->get($id)->gov_id,
+                ];
+            }
         }
         return $data;
     }

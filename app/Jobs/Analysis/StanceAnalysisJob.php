@@ -39,7 +39,7 @@ class StanceAnalysisJob implements ShouldQueue
 
         Analyst::upsert(
             $data,
-            ["id"],
+            ["id" , "post_id", "gov_id"],
             ["stance", "stance_confidence"]
         );
     }
@@ -74,6 +74,10 @@ class StanceAnalysisJob implements ShouldQueue
     private function validateResponse($response): array
     {
         $data = [];
+        $ids = array_map(function ($item) {
+            return $item["id"];
+        }, $response["results"]);
+        $data_db = Analyst::whereIn("id", $ids)->get()->keyBy("id");
         foreach ($response["results"] as $item) {
             if ($item["status"] != "success") {
                 Log::warning("Stance analysis failed for item ID " . $item["id"] . ": " . ($item["error"] ?? "Unknown error"));
@@ -90,11 +94,15 @@ class StanceAnalysisJob implements ShouldQueue
                 Log::warning("Invalid stance value for item ID " . $item["id"] . ": " . $item["stance"]);
                 continue;
             }
-            $data[] = [
-                "id" => $id,
-                "stance" => $stance,
-                "stance_confidence" => $item["confidence"],
-            ];
+            if ($data_db->has($id)) {
+                $data[] = [
+                    "id" => $id,
+                    "stance" => $stance,
+                    "stance_confidence" => $item["confidence"],
+                    "post_id" => $data_db->get($id)->post_id,
+                    "gov_id" => $data_db->get($id)->gov_id,
+                ];
+            }
         }
         return $data;
     }
