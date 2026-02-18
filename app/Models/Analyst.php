@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\AnalystSentimentEnum;
+use App\Enums\AnalystStanceEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,7 +21,7 @@ class Analyst extends Model
         'post_id' => 'integer',
         'gov_id' => 'integer',
         "sentiment" => AnalystSentimentEnum::class,
-        "stance" => AnalystSentimentEnum::class,
+        "stance" => AnalystStanceEnum::class,
     ];
 
 

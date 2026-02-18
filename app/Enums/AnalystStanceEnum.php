@@ -40,7 +40,7 @@ enum AnalystStanceEnum: string
         return match ($this) {
             self::SUPPORTIVE => 'heroicon-o-face-smile',
             self::AGAINST => 'heroicon-o-arrow-face-frown',
-            self::NEUTRAL => 'heroicon-o-face-neutral',
+            self::NEUTRAL => 'heroicon-o-hand-thumb-up',
         };
     }
 }

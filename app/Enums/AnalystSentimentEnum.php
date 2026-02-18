@@ -31,7 +31,7 @@ enum AnalystSentimentEnum :string
         return match ($this) {
             self::POSITIVE => 'success',
             self::NEGATIVE => 'danger',
-            self::NORMAL => 'normal',
+            self::NORMAL => 'info',
         };
     }
     
@@ -40,7 +40,7 @@ enum AnalystSentimentEnum :string
         return match ($this) {
             self::POSITIVE => 'heroicon-o-face-smile',
             self::NEGATIVE => 'heroicon-o-face-frown',
-            self::NORMAL => 'heroicon-o-face-meh',
+            self::NORMAL => 'heroicon-o-hand-thumb-up',
         };
     }
 }

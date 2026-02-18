@@ -20,17 +20,27 @@ class AnalystResource extends CustomResource
 
     // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup="Analyst" ;
+    protected static ?string $navigationGroup = "Analyst";
 
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
+
+                Tables\Columns\TextColumn::make('post.content')
+                    ->tooltip(fn($record) => $record?->post?->content)
+                    ->limit(20),
                 Tables\Columns\TextColumn::make('gov.name')
                     ->label("Government Organization"),
-                parent::getStatusColumn("sentiment"),
-                parent::getStatusColumn("stance"),
+                parent::getStatusColumn("sentiment")
+                    ->icon(function ($state) {
+                        return $state->icon();
+                    }),
+                parent::getStatusColumn("stance")
+                    ->icon(function ($state) {
+                        return $state->icon();
+                    }),
                 parent::getDateFormattedColumn("created_at")
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
