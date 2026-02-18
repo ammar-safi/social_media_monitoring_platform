@@ -5,6 +5,7 @@ namespace App\Jobs\Analysis;
 use App\Enums\AnalystSentimentEnum;
 use App\Models\Analyst;
 use App\Services\AnalysisModelService;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -32,7 +33,7 @@ class SentimentAnalysisJob implements ShouldQueue
 
         if (isset($response["error"]) && $response["success"] == false) {
             Log::error("Sentiment analysis API error: " . $response["error"]);
-            return;
+            throw new Exception("connection error with ai serves");
         }
 
         $data = $this->validateResponse($response);

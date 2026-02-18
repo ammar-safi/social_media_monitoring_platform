@@ -5,6 +5,7 @@ namespace App\Jobs\Analysis;
 use App\Enums\AnalystStanceEnum;
 use App\Models\Analyst;
 use App\Services\AnalysisModelService;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -30,7 +31,7 @@ class StanceAnalysisJob implements ShouldQueue
 
         if (isset($response["error"]) && $response["success"] == false) {
             Log::error("Sentiment analysis API error: " . $response["error"]);
-            return;
+            throw new Exception("connection error with ai serves ");
         }
 
         $data = $this->validateResponse($response);
@@ -39,7 +40,7 @@ class StanceAnalysisJob implements ShouldQueue
 
         Analyst::upsert(
             $data,
-            ["id" , "post_id", "gov_id"],
+            ["id", "post_id", "gov_id"],
             ["stance", "stance_confidence"]
         );
     }
