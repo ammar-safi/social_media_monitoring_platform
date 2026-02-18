@@ -19,16 +19,13 @@ class Invite extends Model
     protected $guarded = [];
 
 
-    protected function casts(): array
-    {
-        return [
-            'id' => 'integer',
-            'user_id' => 'integer',
-            'expired_at' => 'timestamp',
-            'expired' => 'boolean',
-            'status' => InviteStatusEnum::class
-        ];
-    }
+    protected $casts = [
+        'id' => 'integer',
+        'user_id' => 'integer',
+        'expired_at' => 'timestamp',
+        'expired' => 'boolean',
+        'status' => InviteStatusEnum::class
+    ];
 
     protected static function booted()
     {
@@ -48,5 +45,4 @@ class Invite extends Model
     {
         return $this->hasOne(PolicyRequest::class);
     }
-
 }

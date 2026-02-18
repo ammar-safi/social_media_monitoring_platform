@@ -2,71 +2,79 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Pages\CustomResource;
 use App\Filament\Resources\HashtagResource\Pages;
 use App\Filament\Resources\HashtagResource\RelationManagers;
+use App\Models\GovOrg;
 use App\Models\Hashtag;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class HashtagResource extends Resource
+class HashtagResource extends CustomResource
 {
     protected static ?string $model = Hashtag::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Analytic';
-    
+    protected static ?string $navigationGroup = 'Analyst';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('uuid')
-                    ->label('UUID')
-                    ->required()
-                    ->maxLength(36),
                 Forms\Components\TextInput::make('name')
+                    ->unique(ignoreRecord: true)
                     ->required()
+                    ->prefixIcon("heroicon-o-hashtag")
                     ->maxLength(255),
-                Forms\Components\Select::make('user_id')
-                    ->relationship('user', 'id')
+                Forms\Components\Select::make('gov_id')
+                    ->label("government")
+                    ->options(fn() => GovOrg::all()->pluck("name", "id"))
+                    ->searchable()
+                    ->preload()
                     ->required(),
+
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                $userId = Filament::auth()->user()->id;
+                return $query
+                    ->orderByRaw("CASE WHEN user_id = ? THEN 0 ELSE 1 END", [$userId])
+                    ->orderByDesc("created_at");
+            })
             ->columns([
-                Tables\Columns\TextColumn::make('uuid')
-                    ->label('UUID')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('name')
+                    ->icon("heroicon-o-hashtag")
                     ->searchable(),
-                Tables\Columns\TextColumn::make('user.id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                Tables\Columns\TextColumn::make('gov.name')
+                    ->default("( DELETED ACCOUNT )")
+                    ->label("government"),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->default("( DELETED ACCOUNT )")
+                    ->label("created by"),
+                parent::getStatusColumn("user.type")
+                    ->default("( DELETED ACCOUNT )")
+                    ->label("user type"),
+                parent::getDateFormattedColumn("created_at")
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                DeleteAction::make()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -77,17 +85,15 @@ class HashtagResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListHashtags::route('/'),
-            'create' => Pages\CreateHashtag::route('/create'),
-            'edit' => Pages\EditHashtag::route('/{record}/edit'),
+            // 'create' => Pages\CreateHashtag::route('/create'),
+            // 'edit' => Pages\EditHashtag::route('/{record}/edit'),
         ];
     }
 }

@@ -125,14 +125,11 @@ class UserResource extends CustomResource
                 parent::getStatusColumn("type"),
                 Tables\Columns\IconColumn::make('active')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+
+                parent::getDateFormattedColumn("created_at")
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->sortable()
-                    ->dateTime()
-                    ->toggleable(isToggledHiddenByDefault: true),
+
             ])
             ->filters([])
             ->actions([
@@ -189,14 +186,7 @@ class UserResource extends CustomResource
                         IconEntry::make('active')
                             ->label("Account active")
                             ->boolean(),
-                        TextEntry::make("created_at")
-                            ->formatStateUsing(function ($state) {
-                                $date = Carbon::parse($state);
-                                $readable_date = $date->diffForHumans();
-                                $state = Carbon::parse($state)->format("d/M/Y");
-                                return $state . " (" .  $readable_date . ")";
-                            }),
-
+                        parent::getDateFormattedEntry("created_at")
                     ])
 
             ]);

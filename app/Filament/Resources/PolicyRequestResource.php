@@ -89,8 +89,7 @@ class PolicyRequestResource extends CustomResource
 
                 parent::getDateFormattedColumn("expired_at"),
 
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                parent::getDateFormattedColumn("created_at")
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

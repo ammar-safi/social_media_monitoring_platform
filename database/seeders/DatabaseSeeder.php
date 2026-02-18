@@ -33,18 +33,20 @@ class DatabaseSeeder extends Seeder
         // ApproveUser::factory(10)->create();
         // GovOrg::factory(10)->create();
         // Hashtag::factory(10)->create();
-        Hashtag::insert([
+        Hashtag::upsert([
             [
                 'uuid' => Str::uuid(),
                 "name" => "facebook",
-                "user_id" => 1
+                "user_id" => 1,
+                "gov_id" => GovOrg::factory()->create()->id
             ],
             [
                 'uuid' => Str::uuid(),
                 "name" => "twitter",
-                "user_id" => 1
+                "user_id" => 1,
+                "gov_id" => GovOrg::factory()->create()->id
             ]
-        ]);
+        ], ["name"], ["uuid", "user_id", "gov_id"]);
         // Post::factory(10)->create();
         // HashtagPost::factory(10)->create();
         // Invite::factory(10)->create();

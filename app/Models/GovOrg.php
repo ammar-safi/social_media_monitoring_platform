@@ -19,12 +19,9 @@ class GovOrg extends Model
     protected $appends = ["rating", "my_rating", "my_comment"];
 
 
-    protected function casts(): array
-    {
-        return [
-            'id' => 'integer',
-        ];
-    }
+    protected $casts = [
+        'id' => 'integer',
+    ];
 
     public function Posts(): BelongsToMany
     {
@@ -40,6 +37,10 @@ class GovOrg extends Model
     public function Ratings(): HasMany
     {
         return $this->HasMany(Rating::class, "gov_org_id");
+    }
+    public function hashtag(): HasMany
+    {
+        return $this->hasMany(Hashtag::class, "gov_id");
     }
 
     public function getRatingAttribute()

@@ -16,9 +16,11 @@ return new class extends Migration
         Schema::create('hashtags', function (Blueprint $table) {
             $table->id();
             $table->uuid()->unique();
-            $table->string('name');
+            $table->string('name')->unique();
             $table->unsignedBigInteger("user_id");
             $table->foreign("user_id")->references("id")->on('users');
+            $table->unsignedBigInteger("gov_id");
+            $table->foreign("gov_id")->references("id")->on('gov_orgs');
             $table->timestamps();
             $table->softDeletes();
         });

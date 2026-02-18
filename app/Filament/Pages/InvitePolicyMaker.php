@@ -132,7 +132,6 @@ class InvitePolicyMaker extends Page implements HasTable
                 TextColumn::make('email')
                     ->label("My invites")
                     ->searchable(),
-                // TODO 
                 TextColumn::make('token')
                     ->label("Secret code")
                     ->hidden(fn() => Filament::auth()->user()->type != UserTypeEnum::ADMIN)
@@ -146,10 +145,10 @@ class InvitePolicyMaker extends Page implements HasTable
                 TextColumn::make('status')
                     ->badge()
                     ->formatStateUsing(function ($state) {
-                        return InviteStatusEnum::from($state)->label();
+                        return $state->label();
                     })
                     ->color(function ($state): string {
-                        return InviteStatusEnum::from($state)->badgeColor();
+                        return $state->badgeColor();
                     }),
                 TextColumn::make('expired_at')
                     ->formatStateUsing(function ($state) {

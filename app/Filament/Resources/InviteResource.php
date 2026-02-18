@@ -66,37 +66,22 @@ class InviteResource extends CustomResource
                 Tables\Columns\TextColumn::make('email')
                     ->label("policy maker email")
                     ->searchable(),
-                    //TODO
+                //TODO
                 Tables\Columns\TextColumn::make('token')
                     ->label("Secret code")
                     ->copyable()
                     ->icon("heroicon-o-document-duplicate")
                     ->copyMessage("copied")
                     ->copyMessageDuration(15000)
-                    ->iconPosition(IconPosition::After)
+                    ->iconPosition(IconPosition::After),
 
-                    ,
-                Tables\Columns\TextColumn::make('status')
-                    ->badge()
-                    ->formatStateUsing(function ($state) {
-                        return InviteStatusEnum::from($state)->label();
-                    })
-                    ->color(function ($state): string {
-                        return InviteStatusEnum::from($state)->badgeColor();
-                    }),
+                parent::getStatusColumn("status"),
+
                 parent::getDateFormattedColumn("expired_at"),
+
                 Tables\Columns\IconColumn::make('expired')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime()
+                parent::getDateFormattedColumn("created_at")
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -128,14 +113,7 @@ class InviteResource extends CustomResource
                     ->schema([
                         TextEntry::make("email")
                             ->icon('heroicon-o-envelope'),
-                        TextEntry::make('status')
-                            ->badge()
-                            ->formatStateUsing(function ($state) {
-                                return InviteStatusEnum::from($state)->label();
-                            })
-                            ->color(function ($state): string {
-                                return InviteStatusEnum::from($state)->badgeColor();
-                            }),
+                        parent::getStatusEntry("status"),
                         TextEntry::make('expired_at')
                             ->icon('heroicon-o-calendar')
                             ->formatStateUsing(function ($state) {

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Enums\UserTypeEnum;
+use App\Filament\Pages\CustomResource;
 use App\Filament\Resources\GovOrgResource\Pages;
 use App\Filament\Resources\GovOrgResource\RelationManagers;
 use App\Filament\Resources\GovOrgResource\RelationManagers\RatingsRelationManager;
@@ -30,12 +31,12 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class GovOrgResource extends Resource
+class GovOrgResource extends CustomResource
 {
     protected static ?string $model = GovOrg::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-building-library';
-    protected static ?string $navigationLabel, $label= 'Government Organizations';
+    protected static ?string $navigationLabel, $label = 'Government Organizations';
     // protected static ?string $navigationGroup = 'Government management';
     protected static ?int $navigationSort = 1;
 
@@ -68,12 +69,7 @@ class GovOrgResource extends Resource
                         return $state;
                     }),
 
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                parent::getDateFormattedColumn("created_at")
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

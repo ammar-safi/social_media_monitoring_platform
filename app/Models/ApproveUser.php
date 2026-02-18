@@ -22,19 +22,14 @@ class ApproveUser extends Model
     use HasFactory, SoftDeletes;
 
     protected $guarded = [];
-
-
-    protected function casts(): array
-    {
-        return [
-            'id' => 'integer',
-            'admin_id' => 'integer',
-            'user_id' => 'integer',
-            'expired_at' => 'timestamp',
-            'expired' => 'boolean',
-            'status' => ApproveUserStatusEnum::class,
-        ];
-    }
+    protected $casts = [
+        'id' => 'integer',
+        'admin_id' => 'integer',
+        'user_id' => 'integer',
+        'expired_at' => 'timestamp',
+        'expired' => 'boolean',
+        'status' => ApproveUserStatusEnum::class,
+    ];
 
 
     public function Admin(): BelongsTo
